@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Rei - Login</title>
+    <title>Açaí Rei - Sistema de Caixa</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -14,57 +14,24 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #4a148c 50%, #7c43bd 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Login Screen */
+        .login-screen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1a0a2e 0%, #4a148c 50%, #7c43bd 100%);
-            position: relative;
-            overflow: hidden;
+            padding: 20px;
         }
 
-        /* Partículas flutuantes de fundo */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 15s infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        /* Container principal */
         .login-container {
-            position: relative;
-            z-index: 10;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 3rem;
+            padding: 2.5rem;
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
@@ -73,28 +40,20 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Logo e título */
         .logo-section {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
 
         .logo-container {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 1.5rem;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
             position: relative;
-            animation: pulse 2s infinite;
         }
 
         .logo-image {
@@ -104,81 +63,29 @@
             object-fit: cover;
             border: 4px solid white;
             box-shadow: 0 10px 30px rgba(124, 67, 189, 0.4);
-            transition: transform 0.3s ease;
-        }
-
-        .logo-container:hover .logo-image {
-            transform: scale(1.05);
-        }
-
-        /* Anel decorativo ao redor da logo */
-        .logo-ring {
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: -8px;
-            bottom: -8px;
-            border: 3px solid rgba(124, 67, 189, 0.3);
-            border-radius: 50%;
-            animation: rotate 10s linear infinite;
-        }
-
-        .logo-ring::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            border: 2px solid rgba(124, 67, 189, 0.2);
-            border-radius: 50%;
-            animation: rotate 15s linear infinite reverse;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.02);
-            }
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
         }
 
         h1 {
             color: #4a148c;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
         }
 
         .subtitle {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
-        /* Formulário */
         .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
+            margin-bottom: 1.2rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: #4a148c;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s;
+            font-size: 0.85rem;
         }
 
         .input-wrapper {
@@ -191,12 +98,11 @@
             top: 50%;
             transform: translateY(-50%);
             color: #7c43bd;
-            transition: color 0.3s;
         }
 
         input {
             width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             font-size: 1rem;
@@ -211,26 +117,15 @@
             box-shadow: 0 0 0 4px rgba(124, 67, 189, 0.1);
         }
 
-        input:focus + i {
-            color: #4a148c;
-        }
-
         .toggle-password {
             position: absolute;
             right: 1rem;
-            left: auto !important;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
             color: #999;
-            transition: color 0.3s;
         }
 
-        .toggle-password:hover {
-            color: #7c43bd;
-        }
-
-        /* Botão de login */
         .login-btn {
             width: 100%;
             padding: 1rem;
@@ -238,12 +133,10 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
             margin-top: 0.5rem;
         }
 
@@ -252,29 +145,6 @@
             box-shadow: 0 10px 25px rgba(124, 67, 189, 0.4);
         }
 
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .login-btn:active::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        /* Mensagem de erro */
         .error-message {
             background: #ffebee;
             color: #c62828;
@@ -285,238 +155,968 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.9rem;
-            animation: shake 0.5s;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        /* Rodapé */
-        .footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: #999;
-            font-size: 0.85rem;
-        }
-
-        .footer i {
-            color: #e91e63;
-        }
-
-        /* Loading spinner */
-        .spinner {
+        /* Main App */
+        .app-screen {
             display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 0.5rem;
+            min-height: 100vh;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .app-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .btn-content {
+        .app-header h2 {
+            color: #4a148c;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ffcdd2;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #7c43bd 0%, #4a148c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 67, 189, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            color: #4a148c;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Abrir Caixa */
+        .caixa-status {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .caixa-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: #4caf50;
+        }
+
+        .caixa-icon.fechado {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #c62828;
+        }
+
+        .caixa-info {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+        }
+
+        .caixa-info p {
+            margin: 0.5rem 0;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .caixa-info strong {
+            color: #4a148c;
+        }
+
+        .btn-caixa {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-abrir {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .btn-fechar {
+            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+            color: white;
+        }
+
+        .btn-caixa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Produtos Vendidos */
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: end;
+        }
+
+        .form-group-compact {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-compact label {
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group-compact input, .form-group-compact select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #7c43bd 0%, #4a148c 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            height: fit-content;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.05);
+        }
+
+        /* Tabela */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f5f5f5;
+            color: #4a148c;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #ffcdd2;
+        }
+
+        /* Total */
+        .total-section {
+            background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .total-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* Faturas */
+        .faturas-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .fatura-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .fatura-card:hover {
+            border-color: #7c43bd;
+            transform: translateX(5px);
+        }
+
+        .fatura-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .fatura-numero {
+            color: #4a148c;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .fatura-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-aberta {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-fechada {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .fatura-info {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .fatura-total {
+            margin-top: 0.5rem;
+            color: #4a148c;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            color: #4a148c;
+            font-size: 1.3rem;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .btn-close:hover {
+            color: #333;
         }
 
         /* Responsivo */
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 1rem;
-                padding: 2rem;
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
             }
             
-            .logo-container {
-                width: 100px;
-                height: 100px;
+            .tabs-nav {
+                flex-direction: column;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Partículas de fundo -->
-    <div class="particles" id="particles"></div>
 
-    <!-- Container de login -->
-    <div class="login-container">
-        <div class="logo-section">
-            <div class="logo-container">
-                <div class="logo-ring"></div>
-                <img src="https://i.ibb.co/sr0dSjh/logo-acai.png" 
-                     alt="Logo Açaí Rei" 
-                     class="logo-image"
-                     onerror="this.src='https://via.placeholder.com/120/4a148c/ffffff?text=Açaí+Rei'; this.onerror=null;">
+    <!-- TELA DE LOGIN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="logo-section">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/sr0dSjh/logo-acai.png" 
+                         alt="Logo Açaí Rei" 
+                         class="logo-image"
+                         onerror="this.src='https://via.placeholder.com/100/4a148c/ffffff?text=Açaí+Rei'">
+                </div>
+                <h1>Açaí Rei</h1>
+                <p class="subtitle">Sistema de Controle de Caixa</p>
             </div>
-            <h1>Açaí Rei</h1>
-            <p class="subtitle">Sistema de Controle de Produção</p>
-        </div>
 
-        <div class="error-message" id="errorMessage">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>Usuário ou senha incorretos!</span>
-        </div>
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Usuário ou senha incorretos!</span>
+            </div>
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Usuário</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-user"></i>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        placeholder="Digite seu usuário" 
-                        autocomplete="username"
-                        required
-                    >
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Digite seu usuário" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Digite sua senha" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- APLICATIVO PRINCIPAL -->
+    <div class="app-screen" id="appScreen">
+        <header class="app-header">
+            <h2><i class="fas fa-crown"></i> Açaí Rei</h2>
+            <div class="user-info">
+                <span id="currentUser"></span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </header>
+
+        <div class="tabs-container">
+            <!-- Navegação das Abas -->
+            <nav class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab('caixa')">
+                    <i class="fas fa-cash-register"></i> Abrir Caixa
+                </button>
+                <button class="tab-btn" onclick="switchTab('produtos')">
+                    <i class="fas fa-ice-cream"></i> Produtos Vendidos
+                </button>
+                <button class="tab-btn" onclick="switchTab('faturas')">
+                    <i class="fas fa-receipt"></i> Faturas
+                </button>
+            </nav>
+
+            <!-- ABA 1: ABRIR CAIXA -->
+            <div class="tab-content active" id="tab-caixa">
+                <div class="card">
+                    <div class="caixa-status" id="caixaStatus">
+                        <div class="caixa-icon fechado" id="caixaIcon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h2 id="caixaTitulo">Caixa Fechado</h2>
+                        <p style="color: #666; margin-top: 0.5rem;">Clique abaixo para iniciar o expediente</p>
+                        
+                        <div class="caixa-info" id="caixaInfo" style="display: none;">
+                            <p><i class="fas fa-play-circle"></i> <strong>Aberto em:</strong> <span id="horaAbertura">-</span></p>
+                            <p><i class="fas fa-stop-circle"></i> <strong>Fechado em:</strong> <span id="horaFechamento">-</span></p>
+                            <p><i class="fas fa-clock"></i> <strong>Duração:</strong> <span id="duracao">-</span></p>
+                        </div>
+
+                        <button class="btn-caixa btn-abrir" id="btnCaixa" onclick="toggleCaixa()">
+                            <i class="fas fa-lock-open"></i> Abrir Caixa
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-lock"></i>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="Digite sua senha" 
-                        autocomplete="current-password"
-                        required
-                    >
-                    <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+            <!-- ABA 2: PRODUTOS VENDIDOS -->
+            <div class="tab-content" id="tab-produtos">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-plus-circle"></i> Registrar Venda</h3>
+                        <span id="caixaAbertoBadge" style="display: none;" class="fatura-status status-aberta">
+                            <i class="fas fa-check-circle"></i> Caixa Aberto
+                        </span>
+                    </div>
+
+                    <form id="vendaForm" onsubmit="addProduto(event)">
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label>Nome do Produto</label>
+                                <input type="text" id="nomeProduto" placeholder="Ex: Açaí 500ml" required>
+                            </div>
+                            <div class="form-group-compact">
+                                <label>Valor (R$)</label>
+                                <input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group-compact">
+                                <label>Forma de Pagamento</label>
+                                <select id="formaPagamento" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Dinheiro">Dinheiro</option>
+                                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                    <option value="Cartão de Débito">Cartão de Débito</option>
+                                    <option value="PIX">PIX</option>
+                                    <option value="PicPay">PicPay</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-add">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Valor</th>
+                                    <th>Pagamento</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaProdutos">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #999; padding: 2rem;">
+                                        Nenhuma venda registrada ainda
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-section">
+                        <span class="total-label">Total de Vendas</span>
+                        <span class="total-value" id="totalVendas">R$ 0,00</span>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="login-btn" id="loginBtn">
-                <span class="btn-content">
-                    Entrar
-                    <div class="spinner" id="spinner"></div>
-                </span>
-            </button>
-        </form>
+            <!-- ABA 3: FATURAS -->
+            <div class="tab-content" id="tab-faturas">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-history"></i> Histórico de Faturas</h3>
+                    </div>
+                    
+                    <div class="faturas-list" id="listaFaturas">
+                        <div style="text-align: center; color: #999; padding: 3rem;">
+                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>Nenhuma fatura registrada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="footer">
-            <p>© 2024 Açaí Rei <i class="fas fa-heart"></i> Todos os direitos reservados</p>
+    <!-- MODAL DE DETALHES DA FATURA -->
+    <div class="modal" id="modalFatura">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-file-invoice"></i> Detalhes da Fatura</h3>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div id="modalBody">
+                <!-- Conteúdo dinâmico -->
+            </div>
         </div>
     </div>
 
     <script>
-        // Configurações
+        // CONFIGURAÇÕES
         const CREDENTIALS = {
             username: 'Açai Rei001',
             password: '170920'
         };
 
-        // Elementos DOM
-        const form = document.getElementById('loginForm');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const togglePassword = document.getElementById('togglePassword');
-        const errorMessage = document.getElementById('errorMessage');
-        const loginBtn = document.getElementById('loginBtn');
-        const spinner = document.getElementById('spinner');
-        const btnText = loginBtn.querySelector('.btn-content');
+        // ESTADO DO SISTEMA
+        let caixaAberto = false;
+        let horaAbertura = null;
+        let produtosVenda = [];
+        let faturas = JSON.parse(localStorage.getItem('faturasAcaiRei')) || [];
+        let faturaAtual = null;
 
-        // Criar partículas de fundo
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const particleCount = 20;
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                container.appendChild(particle);
-            }
-        }
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-        // Toggle visibilidade da senha
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+                document.getElementById('currentUser').textContent = username;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appScreen').style.display = 'block';
+                carregarFaturas();
+            } else {
+                document.getElementById('errorMessage').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // TOGGLE SENHA
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Login
-        form.addEventListener('submit', async function(e) {
+        // LOGOUT
+        function logout() {
+            if (caixaAberto) {
+                if (!confirm('O caixa está aberto! Deseja fechar e sair?')) return;
+                fecharCaixa();
+            }
+            location.reload();
+        }
+
+        // TROCAR ABAS
+        function switchTab(tabName) {
+            // Atualizar botões
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+
+            // Atualizar conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // Atualizar badge na aba de produtos
+            if (tabName === 'produtos') {
+                document.getElementById('caixaAbertoBadge').style.display = caixaAberto ? 'inline-block' : 'none';
+            }
+        }
+
+        // ABRIR/FECHAR CAIXA
+        function toggleCaixa() {
+            if (!caixaAberto) {
+                abrirCaixa();
+            } else {
+                fecharCaixa();
+            }
+        }
+
+        function abrirCaixa() {
+            caixaAberto = true;
+            horaAbertura = new Date();
+            produtosVenda = [];
+            faturaAtual = {
+                id: Date.now(),
+                dataAbertura: horaAbertura.toISOString(),
+                dataFechamento: null,
+                produtos: [],
+                total: 0
+            };
+
+            // Atualizar UI
+            document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock-open"></i>';
+            document.getElementById('caixaIcon').classList.remove('fechado');
+            document.getElementById('caixaTitulo').textContent = 'Caixa Aberto';
+            document.getElementById('horaAbertura').textContent = formatarDataHora(horaAbertura);
+            document.getElementById('horaFechamento').textContent = '-';
+            document.getElementById('duracao').textContent = '-';
+            document.getElementById('caixaInfo').style.display = 'block';
+            
+            const btn = document.getElementById('btnCaixa');
+            btn.innerHTML = '<i class="fas fa-lock"></i> Fechar Caixa';
+            btn.classList.remove('btn-abrir');
+            btn.classList.add('btn-fechar');
+
+            // Limpar tabela
+            atualizarTabelaProdutos();
+            atualizarTotal();
+
+            alert('Caixa aberto com sucesso! Hora: ' + formatarDataHora(horaAbertura));
+        }
+
+        function fecharCaixa() {
+            if (produtosVenda.length === 0) {
+                if (!confirm('Nenhuma venda registrada. Deseja fechar o caixa mesmo assim?')) return;
+            }
+
+            caixaAberto = false;
+            const horaFechamento = new Date();
+            
+            // Completar fatura
+            faturaAtual.dataFechamento = horaFechamento.toISOString();
+            faturaAtual.produtos = [...produtosVenda];
+            faturaAtual.total = calcularTotal();
+            
+            // Salvar
+            faturas.unshift(faturaAtual);
+            localStorage.setItem('faturasAcaiRei', JSON.stringify(faturas));
+
+            // Atualizar UI
+            document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock"></i>';
+            document.getElementById('caixaIcon').classList.add('fechado');
+            document.getElementById('caixaTitulo').textContent = 'Caixa Fechado';
+            document.getElementById('horaFechamento').textContent = formatarDataHora(horaFechamento);
+            document.getElementById('duracao').textContent = calcularDuracao(horaAbertura, horaFechamento);
+            
+            const btn = document.getElementById('btnCaixa');
+            btn.innerHTML = '<i class="fas fa-lock-open"></i> Abrir Caixa';
+            btn.classList.remove('btn-fechar');
+            btn.classList.add('btn-abrir');
+
+            // Recarregar faturas
+            carregarFaturas();
+
+            alert(`Caixa fechado!\nTotal de vendas: R$ ${faturaAtual.total.toFixed(2).replace('.', ',')}`);
+        }
+
+        // PRODUTOS
+        function addProduto(e) {
             e.preventDefault();
             
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-
-            // Mostrar loading
-            spinner.style.display = 'block';
-            loginBtn.disabled = true;
-            errorMessage.style.display = 'none';
-
-            // Simular delay de rede (opcional, para UX)
-            await new Promise(resolve => setTimeout(resolve, 800));
-
-            // Verificar credenciais
-            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
-                // Login bem-sucedido
-                loginBtn.style.background = 'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)';
-                btnText.innerHTML = '<i class="fas fa-check"></i> Sucesso!';
-                
-                setTimeout(() => {
-                    // Aqui você redireciona para a página principal
-                    alert('Bem-vindo ao Sistema Açaí Rei!\n\nLogin realizado com sucesso.');
-                    // window.location.href = '/dashboard.html';
-                    
-                    // Reset para demonstração
-                    setTimeout(() => {
-                        loginBtn.style.background = '';
-                        btnText.innerHTML = 'Entrar<div class="spinner" id="spinner"></div>';
-                        spinner.style.display = 'none';
-                        loginBtn.disabled = false;
-                        form.reset();
-                    }, 1000);
-                }, 500);
-            } else {
-                // Login falhou
-                spinner.style.display = 'none';
-                loginBtn.disabled = false;
-                errorMessage.style.display = 'flex';
-                
-                // Efeito de shake no input
-                if (username !== CREDENTIALS.username) {
-                    usernameInput.style.borderColor = '#c62828';
-                    setTimeout(() => usernameInput.style.borderColor = '', 3000);
-                }
-                if (password !== CREDENTIALS.password) {
-                    passwordInput.style.borderColor = '#c62828';
-                    setTimeout(() => passwordInput.style.borderColor = '', 3000);
-                }
+            if (!caixaAberto) {
+                alert('Abra o caixa primeiro!');
+                switchTab('caixa');
+                return;
             }
-        });
 
-        // Limpar erro ao digitar
-        [usernameInput, passwordInput].forEach(input => {
-            input.addEventListener('input', () => {
-                errorMessage.style.display = 'none';
-                input.style.borderColor = '';
+            const nome = document.getElementById('nomeProduto').value;
+            const valor = parseFloat(document.getElementById('valorProduto').value);
+            const pagamento = document.getElementById('formaPagamento').value;
+
+            const produto = {
+                id: Date.now(),
+                nome,
+                valor,
+                pagamento,
+                hora: new Date().toISOString()
+            };
+
+            produtosVenda.push(produto);
+            atualizarTabelaProdutos();
+            atualizarTotal();
+
+            // Limpar formulário
+            document.getElementById('vendaForm').reset();
+            document.getElementById('nomeProduto').focus();
+        }
+
+        function removerProduto(id) {
+            produtosVenda = produtosVenda.filter(p => p.id !== id);
+            atualizarTabelaProdutos();
+            atualizarTotal();
+        }
+
+        function atualizarTabelaProdutos() {
+            const tbody = document.getElementById('tabelaProdutos');
+            
+            if (produtosVenda.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #999; padding: 2rem;">
+                            Nenhuma venda registrada ainda
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = produtosVenda.map(p => `
+                <tr>
+                    <td><strong>${p.nome}</strong></td>
+                    <td>R$ ${p.valor.toFixed(2).replace('.', ',')}</td>
+                    <td><span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem;">${p.pagamento}</span></td>
+                    <td>
+                        <button class="btn-delete" onclick="removerProduto(${p.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function calcularTotal() {
+            return produtosVenda.reduce((sum, p) => sum + p.valor, 0);
+        }
+
+        function atualizarTotal() {
+            const total = calcularTotal();
+            document.getElementById('totalVendas').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        }
+
+        // FATURAS
+        function carregarFaturas() {
+            const container = document.getElementById('listaFaturas');
+            
+            if (faturas.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #999; padding: 3rem;">
+                        <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <p>Nenhuma fatura registrada</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = faturas.map((f, index) => {
+                const dataAbertura = new Date(f.dataAbertura);
+                const dataFechamento = f.dataFechamento ? new Date(f.dataFechamento) : null;
+                const status = dataFechamento ? 'fechada' : 'aberta';
+                
+                return `
+                    <div class="fatura-card" onclick="verDetalhesFatura(${f.id})">
+                        <div class="fatura-header">
+                            <span class="fatura-numero">Fatura #${faturas.length - index}</span>
+                            <span class="fatura-status status-${status}">${status === 'aberta' ? 'Em Aberto' : 'Fechada'}</span>
+                        </div>
+                        <div class="fatura-info">
+                            <span><i class="fas fa-calendar"></i> ${dataAbertura.toLocaleDateString('pt-BR')}</span>
+                            <span><i class="fas fa-clock"></i> ${dataAbertura.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</span>
+                            <span><i class="fas fa-shopping-bag"></i> ${f.produtos.length} itens</span>
+                        </div>
+                        <div class="fatura-total">
+                            Total: R$ ${f.total.toFixed(2).replace('.', ',')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function verDetalhesFatura(id) {
+            const fatura = faturas.find(f => f.id === id);
+            if (!fatura) return;
+
+            const dataAbertura = new Date(fatura.dataAbertura);
+            const dataFechamento = fatura.dataFechamento ? new Date(fatura.dataFechamento) : null;
+
+            let html = `
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Aberto em:</strong> ${formatarDataHora(dataAbertura)}</p>
+                    ${dataFechamento ? `<p style="color: #666; margin-bottom: 0.5rem;"><strong>Fechado em:</strong> ${formatarDataHora(dataFechamento)}</p>` : '<p style="color: #2e7d32;"><i class="fas fa-circle"></i> Caixa ainda aberto</p>'}
+                </div>
+                
+                <h4 style="color: #4a148c; margin-bottom: 1rem;">Produtos Vendidos:</h4>
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+            `;
+
+            if (fatura.produtos.length === 0) {
+                html += '<p style="color: #999; text-align: center;">Nenhum produto vendido</p>';
+            } else {
+                html += fatura.produtos.map(p => `
+                    <div style="display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong>${p.nome}</strong>
+                            <span style="color: #999; font-size: 0.85rem; display: block;">${p.pagamento}</span>
+                        </div>
+                        <span style="font-weight: 600; color: #4a148c;">R$ ${p.valor.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `).join('');
+            }
+
+            html += `
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%); color: white; padding: 1.5rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1.1rem;">TOTAL GERAL</span>
+                    <span style="font-size: 1.8rem; font-weight: 700;">R$ ${fatura.total.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `;
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalFatura').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalFatura').classList.remove('active');
+        }
+
+        // UTILITÁRIOS
+        function formatarDataHora(date) {
+            return date.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
-        });
+        }
 
-        // Inicializar
-        createParticles();
+        function calcularDuracao(inicio, fim) {
+            const diff = fim - inicio;
+            const horas = Math.floor(diff / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            return `${horas}h ${minutos}min`;
+        }
 
-        // Focar no usuário ao carregar
-        window.addEventListener('load', () => {
-            usernameInput.focus();
+        // Fechar modal ao clicar fora
+        document.getElementById('modalFatura').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
         });
     </script>
 </body>
 </html>
-
