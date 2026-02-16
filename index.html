@@ -100,7 +100,7 @@
             color: #7c43bd;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 0.9rem 1rem 0.9rem 2.8rem;
             border: 2px solid #e0e0e0;
@@ -110,7 +110,7 @@
             background: #fafafa;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: #7c43bd;
             background: white;
@@ -157,7 +157,7 @@
             font-size: 0.9rem;
         }
 
-        /* Main App */
+        /* Main App - Escondido inicialmente */
         .app-screen {
             display: none;
             min-height: 100vh;
@@ -217,6 +217,7 @@
             padding: 0.5rem;
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -233,6 +234,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            white-space: nowrap;
+            min-width: 120px;
         }
 
         .tab-btn.active {
@@ -255,7 +258,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 20px;
@@ -281,28 +283,35 @@
             gap: 0.5rem;
         }
 
-        /* Abrir Caixa */
+        /* Caixa */
         .caixa-status {
             text-align: center;
-            padding: 3rem 2rem;
+            padding: 2rem 1rem;
         }
 
         .caixa-icon {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 3rem;
-            color: #4caf50;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            color: #c62828;
+            transition: all 0.3s;
         }
 
-        .caixa-icon.fechado {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            color: #c62828;
+        .caixa-icon.aberto {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .caixa-info {
@@ -310,12 +319,17 @@
             padding: 1.5rem;
             background: #f5f5f5;
             border-radius: 12px;
+            display: none;
+        }
+
+        .caixa-info.show {
+            display: block;
         }
 
         .caixa-info p {
             margin: 0.5rem 0;
-            color: #666;
-            font-size: 1.1rem;
+            color: #555;
+            font-size: 1rem;
         }
 
         .caixa-info strong {
@@ -323,8 +337,8 @@
         }
 
         .btn-caixa {
-            padding: 1rem 3rem;
-            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -333,6 +347,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            margin: 0.5rem;
         }
 
         .btn-abrir {
@@ -350,7 +365,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
-        /* Produtos Vendidos */
+        /* Produtos */
         .form-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr auto;
@@ -369,7 +384,8 @@
             margin-bottom: 0.3rem;
         }
 
-        .form-group-compact input, .form-group-compact select {
+        .form-group-compact input, 
+        .form-group-compact select {
             padding: 0.8rem;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
@@ -392,7 +408,6 @@
             transform: scale(1.05);
         }
 
-        /* Tabela */
         .table-container {
             overflow-x: auto;
             margin-top: 1.5rem;
@@ -437,7 +452,6 @@
             background: #ffcdd2;
         }
 
-        /* Total */
         .total-section {
             background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%);
             color: white;
@@ -447,6 +461,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .total-label {
@@ -455,8 +471,28 @@
         }
 
         .total-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-danger {
+            background: #ffebee;
+            color: #c62828;
         }
 
         /* Faturas */
@@ -515,10 +551,10 @@
             display: flex;
             gap: 1.5rem;
             flex-wrap: wrap;
+            margin-bottom: 0.5rem;
         }
 
         .fatura-total {
-            margin-top: 0.5rem;
             color: #4a148c;
             font-weight: 700;
             font-size: 1.1rem;
@@ -580,6 +616,18 @@
             color: #333;
         }
 
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 3rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
         /* Responsivo */
         @media (max-width: 768px) {
             .form-row {
@@ -594,6 +642,14 @@
                 flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+            }
+
+            .caixa-info p {
+                font-size: 0.9rem;
+            }
+
+            .total-value {
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -638,7 +694,7 @@
                 </div>
 
                 <button type="submit" class="login-btn">
-                    <i class="fas fa-sign-in-alt"></i> Entrar
+                    <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
                 </button>
             </form>
         </div>
@@ -657,15 +713,15 @@
         </header>
 
         <div class="tabs-container">
-            <!-- Navegação das Abas -->
+            <!-- Navegação -->
             <nav class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('caixa')">
+                <button class="tab-btn active" onclick="switchTab('caixa', this)">
                     <i class="fas fa-cash-register"></i> Abrir Caixa
                 </button>
-                <button class="tab-btn" onclick="switchTab('produtos')">
-                    <i class="fas fa-ice-cream"></i> Produtos Vendidos
+                <button class="tab-btn" onclick="switchTab('produtos', this)">
+                    <i class="fas fa-ice-cream"></i> Produtos
                 </button>
-                <button class="tab-btn" onclick="switchTab('faturas')">
+                <button class="tab-btn" onclick="switchTab('faturas', this)">
                     <i class="fas fa-receipt"></i> Faturas
                 </button>
             </nav>
@@ -673,17 +729,17 @@
             <!-- ABA 1: ABRIR CAIXA -->
             <div class="tab-content active" id="tab-caixa">
                 <div class="card">
-                    <div class="caixa-status" id="caixaStatus">
-                        <div class="caixa-icon fechado" id="caixaIcon">
+                    <div class="caixa-status">
+                        <div class="caixa-icon" id="caixaIcon">
                             <i class="fas fa-lock"></i>
                         </div>
                         <h2 id="caixaTitulo">Caixa Fechado</h2>
-                        <p style="color: #666; margin-top: 0.5rem;">Clique abaixo para iniciar o expediente</p>
+                        <p style="color: #666; margin: 0.5rem 0 1.5rem;">Clique abaixo para iniciar o expediente</p>
                         
-                        <div class="caixa-info" id="caixaInfo" style="display: none;">
-                            <p><i class="fas fa-play-circle"></i> <strong>Aberto em:</strong> <span id="horaAbertura">-</span></p>
-                            <p><i class="fas fa-stop-circle"></i> <strong>Fechado em:</strong> <span id="horaFechamento">-</span></p>
-                            <p><i class="fas fa-clock"></i> <strong>Duração:</strong> <span id="duracao">-</span></p>
+                        <div class="caixa-info" id="caixaInfo">
+                            <p><i class="fas fa-play-circle" style="color: #4caf50;"></i> <strong>Aberto em:</strong> <span id="horaAbertura">-</span></p>
+                            <p><i class="fas fa-stop-circle" style="color: #f44336;"></i> <strong>Fechado em:</strong> <span id="horaFechamento">-</span></p>
+                            <p><i class="fas fa-clock" style="color: #7c43bd;"></i> <strong>Duração:</strong> <span id="duracao">-</span></p>
                         </div>
 
                         <button class="btn-caixa btn-abrir" id="btnCaixa" onclick="toggleCaixa()">
@@ -698,8 +754,8 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-plus-circle"></i> Registrar Venda</h3>
-                        <span id="caixaAbertoBadge" style="display: none;" class="fatura-status status-aberta">
-                            <i class="fas fa-check-circle"></i> Caixa Aberto
+                        <span id="caixaStatusBadge" class="badge badge-danger">
+                            <i class="fas fa-lock"></i> Caixa Fechado
                         </span>
                     </div>
 
@@ -714,12 +770,12 @@
                                 <input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" required>
                             </div>
                             <div class="form-group-compact">
-                                <label>Forma de Pagamento</label>
+                                <label>Pagamento</label>
                                 <select id="formaPagamento" required>
                                     <option value="">Selecione</option>
                                     <option value="Dinheiro">Dinheiro</option>
-                                    <option value="Cartão de Crédito">Cartão de Crédito</option>
-                                    <option value="Cartão de Débito">Cartão de Débito</option>
+                                    <option value="Cartão Crédito">Cartão Crédito</option>
+                                    <option value="Cartão Débito">Cartão Débito</option>
                                     <option value="PIX">PIX</option>
                                     <option value="PicPay">PicPay</option>
                                     <option value="Outro">Outro</option>
@@ -743,8 +799,8 @@
                             </thead>
                             <tbody id="tabelaProdutos">
                                 <tr>
-                                    <td colspan="4" style="text-align: center; color: #999; padding: 2rem;">
-                                        Nenhuma venda registrada ainda
+                                    <td colspan="4" class="empty-state" style="padding: 2rem;">
+                                        Nenhuma venda registrada
                                     </td>
                                 </tr>
                             </tbody>
@@ -766,8 +822,8 @@
                     </div>
                     
                     <div class="faturas-list" id="listaFaturas">
-                        <div style="text-align: center; color: #999; padding: 3rem;">
-                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
                             <p>Nenhuma fatura registrada</p>
                         </div>
                     </div>
@@ -776,17 +832,14 @@
         </div>
     </div>
 
-    <!-- MODAL DE DETALHES DA FATURA -->
-    <div class="modal" id="modalFatura">
+    <!-- MODAL DETALHES -->
+    <div class="modal" id="modalFatura" onclick="if(event.target === this) closeModal()">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title"><i class="fas fa-file-invoice"></i> Detalhes da Fatura</h3>
                 <button class="btn-close" onclick="closeModal()">&times;</button>
             </div>
-            
-            <div id="modalBody">
-                <!-- Conteúdo dinâmico -->
-            </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
@@ -797,7 +850,7 @@
             password: '170920'
         };
 
-        // ESTADO DO SISTEMA
+        // ESTADO
         let caixaAberto = false;
         let horaAbertura = null;
         let produtosVenda = [];
@@ -812,15 +865,17 @@
             const password = document.getElementById('password').value.trim();
 
             if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
-                document.getElementById('currentUser').textContent = username;
+                // Esconde login, mostra app
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appScreen').style.display = 'block';
+                document.getElementById('currentUser').textContent = username;
+                
+                // Carrega dados
                 carregarFaturas();
             } else {
-                document.getElementById('errorMessage').style.display = 'flex';
-                setTimeout(() => {
-                    document.getElementById('errorMessage').style.display = 'none';
-                }, 3000);
+                const error = document.getElementById('errorMessage');
+                error.style.display = 'flex';
+                setTimeout(() => error.style.display = 'none', 3000);
             }
         });
 
@@ -834,35 +889,30 @@
 
         // LOGOUT
         function logout() {
-            if (caixaAberto) {
-                if (!confirm('O caixa está aberto! Deseja fechar e sair?')) return;
-                fecharCaixa();
-            }
+            if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
+            if (caixaAberto) fecharCaixa();
             location.reload();
         }
 
         // TROCAR ABAS
-        function switchTab(tabName) {
-            // Atualizar botões
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.tab-btn').classList.add('active');
+        function switchTab(tabName, btn) {
+            // Atualiza botões
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-            // Atualizar conteúdo
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            // Atualiza conteúdo
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
-
-            // Atualizar badge na aba de produtos
-            if (tabName === 'produtos') {
-                document.getElementById('caixaAbertoBadge').style.display = caixaAberto ? 'inline-block' : 'none';
-            }
         }
 
-        // ABRIR/FECHAR CAIXA
+        // CAIXA
         function toggleCaixa() {
             if (!caixaAberto) {
                 abrirCaixa();
             } else {
-                fecharCaixa();
+                if (confirm('Deseja realmente fechar o caixa?')) {
+                    fecharCaixa();
+                }
             }
         }
 
@@ -870,6 +920,7 @@
             caixaAberto = true;
             horaAbertura = new Date();
             produtosVenda = [];
+            
             faturaAtual = {
                 id: Date.now(),
                 dataAbertura: horaAbertura.toISOString(),
@@ -878,47 +929,44 @@
                 total: 0
             };
 
-            // Atualizar UI
+            // UI
             document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock-open"></i>';
-            document.getElementById('caixaIcon').classList.remove('fechado');
+            document.getElementById('caixaIcon').classList.add('aberto');
             document.getElementById('caixaTitulo').textContent = 'Caixa Aberto';
             document.getElementById('horaAbertura').textContent = formatarDataHora(horaAbertura);
             document.getElementById('horaFechamento').textContent = '-';
             document.getElementById('duracao').textContent = '-';
-            document.getElementById('caixaInfo').style.display = 'block';
+            document.getElementById('caixaInfo').classList.add('show');
             
             const btn = document.getElementById('btnCaixa');
             btn.innerHTML = '<i class="fas fa-lock"></i> Fechar Caixa';
             btn.classList.remove('btn-abrir');
             btn.classList.add('btn-fechar');
 
-            // Limpar tabela
-            atualizarTabelaProdutos();
-            atualizarTotal();
+            // Atualiza badge na aba produtos
+            const badge = document.getElementById('caixaStatusBadge');
+            badge.className = 'badge badge-success';
+            badge.innerHTML = '<i class="fas fa-lock-open"></i> Caixa Aberto';
 
-            alert('Caixa aberto com sucesso! Hora: ' + formatarDataHora(horaAbertura));
+            atualizarTabela();
+            atualizarTotal();
         }
 
         function fecharCaixa() {
-            if (produtosVenda.length === 0) {
-                if (!confirm('Nenhuma venda registrada. Deseja fechar o caixa mesmo assim?')) return;
-            }
-
-            caixaAberto = false;
             const horaFechamento = new Date();
-            
-            // Completar fatura
+            caixaAberto = false;
+
+            // Salva fatura
             faturaAtual.dataFechamento = horaFechamento.toISOString();
             faturaAtual.produtos = [...produtosVenda];
             faturaAtual.total = calcularTotal();
             
-            // Salvar
             faturas.unshift(faturaAtual);
             localStorage.setItem('faturasAcaiRei', JSON.stringify(faturas));
 
-            // Atualizar UI
+            // UI
             document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock"></i>';
-            document.getElementById('caixaIcon').classList.add('fechado');
+            document.getElementById('caixaIcon').classList.remove('aberto');
             document.getElementById('caixaTitulo').textContent = 'Caixa Fechado';
             document.getElementById('horaFechamento').textContent = formatarDataHora(horaFechamento);
             document.getElementById('duracao').textContent = calcularDuracao(horaAbertura, horaFechamento);
@@ -928,10 +976,14 @@
             btn.classList.remove('btn-fechar');
             btn.classList.add('btn-abrir');
 
-            // Recarregar faturas
-            carregarFaturas();
+            // Atualiza badge
+            const badge = document.getElementById('caixaStatusBadge');
+            badge.className = 'badge badge-danger';
+            badge.innerHTML = '<i class="fas fa-lock"></i> Caixa Fechado';
 
-            alert(`Caixa fechado!\nTotal de vendas: R$ ${faturaAtual.total.toFixed(2).replace('.', ',')}`);
+            carregarFaturas();
+            
+            alert(`Caixa fechado!\nTotal: R$ ${faturaAtual.total.toFixed(2).replace('.', ',')}`);
         }
 
         // PRODUTOS
@@ -939,8 +991,7 @@
             e.preventDefault();
             
             if (!caixaAberto) {
-                alert('Abra o caixa primeiro!');
-                switchTab('caixa');
+                alert('Abra o caixa primeiro na aba "Abrir Caixa"!');
                 return;
             }
 
@@ -948,40 +999,30 @@
             const valor = parseFloat(document.getElementById('valorProduto').value);
             const pagamento = document.getElementById('formaPagamento').value;
 
-            const produto = {
+            produtosVenda.push({
                 id: Date.now(),
                 nome,
                 valor,
                 pagamento,
-                hora: new Date().toISOString()
-            };
+                hora: new Date().toLocaleTimeString('pt-BR')
+            });
 
-            produtosVenda.push(produto);
-            atualizarTabelaProdutos();
-            atualizarTotal();
-
-            // Limpar formulário
             document.getElementById('vendaForm').reset();
-            document.getElementById('nomeProduto').focus();
+            atualizarTabela();
+            atualizarTotal();
         }
 
         function removerProduto(id) {
             produtosVenda = produtosVenda.filter(p => p.id !== id);
-            atualizarTabelaProdutos();
+            atualizarTabela();
             atualizarTotal();
         }
 
-        function atualizarTabelaProdutos() {
+        function atualizarTabela() {
             const tbody = document.getElementById('tabelaProdutos');
             
             if (produtosVenda.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: #999; padding: 2rem;">
-                            Nenhuma venda registrada ainda
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhuma venda registrada</td></tr>';
                 return;
             }
 
@@ -990,22 +1031,17 @@
                     <td><strong>${p.nome}</strong></td>
                     <td>R$ ${p.valor.toFixed(2).replace('.', ',')}</td>
                     <td><span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem;">${p.pagamento}</span></td>
-                    <td>
-                        <button class="btn-delete" onclick="removerProduto(${p.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
+                    <td><button class="btn-delete" onclick="removerProduto(${p.id})"><i class="fas fa-trash"></i></button></td>
                 </tr>
             `).join('');
         }
 
         function calcularTotal() {
-            return produtosVenda.reduce((sum, p) => sum + p.valor, 0);
+            return produtosVenda.reduce((s, p) => s + p.valor, 0);
         }
 
         function atualizarTotal() {
-            const total = calcularTotal();
-            document.getElementById('totalVendas').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('totalVendas').textContent = 'R$ ' + calcularTotal().toFixed(2).replace('.', ',');
         }
 
         // FATURAS
@@ -1014,75 +1050,68 @@
             
             if (faturas.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: #999; padding: 3rem;">
-                        <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
                         <p>Nenhuma fatura registrada</p>
-                    </div>
-                `;
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = faturas.map((f, index) => {
-                const dataAbertura = new Date(f.dataAbertura);
-                const dataFechamento = f.dataFechamento ? new Date(f.dataFechamento) : null;
-                const status = dataFechamento ? 'fechada' : 'aberta';
+            container.innerHTML = faturas.map((f, i) => {
+                const abertura = new Date(f.dataAbertura);
+                const fechamento = f.dataFechamento ? new Date(f.dataFechamento) : null;
                 
                 return `
-                    <div class="fatura-card" onclick="verDetalhesFatura(${f.id})">
+                    <div class="fatura-card" onclick="verFatura(${f.id})">
                         <div class="fatura-header">
-                            <span class="fatura-numero">Fatura #${faturas.length - index}</span>
-                            <span class="fatura-status status-${status}">${status === 'aberta' ? 'Em Aberto' : 'Fechada'}</span>
+                            <span class="fatura-numero">Fatura #${faturas.length - i}</span>
+                            <span class="fatura-status ${fechamento ? 'status-fechada' : 'status-aberta'}">
+                                ${fechamento ? 'Fechada' : 'Em Aberto'}
+                            </span>
                         </div>
                         <div class="fatura-info">
-                            <span><i class="fas fa-calendar"></i> ${dataAbertura.toLocaleDateString('pt-BR')}</span>
-                            <span><i class="fas fa-clock"></i> ${dataAbertura.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</span>
+                            <span><i class="fas fa-calendar"></i> ${abertura.toLocaleDateString('pt-BR')}</span>
+                            <span><i class="fas fa-clock"></i> ${abertura.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>
                             <span><i class="fas fa-shopping-bag"></i> ${f.produtos.length} itens</span>
                         </div>
-                        <div class="fatura-total">
-                            Total: R$ ${f.total.toFixed(2).replace('.', ',')}
-                        </div>
+                        <div class="fatura-total">Total: R$ ${f.total.toFixed(2).replace('.', ',')}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        function verDetalhesFatura(id) {
-            const fatura = faturas.find(f => f.id === id);
-            if (!fatura) return;
+        function verFatura(id) {
+            const f = faturas.find(x => x.id === id);
+            if (!f) return;
 
-            const dataAbertura = new Date(fatura.dataAbertura);
-            const dataFechamento = fatura.dataFechamento ? new Date(fatura.dataFechamento) : null;
+            const abertura = new Date(f.dataAbertura);
+            const fechamento = f.dataFechamento ? new Date(f.dataFechamento) : null;
 
             let html = `
-                <div style="margin-bottom: 1.5rem;">
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Aberto em:</strong> ${formatarDataHora(dataAbertura)}</p>
-                    ${dataFechamento ? `<p style="color: #666; margin-bottom: 0.5rem;"><strong>Fechado em:</strong> ${formatarDataHora(dataFechamento)}</p>` : '<p style="color: #2e7d32;"><i class="fas fa-circle"></i> Caixa ainda aberto</p>'}
+                <div style="margin-bottom: 1rem;">
+                    <p style="margin: 0.5rem 0;"><strong>Aberto:</strong> ${formatarDataHora(abertura)}</p>
+                    ${fechamento ? `<p style="margin: 0.5rem 0;"><strong>Fechado:</strong> ${formatarDataHora(fechamento)}</p>` : '<p style="color: #4caf50;"><i class="fas fa-circle"></i> Caixa em aberto</p>'}
                 </div>
-                
-                <h4 style="color: #4a148c; margin-bottom: 1rem;">Produtos Vendidos:</h4>
-                <div style="background: #f8f9fa; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                <h4 style="color: #4a148c; margin: 1rem 0;">Produtos:</h4>
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 1rem;">
             `;
 
-            if (fatura.produtos.length === 0) {
-                html += '<p style="color: #999; text-align: center;">Nenhum produto vendido</p>';
+            if (f.produtos.length === 0) {
+                html += '<p style="color: #999; text-align: center;">Nenhum produto</p>';
             } else {
-                html += fatura.produtos.map(p => `
-                    <div style="display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #eee;">
-                        <div>
-                            <strong>${p.nome}</strong>
-                            <span style="color: #999; font-size: 0.85rem; display: block;">${p.pagamento}</span>
-                        </div>
-                        <span style="font-weight: 600; color: #4a148c;">R$ ${p.valor.toFixed(2).replace('.', ',')}</span>
+                html += f.produtos.map(p => `
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                        <span>${p.nome} <small style="color: #999;">(${p.pagamento})</small></span>
+                        <strong>R$ ${p.valor.toFixed(2).replace('.', ',')}</strong>
                     </div>
                 `).join('');
             }
 
             html += `
                 </div>
-                
-                <div style="background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%); color: white; padding: 1.5rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 1.1rem;">TOTAL GERAL</span>
-                    <span style="font-size: 1.8rem; font-weight: 700;">R$ ${fatura.total.toFixed(2).replace('.', ',')}</span>
+                <div style="background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%); color: white; padding: 1rem; border-radius: 12px; margin-top: 1rem; display: flex; justify-content: space-between;">
+                    <span>TOTAL</span>
+                    <strong style="font-size: 1.3rem;">R$ ${f.total.toFixed(2).replace('.', ',')}</strong>
                 </div>
             `;
 
@@ -1094,29 +1123,17 @@
             document.getElementById('modalFatura').classList.remove('active');
         }
 
-        // UTILITÁRIOS
+        // UTILS
         function formatarDataHora(date) {
-            return date.toLocaleString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            return date.toLocaleString('pt-BR');
         }
 
         function calcularDuracao(inicio, fim) {
-            const diff = fim - inicio;
-            const horas = Math.floor(diff / (1000 * 60 * 60));
-            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            return `${horas}h ${minutos}min`;
+            const diff = Math.floor((fim - inicio) / 1000 / 60);
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            return `${h}h ${m}min`;
         }
-
-        // Fechar modal ao clicar fora
-        document.getElementById('modalFatura').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
     </script>
 </body>
 </html>
