@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Açaí Rei - Sistema Sincronizado</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -1129,28 +1130,10 @@
     </div>
 
     <script>
-        // ==================== CONFIGURAÇÃO ====================
-        // URL do seu repositório GitHub (substitua pelo seu)
-        const GITHUB_REPO = 'AcaiRei/Faturas';
-        const GITHUB_BRANCH = 'main';
-        
-        // Chave de criptografia simples (pode mudar se quiser)
-        const ENCRYPTION_KEY = 'acairei2024';
-
-        // ==================== SEGURANÇA ====================
-        function hashPassword(password) {
-            let hash = 0;
-            for (let i = 0; i < password.length; i++) {
-                const char = password.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return hash.toString(16);
-        }
-
+        // ==================== CREDENCIAIS CORRETAS ====================
         const CREDENTIALS = {
             username: 'Açai Rei001',
-            passwordHash: '2e4a8c1f'
+            password: '170920'  // SENHA EM TEXTO PLANO - SEM HASH
         };
 
         // ==================== ESTADO ====================
@@ -1163,7 +1146,6 @@
         let dispensas = [];
         let comprasDispensa = [];
         let itensSelecionados = new Set();
-        let dadosSincronizados = {};
 
         // ==================== INICIALIZAÇÃO ====================
         window.addEventListener('load', () => {
@@ -1182,93 +1164,6 @@
             }
         }
 
-        // ==================== SINCRONIZAÇÃO GITHUB ====================
-        // Como o GitHub Pages é estático, usamos uma solução alternativa:
-        // Salvamos os dados em um arquivo JSON no localStorage e oferecemos
-        // download/upload para sincronização manual entre dispositivos
-
-        function sincronizarDados() {
-            const status = document.getElementById('syncStatus');
-            const text = document.getElementById('syncText');
-            
-            status.className = 'sync-status syncing';
-            text.textContent = 'Sincronizando...';
-
-            // Preparar dados para exportação
-            const dados = {
-                faturas: faturas,
-                dispensas: dispensas,
-                comprasDispensa: comprasDispensa,
-                lastSync: new Date().toISOString(),
-                version: '1.0'
-            };
-
-            // Salvar no localStorage
-            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
-            
-            // Criar arquivo para download (backup)
-            const dataStr = JSON.stringify(dados, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            // Oferecer download
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
-            
-            // Em mobile, mostra opções
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                // Mobile: salva no localStorage e mostra QR code ou opção de compartilhar
-                if (navigator.share) {
-                    const file = new File([dataBlob], 'acai-rei-dados.json', { type: 'application/json' });
-                    navigator.share({
-                        title: 'Dados Açaí Rei',
-                        text: 'Backup dos dados do sistema',
-                        files: [file]
-                    }).catch(() => {
-                        // Se não conseguir compartilhar, faz download
-                        link.click();
-                    });
-                } else {
-                    link.click();
-                }
-            } else {
-                // Desktop: download direto
-                link.click();
-            }
-
-            URL.revokeObjectURL(url);
-
-            setTimeout(() => {
-                status.className = 'sync-status synced';
-                text.textContent = 'Sincronizado';
-                alert('Dados sincronizados! O arquivo de backup foi baixado.\n\nPara transferir para outro dispositivo:\n1. Envie o arquivo baixado (WhatsApp, email, etc)\n2. No outro dispositivo, faça upload do arquivo');
-            }, 1000);
-        }
-
-        function importarDados(arquivo) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const dados = JSON.parse(e.target.result);
-                    
-                    if (confirm(`Importar dados de ${new Date(dados.lastSync).toLocaleString('pt-BR')}?\n\nIsso substituirá os dados atuais.`)) {
-                        faturas = dados.faturas || [];
-                        dispensas = dados.dispensas || [];
-                        comprasDispensa = dados.comprasDispensa || [];
-                        
-                        salvarDadosLocais();
-                        carregarInterface();
-                        
-                        alert('Dados importados com sucesso!');
-                    }
-                } catch (err) {
-                    alert('Erro ao importar arquivo. Verifique se é um backup válido.');
-                }
-            };
-            reader.readAsText(arquivo);
-        }
-
         // ==================== LOGIN ====================
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1280,7 +1175,8 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
 
-            if (username === CREDENTIALS.username && hashPassword(password) === CREDENTIALS.passwordHash) {
+            // VERIFICAÇÃO DIRETA - SEM HASH
+            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
                 const session = { user: username };
                 localStorage.setItem('acaiRei_session', JSON.stringify(session));
                 currentUser = username;
@@ -1313,6 +1209,81 @@
             carregarInterface();
         }
 
+        // ==================== SINCRONIZAÇÃO ====================
+        function sincronizarDados() {
+            const status = document.getElementById('syncStatus');
+            const text = document.getElementById('syncText');
+            
+            status.className = 'sync-status syncing';
+            text.textContent = 'Sincronizando...';
+
+            const dados = {
+                faturas: faturas,
+                dispensas: dispensas,
+                comprasDispensa: comprasDispensa,
+                lastSync: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
+
+            const dataStr = JSON.stringify(dados, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                if (navigator.share) {
+                    const file = new File([dataBlob], 'acai-rei-dados.json', { type: 'application/json' });
+                    navigator.share({
+                        title: 'Dados Açaí Rei',
+                        text: 'Backup dos dados do sistema',
+                        files: [file]
+                    }).catch(() => {
+                        link.click();
+                    });
+                } else {
+                    link.click();
+                }
+            } else {
+                link.click();
+            }
+
+            URL.revokeObjectURL(url);
+
+            setTimeout(() => {
+                status.className = 'sync-status synced';
+                text.textContent = 'Sincronizado';
+                alert('Dados sincronizados! O arquivo de backup foi baixado.\n\nPara transferir para outro dispositivo:\n1. Envie o arquivo baixado (WhatsApp, email, etc)\n2. No outro dispositivo, importe o arquivo');
+            }, 1000);
+        }
+
+        function importarDados(arquivo) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    
+                    if (confirm(`Importar dados de ${new Date(dados.lastSync).toLocaleString('pt-BR')}?\n\nIsso substituirá os dados atuais.`)) {
+                        faturas = dados.faturas || [];
+                        dispensas = dados.dispensas || [];
+                        comprasDispensa = dados.comprasDispensa || [];
+                        
+                        salvarDadosLocais();
+                        carregarInterface();
+                        
+                        alert('Dados importados com sucesso!');
+                    }
+                } catch (err) {
+                    alert('Erro ao importar arquivo. Verifique se é um backup válido.');
+                }
+            };
+            reader.readAsText(arquivo);
+        }
+
         // ==================== DADOS LOCAIS ====================
         function carregarDadosLocais() {
             const dados = JSON.parse(localStorage.getItem('acaiRei_dados')) || {};
@@ -1320,11 +1291,9 @@
             dispensas = dados.dispensas || [];
             comprasDispensa = dados.comprasDispensa || [];
             
-            // Carregar vendas pendentes (caixa aberto)
             const vendasPendentes = localStorage.getItem('acaiRei_vendasPendentes');
             if (vendasPendentes) {
                 produtosVenda = JSON.parse(vendasPendentes);
-                // Verificar se tinha caixa aberto
                 const caixaData = localStorage.getItem('acaiRei_caixaData');
                 if (caixaData) {
                     const caixa = JSON.parse(caixaData);
@@ -1346,7 +1315,6 @@
             };
             localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
             
-            // Salvar estado do caixa
             if (caixaAberto) {
                 localStorage.setItem('acaiRei_caixaData', JSON.stringify({
                     aberto: true,
@@ -1882,7 +1850,7 @@
             return `${h}h ${m}min`;
         }
 
-        // Adicionar botão de importação na tela (invisível inicialmente)
+        // Input de importação
         const importInput = document.createElement('input');
         importInput.type = 'file';
         importInput.accept = '.json';
