@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Rei - Sistema de Caixa</title>
+    <title>Açaí Rei - Sistema Completo</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -19,7 +24,7 @@
             color: #333;
         }
 
-        /* Login Screen */
+        /* Login */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -53,7 +58,6 @@
             width: 100px;
             height: 100px;
             margin: 0 auto 1rem;
-            position: relative;
         }
 
         .logo-image {
@@ -140,9 +144,14 @@
             margin-top: 0.5rem;
         }
 
-        .login-btn:hover {
+        .login-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(124, 67, 189, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .error-message {
@@ -157,7 +166,21 @@
             font-size: 0.9rem;
         }
 
-        /* Main App - Escondido inicialmente */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* App */
         .app-screen {
             display: none;
             min-height: 100vh;
@@ -170,6 +193,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .app-header h2 {
@@ -177,6 +202,22 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .sync-status.online {
+            color: #4caf50;
+        }
+
+        .sync-status.offline {
+            color: #f44336;
         }
 
         .user-info {
@@ -204,7 +245,7 @@
 
         /* Tabs */
         .tabs-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
@@ -235,7 +276,7 @@
             justify-content: center;
             gap: 0.5rem;
             white-space: nowrap;
-            min-width: 120px;
+            min-width: 100px;
         }
 
         .tab-btn.active {
@@ -360,12 +401,17 @@
             color: white;
         }
 
-        .btn-caixa:hover {
+        .btn-caixa:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
-        /* Produtos - NOVO LAYOUT */
+        .btn-caixa:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Formulários */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -404,10 +450,16 @@
             width: 100%;
         }
 
-        .btn-add:hover {
+        .btn-add:hover:not(:disabled) {
             transform: scale(1.02);
         }
 
+        .btn-add:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Tabelas */
         .table-container {
             overflow-x: auto;
             margin-top: 1.5rem;
@@ -438,19 +490,30 @@
             background: #fafafa;
         }
 
-        .btn-delete {
-            background: #ffebee;
-            color: #c62828;
+        .btn-action {
+            background: none;
             border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
+            padding: 0.4rem;
             cursor: pointer;
-            font-size: 0.8rem;
+            border-radius: 6px;
             transition: all 0.3s;
+            margin: 0 0.2rem;
+        }
+
+        .btn-edit {
+            color: #2196f3;
+        }
+
+        .btn-edit:hover {
+            background: #e3f2fd;
+        }
+
+        .btn-delete {
+            color: #f44336;
         }
 
         .btn-delete:hover {
-            background: #ffcdd2;
+            background: #ffebee;
         }
 
         .tag {
@@ -579,6 +642,64 @@
             font-size: 1.1rem;
         }
 
+        /* Dispensas */
+        .dispensas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .dispensa-form {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .dispensa-list {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .dispensa-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dispensa-item:hover {
+            background: #e8f5e9;
+            transform: translateX(5px);
+        }
+
+        .dispensa-item.selected {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .dispensa-info h4 {
+            color: #4a148c;
+            margin-bottom: 0.3rem;
+        }
+
+        .dispensa-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .dispensa-valor {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4caf50;
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -602,7 +723,7 @@
             background: white;
             border-radius: 24px;
             padding: 2rem;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -647,7 +768,40 @@
             opacity: 0.3;
         }
 
+        /* Auto-save indicator */
+        .autosave-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .autosave-indicator.show {
+            display: flex;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+
         /* Responsivo */
+        @media (max-width: 968px) {
+            .dispensas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -659,7 +813,6 @@
             
             .app-header {
                 flex-direction: column;
-                gap: 1rem;
                 text-align: center;
             }
 
@@ -674,6 +827,11 @@
     </style>
 </head>
 <body>
+
+    <!-- AUTO SAVE INDICATOR -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        <i class="fas fa-check-circle"></i> Salvo automaticamente
+    </div>
 
     <!-- TELA DE LOGIN -->
     <div class="login-screen" id="loginScreen">
@@ -691,7 +849,7 @@
 
             <div class="error-message" id="errorMessage">
                 <i class="fas fa-exclamation-circle"></i>
-                <span>Usuário ou senha incorretos!</span>
+                <span id="errorText">Usuário ou senha incorretos!</span>
             </div>
 
             <form id="loginForm">
@@ -712,7 +870,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="login-btn">
+                <button type="submit" class="login-btn" id="loginBtn">
                     <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
                 </button>
             </form>
@@ -723,11 +881,16 @@
     <div class="app-screen" id="appScreen">
         <header class="app-header">
             <h2><i class="fas fa-crown"></i> Açaí Rei</h2>
-            <div class="user-info">
-                <span id="currentUser"></span>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Sair
-                </button>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="sync-status offline" id="syncStatus">
+                    <i class="fas fa-wifi"></i> <span id="syncText">Offline</span>
+                </div>
+                <div class="user-info">
+                    <span id="currentUser"></span>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -735,17 +898,20 @@
             <!-- Navegação -->
             <nav class="tabs-nav">
                 <button class="tab-btn active" onclick="switchTab('caixa', this)">
-                    <i class="fas fa-cash-register"></i> Abrir Caixa
+                    <i class="fas fa-cash-register"></i> Caixa
                 </button>
                 <button class="tab-btn" onclick="switchTab('produtos', this)">
-                    <i class="fas fa-ice-cream"></i> Produtos
+                    <i class="fas fa-ice-cream"></i> Vendas
+                </button>
+                <button class="tab-btn" onclick="switchTab('dispensas', this)">
+                    <i class="fas fa-shopping-cart"></i> Dispensas
                 </button>
                 <button class="tab-btn" onclick="switchTab('faturas', this)">
                     <i class="fas fa-receipt"></i> Faturas
                 </button>
             </nav>
 
-            <!-- ABA 1: ABRIR CAIXA -->
+            <!-- ABA 1: CAIXA -->
             <div class="tab-content active" id="tab-caixa">
                 <div class="card">
                     <div class="caixa-status">
@@ -768,7 +934,7 @@
                 </div>
             </div>
 
-            <!-- ABA 2: PRODUTOS VENDIDOS - ATUALIZADA -->
+            <!-- ABA 2: PRODUTOS VENDIDOS -->
             <div class="tab-content" id="tab-produtos">
                 <div class="card">
                     <div class="card-header">
@@ -781,12 +947,12 @@
                     <form id="vendaForm" onsubmit="addProduto(event)">
                         <div class="form-grid">
                             <div class="form-group-compact">
-                                <label><i class="fas fa-user"></i> Nome do Cliente</label>
-                                <input type="text" id="nomeCliente" placeholder="Ex: Maria Silva" required>
+                                <label><i class="fas fa-user"></i> Cliente</label>
+                                <input type="text" id="nomeCliente" placeholder="Nome do cliente" required>
                             </div>
                             <div class="form-group-compact">
                                 <label><i class="fas fa-ice-cream"></i> Produto</label>
-                                <input type="text" id="nomeProduto" placeholder="Ex: Açaí 500ml" required>
+                                <input type="text" id="nomeProduto" placeholder="Nome do produto" required>
                             </div>
                             <div class="form-group-compact">
                                 <label><i class="fas fa-dollar-sign"></i> Valor (R$)</label>
@@ -805,7 +971,7 @@
                                 </select>
                             </div>
                             <div class="form-group-compact">
-                                <label><i class="fas fa-motorcycle"></i> Tipo de Entrega</label>
+                                <label><i class="fas fa-motorcycle"></i> Tipo</label>
                                 <select id="tipoEntrega" required>
                                     <option value="">Selecione</option>
                                     <option value="Presencial">Presencial</option>
@@ -813,7 +979,7 @@
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn-add">
+                        <button type="submit" class="btn-add" id="btnAddVenda">
                             <i class="fas fa-plus"></i> Adicionar Venda
                         </button>
                     </form>
@@ -827,7 +993,7 @@
                                     <th>Valor</th>
                                     <th>Pagamento</th>
                                     <th>Tipo</th>
-                                    <th>Ação</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelaProdutos">
@@ -847,7 +1013,78 @@
                 </div>
             </div>
 
-            <!-- ABA 3: FATURAS -->
+            <!-- ABA 3: DISPENSAS -->
+            <div class="tab-content" id="tab-dispensas">
+                <div class="dispensas-grid">
+                    <!-- Formulário de Cadastro -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-plus-circle"></i> Cadastrar Produto</h3>
+                        </div>
+                        <form id="dispensaForm" onsubmit="addDispensa(event)">
+                            <div class="form-group-compact" style="margin-bottom: 1rem;">
+                                <label><i class="fas fa-box"></i> Nome do Produto</label>
+                                <input type="text" id="nomeDispensa" placeholder="Ex: Copo 500ml" required>
+                            </div>
+                            <div class="form-group-compact" style="margin-bottom: 1rem;">
+                                <label><i class="fas fa-dollar-sign"></i> Valor Unitário (R$)</label>
+                                <input type="number" id="valorDispensa" placeholder="0,00" step="0.01" min="0" required>
+                            </div>
+                            <button type="submit" class="btn-add">
+                                <i class="fas fa-save"></i> Cadastrar Produto
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 2rem;">
+                            <h4 style="color: #4a148c; margin-bottom: 1rem;"><i class="fas fa-list"></i> Produtos Cadastrados</h4>
+                            <div id="listaDispensasCadastradas">
+                                <div class="empty-state" style="padding: 1rem;">
+                                    <p>Nenhum produto cadastrado</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seleção para Compra -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Registrar Compra</h3>
+                        </div>
+                        <p style="color: #666; margin-bottom: 1rem;">Clique nos produtos abaixo para adicionar à compra:</p>
+                        
+                        <div id="listaDispensasCompra" style="max-height: 400px; overflow-y: auto;">
+                            <div class="empty-state" style="padding: 1rem;">
+                                <p>Cadastre produtos primeiro</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: #666;">Itens selecionados: <strong id="countItens">0</strong></span>
+                                <span style="color: #4a148c; font-size: 1.3rem; font-weight: 700;" id="totalDispensa">R$ 0,00</span>
+                            </div>
+                            <button class="btn-add" onclick="finalizarCompraDispensa()" id="btnFinalizarCompra" disabled>
+                                <i class="fas fa-check"></i> Finalizar Compra
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Histórico de Compras -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-history"></i> Histórico de Compras</h3>
+                    </div>
+                    <div id="historicoDispensas">
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <p>Nenhuma compra registrada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 4: FATURAS -->
             <div class="tab-content" id="tab-faturas">
                 <div class="card">
                     <div class="card-header">
@@ -865,51 +1102,307 @@
         </div>
     </div>
 
-    <!-- MODAL DETALHES -->
-    <div class="modal" id="modalFatura" onclick="if(event.target === this) closeModal()">
+    <!-- MODAL EDITAR VENDA -->
+    <div class="modal" id="modalEditar" onclick="if(event.target === this) closeModalEditar()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-edit"></i> Editar Venda</h3>
+                <button class="btn-close" onclick="closeModalEditar()">&times;</button>
+            </div>
+            <form id="formEditarVenda" onsubmit="salvarEdicao(event)">
+                <input type="hidden" id="editId">
+                <div class="form-grid">
+                    <div class="form-group-compact">
+                        <label>Cliente</label>
+                        <input type="text" id="editCliente" required>
+                    </div>
+                    <div class="form-group-compact">
+                        <label>Produto</label>
+                        <input type="text" id="editProduto" required>
+                    </div>
+                    <div class="form-group-compact">
+                        <label>Valor (R$)</label>
+                        <input type="number" id="editValor" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group-compact">
+                        <label>Pagamento</label>
+                        <select id="editPagamento" required>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Cartão Crédito">Cartão Crédito</option>
+                            <option value="Cartão Débito">Cartão Débito</option>
+                            <option value="PIX">PIX</option>
+                            <option value="PicPay">PicPay</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group-compact">
+                        <label>Tipo</label>
+                        <select id="editTipo" required>
+                            <option value="Presencial">Presencial</option>
+                            <option value="Delivery">Delivery</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-add" style="margin-top: 1rem;">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DETALHES FATURA -->
+    <div class="modal" id="modalFatura" onclick="if(event.target === this) closeModalFatura()">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title"><i class="fas fa-file-invoice"></i> Detalhes da Fatura</h3>
-                <button class="btn-close" onclick="closeModal()">&times;</button>
+                <button class="btn-close" onclick="closeModalFatura()">&times;</button>
             </div>
             <div id="modalBody"></div>
         </div>
     </div>
 
+    <!-- MODAL DETALHES COMPRA -->
+    <div class="modal" id="modalCompra" onclick="if(event.target === this) closeModalCompra()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-shopping-bag"></i> Detalhes da Compra</h3>
+                <button class="btn-close" onclick="closeModalCompra()">&times;</button>
+            </div>
+            <div id="modalCompraBody"></div>
+        </div>
+    </div>
+
     <script>
-        // CONFIGURAÇÕES
-        const CREDENTIALS = {
-            username: 'Açai Rei001',
-            password: '170920'
+        // ==================== CONFIGURAÇÃO FIREBASE ====================
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "acai-rei-sistema.firebaseapp.com",
+            databaseURL: "https://acai-rei-sistema-default-rtdb.firebaseio.com",
+            projectId: "acai-rei-sistema",
+            storageBucket: "acai-rei-sistema.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
         };
 
-        // ESTADO
+        let app, database, auth;
+        let firebaseOnline = false;
+
+        try {
+            if (firebaseConfig.apiKey !== "SUA_API_KEY") {
+                app = firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                auth = firebase.auth();
+                firebaseOnline = true;
+            }
+        } catch (e) {
+            console.log("Firebase não configurado, usando LocalStorage");
+        }
+
+        // ==================== SEGURANÇA ====================
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
+
+        const CREDENTIALS = {
+            username: 'Açai Rei001',
+            passwordHash: '2e4a8c1f'
+        };
+
+        // ==================== ESTADO ====================
         let caixaAberto = false;
         let horaAbertura = null;
         let produtosVenda = [];
-        let faturas = JSON.parse(localStorage.getItem('faturasAcaiRei')) || [];
+        let faturas = [];
         let faturaAtual = null;
+        let currentUser = null;
+        let dispensas = [];
+        let comprasDispensa = [];
+        let itensSelecionados = new Set();
 
-        // LOGIN
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // ==================== INICIALIZAÇÃO ====================
+        window.addEventListener('load', () => {
+            checkAuth();
+            setupAutoSave();
+        });
+
+        function checkAuth() {
+            // SESSÃO SEM EXPIRAÇÃO - só verifica se existe
+            const savedSession = localStorage.getItem('acaiRei_session');
+            if (savedSession) {
+                const session = JSON.parse(savedSession);
+                // Sessão válida indefinidamente até fazer logout
+                currentUser = session.user;
+                showApp();
+            } else {
+                showLogin();
+            }
+        }
+
+        // ==================== LOGIN ====================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading"></div> Entrando...';
+
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
 
-            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appScreen').style.display = 'block';
-                document.getElementById('currentUser').textContent = username;
-                carregarFaturas();
+            if (username === CREDENTIALS.username && hashPassword(password) === CREDENTIALS.passwordHash) {
+                // SESSÃO SEM EXPIRAÇÃO
+                const session = {
+                    user: username
+                    // REMOVIDO: expires - não expira mais
+                };
+                localStorage.setItem('acaiRei_session', JSON.stringify(session));
+                currentUser = username;
+
+                await carregarDados();
+                showApp();
             } else {
-                const error = document.getElementById('errorMessage');
-                error.style.display = 'flex';
-                setTimeout(() => error.style.display = 'none', 3000);
+                showError('Usuário ou senha incorretos!');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar no Sistema';
             }
         });
 
-        // TOGGLE SENHA
+        function showError(msg) {
+            const error = document.getElementById('errorMessage');
+            document.getElementById('errorText').textContent = msg;
+            error.style.display = 'flex';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appScreen').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'block';
+            document.getElementById('currentUser').textContent = currentUser;
+            
+            updateSyncStatus();
+            carregarInterface();
+        }
+
+        // ==================== SINCRONIZAÇÃO ====================
+        async function carregarDados() {
+            if (firebaseOnline) {
+                try {
+                    const snapshot = await database.ref('acaiRei').once('value');
+                    const data = snapshot.val() || {};
+                    
+                    faturas = data.faturas || [];
+                    dispensas = data.dispensas || [];
+                    comprasDispensa = data.comprasDispensa || [];
+                    
+                    updateSyncStatus(true);
+                } catch (e) {
+                    console.error("Erro Firebase:", e);
+                    carregarLocal();
+                }
+            } else {
+                carregarLocal();
+            }
+        }
+
+        function carregarLocal() {
+            faturas = JSON.parse(localStorage.getItem('acaiRei_faturas')) || [];
+            dispensas = JSON.parse(localStorage.getItem('acaiRei_dispensas')) || [];
+            comprasDispensa = JSON.parse(localStorage.getItem('acaiRei_compras')) || [];
+            updateSyncStatus(false);
+        }
+
+        async function salvarDados() {
+            const data = {
+                faturas: faturas,
+                dispensas: dispensas,
+                comprasDispensa: comprasDispensa,
+                lastUpdate: new Date().toISOString()
+            };
+
+            localStorage.setItem('acaiRei_faturas', JSON.stringify(faturas));
+            localStorage.setItem('acaiRei_dispensas', JSON.stringify(dispensas));
+            localStorage.setItem('acaiRei_compras', JSON.stringify(comprasDispensa));
+
+            if (firebaseOnline) {
+                try {
+                    await database.ref('acaiRei').set(data);
+                    updateSyncStatus(true);
+                    showAutoSave();
+                } catch (e) {
+                    console.error("Erro ao salvar no Firebase:", e);
+                    updateSyncStatus(false);
+                }
+            } else {
+                showAutoSave();
+            }
+        }
+
+        function updateSyncStatus(online = null) {
+            const status = document.getElementById('syncStatus');
+            const text = document.getElementById('syncText');
+            
+            if (online === null) {
+                online = navigator.onLine && firebaseOnline;
+            }
+
+            if (online) {
+                status.className = 'sync-status online';
+                text.textContent = 'Online';
+            } else {
+                status.className = 'sync-status offline';
+                text.textContent = 'Offline (Local)';
+            }
+        }
+
+        function showAutoSave() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 2000);
+        }
+
+        // ==================== AUTO SAVE ====================
+        function setupAutoSave() {
+            setInterval(() => {
+                if (caixaAberto && produtosVenda.length > 0) {
+                    salvarDados();
+                }
+            }, 30000);
+
+            window.addEventListener('beforeunload', (e) => {
+                if (caixaAberto && produtosVenda.length > 0) {
+                    salvarDados();
+                }
+            });
+        }
+
+        // ==================== INTERFACE ====================
+        function carregarInterface() {
+            carregarFaturas();
+            carregarDispensas();
+            atualizarTabela();
+            atualizarTotal();
+        }
+
+        function logout() {
+            if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
+            if (caixaAberto) fecharCaixa();
+            
+            // Remove a sessão ao fazer logout
+            localStorage.removeItem('acaiRei_session');
+            location.reload();
+        }
+
         document.getElementById('togglePassword').addEventListener('click', function() {
             const input = document.getElementById('password');
             input.type = input.type === 'password' ? 'text' : 'password';
@@ -917,14 +1410,6 @@
             this.classList.toggle('fa-eye-slash');
         });
 
-        // LOGOUT
-        function logout() {
-            if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
-            if (caixaAberto) fecharCaixa();
-            location.reload();
-        }
-
-        // TROCAR ABAS
         function switchTab(tabName, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -932,7 +1417,7 @@
             document.getElementById('tab-' + tabName).classList.add('active');
         }
 
-        // CAIXA
+        // ==================== CAIXA ====================
         function toggleCaixa() {
             if (!caixaAberto) {
                 abrirCaixa();
@@ -946,8 +1431,14 @@
         function abrirCaixa() {
             caixaAberto = true;
             horaAbertura = new Date();
-            produtosVenda = [];
             
+            const vendasPendentes = localStorage.getItem('acaiRei_vendasPendentes');
+            if (vendasPendentes) {
+                produtosVenda = JSON.parse(vendasPendentes);
+            } else {
+                produtosVenda = [];
+            }
+
             faturaAtual = {
                 id: Date.now(),
                 dataAbertura: horaAbertura.toISOString(),
@@ -956,19 +1447,8 @@
                 total: 0
             };
 
-            document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock-open"></i>';
-            document.getElementById('caixaIcon').classList.add('aberto');
-            document.getElementById('caixaTitulo').textContent = 'Caixa Aberto';
-            document.getElementById('horaAbertura').textContent = formatarDataHora(horaAbertura);
-            document.getElementById('horaFechamento').textContent = '-';
-            document.getElementById('duracao').textContent = '-';
-            document.getElementById('caixaInfo').classList.add('show');
+            updateCaixaUI();
             
-            const btn = document.getElementById('btnCaixa');
-            btn.innerHTML = '<i class="fas fa-lock"></i> Fechar Caixa';
-            btn.classList.remove('btn-abrir');
-            btn.classList.add('btn-fechar');
-
             const badge = document.getElementById('caixaStatusBadge');
             badge.className = 'badge badge-success';
             badge.innerHTML = '<i class="fas fa-lock-open"></i> Caixa Aberto';
@@ -986,19 +1466,14 @@
             faturaAtual.total = calcularTotal();
             
             faturas.unshift(faturaAtual);
-            localStorage.setItem('faturasAcaiRei', JSON.stringify(faturas));
-
-            document.getElementById('caixaIcon').innerHTML = '<i class="fas fa-lock"></i>';
-            document.getElementById('caixaIcon').classList.remove('aberto');
-            document.getElementById('caixaTitulo').textContent = 'Caixa Fechado';
-            document.getElementById('horaFechamento').textContent = formatarDataHora(horaFechamento);
-            document.getElementById('duracao').textContent = calcularDuracao(horaAbertura, horaFechamento);
             
-            const btn = document.getElementById('btnCaixa');
-            btn.innerHTML = '<i class="fas fa-lock-open"></i> Abrir Caixa';
-            btn.classList.remove('btn-fechar');
-            btn.classList.add('btn-abrir');
+            localStorage.removeItem('acaiRei_vendasPendentes');
+            produtosVenda = [];
 
+            salvarDados();
+
+            updateCaixaUI(true);
+            
             const badge = document.getElementById('caixaStatusBadge');
             badge.className = 'badge badge-danger';
             badge.innerHTML = '<i class="fas fa-lock"></i> Caixa Fechado';
@@ -1007,40 +1482,114 @@
             alert(`Caixa fechado!\nTotal: R$ ${faturaAtual.total.toFixed(2).replace('.', ',')}`);
         }
 
-        // PRODUTOS - ATUALIZADO COM CLIENTE E TIPO
+        function updateCaixaUI(fechado = false) {
+            const icon = document.getElementById('caixaIcon');
+            const titulo = document.getElementById('caixaTitulo');
+            const btn = document.getElementById('btnCaixa');
+            const info = document.getElementById('caixaInfo');
+
+            if (!fechado && caixaAberto) {
+                icon.innerHTML = '<i class="fas fa-lock-open"></i>';
+                icon.classList.add('aberto');
+                titulo.textContent = 'Caixa Aberto';
+                document.getElementById('horaAbertura').textContent = formatarDataHora(horaAbertura);
+                document.getElementById('horaFechamento').textContent = '-';
+                document.getElementById('duracao').textContent = '-';
+                info.classList.add('show');
+                
+                btn.innerHTML = '<i class="fas fa-lock"></i> Fechar Caixa';
+                btn.classList.remove('btn-abrir');
+                btn.classList.add('btn-fechar');
+            } else {
+                icon.innerHTML = '<i class="fas fa-lock"></i>';
+                icon.classList.remove('aberto');
+                titulo.textContent = 'Caixa Fechado';
+                
+                if (fechado) {
+                    const fechamento = new Date(faturaAtual.dataFechamento);
+                    document.getElementById('horaFechamento').textContent = formatarDataHora(fechamento);
+                    document.getElementById('duracao').textContent = calcularDuracao(horaAbertura, fechamento);
+                }
+                
+                btn.innerHTML = '<i class="fas fa-lock-open"></i> Abrir Caixa';
+                btn.classList.remove('btn-fechar');
+                btn.classList.add('btn-abrir');
+            }
+        }
+
+        // ==================== PRODUTOS / VENDAS ====================
         function addProduto(e) {
             e.preventDefault();
             
             if (!caixaAberto) {
-                alert('Abra o caixa primeiro na aba "Abrir Caixa"!');
+                alert('Abra o caixa primeiro!');
                 return;
             }
 
-            const cliente = document.getElementById('nomeCliente').value;
-            const nome = document.getElementById('nomeProduto').value;
-            const valor = parseFloat(document.getElementById('valorProduto').value);
-            const pagamento = document.getElementById('formaPagamento').value;
-            const tipo = document.getElementById('tipoEntrega').value;
-
-            produtosVenda.push({
+            const produto = {
                 id: Date.now(),
-                cliente,
-                nome,
-                valor,
-                pagamento,
-                tipo,
-                hora: new Date().toLocaleTimeString('pt-BR')
-            });
+                cliente: document.getElementById('nomeCliente').value,
+                nome: document.getElementById('nomeProduto').value,
+                valor: parseFloat(document.getElementById('valorProduto').value),
+                pagamento: document.getElementById('formaPagamento').value,
+                tipo: document.getElementById('tipoEntrega').value,
+                hora: new Date().toISOString()
+            };
 
+            produtosVenda.push(produto);
+            localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
+            
             document.getElementById('vendaForm').reset();
             atualizarTabela();
             atualizarTotal();
+            showAutoSave();
         }
 
         function removerProduto(id) {
+            if (!confirm('Deseja remover esta venda?')) return;
             produtosVenda = produtosVenda.filter(p => p.id !== id);
+            localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
             atualizarTabela();
             atualizarTotal();
+            showAutoSave();
+        }
+
+        function editarProduto(id) {
+            const produto = produtosVenda.find(p => p.id === id);
+            if (!produto) return;
+
+            document.getElementById('editId').value = id;
+            document.getElementById('editCliente').value = produto.cliente;
+            document.getElementById('editProduto').value = produto.nome;
+            document.getElementById('editValor').value = produto.valor;
+            document.getElementById('editPagamento').value = produto.pagamento;
+            document.getElementById('editTipo').value = produto.tipo;
+
+            document.getElementById('modalEditar').classList.add('active');
+        }
+
+        function salvarEdicao(e) {
+            e.preventDefault();
+            
+            const id = parseInt(document.getElementById('editId').value);
+            const index = produtosVenda.findIndex(p => p.id === id);
+            
+            if (index !== -1) {
+                produtosVenda[index] = {
+                    ...produtosVenda[index],
+                    cliente: document.getElementById('editCliente').value,
+                    nome: document.getElementById('editProduto').value,
+                    valor: parseFloat(document.getElementById('editValor').value),
+                    pagamento: document.getElementById('editPagamento').value,
+                    tipo: document.getElementById('editTipo').value
+                };
+                
+                localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
+                atualizarTabela();
+                atualizarTotal();
+                closeModalEditar();
+                showAutoSave();
+            }
         }
 
         function atualizarTabela() {
@@ -1058,7 +1607,14 @@
                     <td>R$ ${p.valor.toFixed(2).replace('.', ',')}</td>
                     <td><span style="background: #f0f0f0; padding: 0.3rem 0.6rem; border-radius: 15px; font-size: 0.8rem;">${p.pagamento}</span></td>
                     <td><span class="tag tag-${p.tipo.toLowerCase()}">${p.tipo}</span></td>
-                    <td><button class="btn-delete" onclick="removerProduto(${p.id})"><i class="fas fa-trash"></i></button></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editarProduto(${p.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-delete" onclick="removerProduto(${p.id})" title="Remover">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -1071,7 +1627,196 @@
             document.getElementById('totalVendas').textContent = 'R$ ' + calcularTotal().toFixed(2).replace('.', ',');
         }
 
-        // FATURAS
+        function closeModalEditar() {
+            document.getElementById('modalEditar').classList.remove('active');
+        }
+
+        // ==================== DISPENSAS ====================
+        function addDispensa(e) {
+            e.preventDefault();
+            
+            const dispensa = {
+                id: Date.now(),
+                nome: document.getElementById('nomeDispensa').value,
+                valor: parseFloat(document.getElementById('valorDispensa').value),
+                data: new Date().toISOString()
+            };
+
+            dispensas.push(dispensa);
+            salvarDados();
+            
+            document.getElementById('dispensaForm').reset();
+            carregarDispensas();
+            showAutoSave();
+        }
+
+        function carregarDispensas() {
+            const containerCadastrados = document.getElementById('listaDispensasCadastradas');
+            if (dispensas.length === 0) {
+                containerCadastrados.innerHTML = '<div class="empty-state" style="padding: 1rem;"><p>Nenhum produto cadastrado</p></div>';
+            } else {
+                containerCadastrados.innerHTML = dispensas.map(d => `
+                    <div class="dispensa-item" style="padding: 0.8rem; margin-bottom: 0.5rem;">
+                        <div>
+                            <strong style="color: #4a148c;">${d.nome}</strong>
+                            <span style="color: #4caf50; margin-left: 0.5rem;">R$ ${d.valor.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <button class="btn-delete" onclick="removerDispensa(${d.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const containerCompra = document.getElementById('listaDispensasCompra');
+            if (dispensas.length === 0) {
+                containerCompra.innerHTML = '<div class="empty-state" style="padding: 1rem;"><p>Cadastre produtos primeiro</p></div>';
+            } else {
+                containerCompra.innerHTML = dispensas.map(d => `
+                    <div class="dispensa-item ${itensSelecionados.has(d.id) ? 'selected' : ''}" 
+                         onclick="toggleItemDispensa(${d.id})">
+                        <div class="dispensa-info">
+                            <h4>${d.nome}</h4>
+                            <p>Clique para ${itensSelecionados.has(d.id) ? 'remover' : 'adicionar'}</p>
+                        </div>
+                        <div class="dispensa-valor">R$ ${d.valor.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                `).join('');
+            }
+
+            atualizarTotalDispensa();
+            carregarHistoricoDispensas();
+        }
+
+        function removerDispensa(id) {
+            if (!confirm('Deseja remover este produto?')) return;
+            dispensas = dispensas.filter(d => d.id !== id);
+            itensSelecionados.delete(id);
+            salvarDados();
+            carregarDispensas();
+        }
+
+        function toggleItemDispensa(id) {
+            if (itensSelecionados.has(id)) {
+                itensSelecionados.delete(id);
+            } else {
+                itensSelecionados.add(id);
+            }
+            carregarDispensas();
+        }
+
+        function atualizarTotalDispensa() {
+            let total = 0;
+            itensSelecionados.forEach(id => {
+                const item = dispensas.find(d => d.id === id);
+                if (item) total += item.valor;
+            });
+            
+            document.getElementById('countItens').textContent = itensSelecionados.size;
+            document.getElementById('totalDispensa').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('btnFinalizarCompra').disabled = itensSelecionados.size === 0;
+        }
+
+        function finalizarCompraDispensa() {
+            if (itensSelecionados.size === 0) return;
+
+            const itens = [];
+            let total = 0;
+            
+            itensSelecionados.forEach(id => {
+                const item = dispensas.find(d => d.id === id);
+                if (item) {
+                    itens.push(item);
+                    total += item.valor;
+                }
+            });
+
+            const compra = {
+                id: Date.now(),
+                data: new Date().toISOString(),
+                itens: itens,
+                total: total
+            };
+
+            comprasDispensa.unshift(compra);
+            salvarDados();
+            
+            itensSelecionados.clear();
+            carregarDispensas();
+            
+            alert(`Compra registrada!\nTotal: R$ ${total.toFixed(2).replace('.', ',')}`);
+        }
+
+        function carregarHistoricoDispensas() {
+            const container = document.getElementById('historicoDispensas');
+            
+            if (comprasDispensa.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <p>Nenhuma compra registrada</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = comprasDispensa.map((c, i) => {
+                const data = new Date(c.data);
+                return `
+                    <div class="fatura-card" onclick="verDetalhesCompra(${c.id})">
+                        <div class="fatura-header">
+                            <span class="fatura-numero">Compra #${comprasDispensa.length - i}</span>
+                            <span class="fatura-status status-fechada">Finalizada</span>
+                        </div>
+                        <div class="fatura-info">
+                            <span><i class="fas fa-calendar"></i> ${data.toLocaleDateString('pt-BR')}</span>
+                            <span><i class="fas fa-clock"></i> ${data.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>
+                            <span><i class="fas fa-shopping-bag"></i> ${c.itens.length} itens</span>
+                        </div>
+                        <div class="fatura-total">Total: R$ ${c.total.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function verDetalhesCompra(id) {
+            const compra = comprasDispensa.find(c => c.id === id);
+            if (!compra) return;
+
+            const data = new Date(compra.data);
+
+            let html = `
+                <div style="margin-bottom: 1rem;">
+                    <p style="margin: 0.5rem 0;"><strong>Data:</strong> ${formatarDataHora(data)}</p>
+                    <p style="margin: 0.5rem 0;"><strong>Itens:</strong> ${compra.itens.length}</p>
+                </div>
+                <h4 style="color: #4a148c; margin: 1rem 0;">Produtos:</h4>
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 1rem;">
+            `;
+
+            html += compra.itens.map(item => `
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                    <span>${item.nome}</span>
+                    <strong>R$ ${item.valor.toFixed(2).replace('.', ',')}</strong>
+                </div>
+            `).join('');
+
+            html += `
+                </div>
+                <div style="background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 1rem; border-radius: 12px; margin-top: 1rem; display: flex; justify-content: space-between;">
+                    <span>TOTAL</span>
+                    <strong style="font-size: 1.3rem;">R$ ${compra.total.toFixed(2).replace('.', ',')}</strong>
+                </div>
+            `;
+
+            document.getElementById('modalCompraBody').innerHTML = html;
+            document.getElementById('modalCompra').classList.add('active');
+        }
+
+        function closeModalCompra() {
+            document.getElementById('modalCompra').classList.remove('active');
+        }
+
+        // ==================== FATURAS ====================
         function carregarFaturas() {
             const container = document.getElementById('listaFaturas');
             
@@ -1099,7 +1844,7 @@
                         <div class="fatura-info">
                             <span><i class="fas fa-calendar"></i> ${abertura.toLocaleDateString('pt-BR')}</span>
                             <span><i class="fas fa-clock"></i> ${abertura.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>
-                            <span><i class="fas fa-shopping-bag"></i> ${f.produtos.length} itens</span>
+                            <span><i class="fas fa-shopping-bag"></i> ${f.produtos.length} vendas</span>
                         </div>
                         <div class="fatura-total">Total: R$ ${f.total.toFixed(2).replace('.', ',')}</div>
                     </div>
@@ -1132,7 +1877,7 @@
                             <strong>${p.cliente}</strong>
                             <span style="font-weight: 600; color: #4a148c;">R$ ${p.valor.toFixed(2).replace('.', ',')}</span>
                         </div>
-                        <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: #666;">
+                        <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: #666; flex-wrap: wrap;">
                             <span><i class="fas fa-ice-cream"></i> ${p.nome}</span>
                             <span><i class="fas fa-credit-card"></i> ${p.pagamento}</span>
                             <span class="tag tag-${p.tipo.toLowerCase()}" style="font-size: 0.7rem;">${p.tipo}</span>
@@ -1153,11 +1898,11 @@
             document.getElementById('modalFatura').classList.add('active');
         }
 
-        function closeModal() {
+        function closeModalFatura() {
             document.getElementById('modalFatura').classList.remove('active');
         }
 
-        // UTILS
+        // ==================== UTILITÁRIOS ====================
         function formatarDataHora(date) {
             return date.toLocaleString('pt-BR');
         }
@@ -1168,6 +1913,9 @@
             const m = diff % 60;
             return `${h}h ${m}min`;
         }
+
+        window.addEventListener('online', () => updateSyncStatus(true));
+        window.addEventListener('offline', () => updateSyncStatus(false));
     </script>
 </body>
 </html>
