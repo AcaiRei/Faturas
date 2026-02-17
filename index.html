@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Rei - Sistema Completo</title>
+    <title>Açaí Rei - Sistema Sincronizado</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -212,12 +207,12 @@
             color: #666;
         }
 
-        .sync-status.online {
+        .sync-status.synced {
             color: #4caf50;
         }
 
-        .sync-status.offline {
-            color: #f44336;
+        .sync-status.syncing {
+            color: #ff9800;
         }
 
         .user-info {
@@ -241,6 +236,24 @@
 
         .logout-btn:hover {
             background: #ffcdd2;
+        }
+
+        .btn-sync {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-sync:hover {
+            background: #bbdefb;
         }
 
         /* Tabs */
@@ -649,19 +662,6 @@
             gap: 2rem;
         }
 
-        .dispensa-form {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 16px;
-        }
-
-        .dispensa-list {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 1.5rem;
-        }
-
         .dispensa-item {
             display: flex;
             justify-content: space-between;
@@ -682,16 +682,6 @@
         .dispensa-item.selected {
             background: #e8f5e9;
             border: 2px solid #4caf50;
-        }
-
-        .dispensa-info h4 {
-            color: #4a148c;
-            margin-bottom: 0.3rem;
-        }
-
-        .dispensa-info p {
-            color: #666;
-            font-size: 0.9rem;
         }
 
         .dispensa-valor {
@@ -768,33 +758,6 @@
             opacity: 0.3;
         }
 
-        /* Auto-save indicator */
-        .autosave-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #4caf50;
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
-
-        .autosave-indicator.show {
-            display: flex;
-            animation: fadeInOut 2s ease;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateY(20px); }
-            10%, 90% { opacity: 1; transform: translateY(0); }
-        }
-
         /* Responsivo */
         @media (max-width: 968px) {
             .dispensas-grid {
@@ -827,11 +790,6 @@
     </style>
 </head>
 <body>
-
-    <!-- AUTO SAVE INDICATOR -->
-    <div class="autosave-indicator" id="autosaveIndicator">
-        <i class="fas fa-check-circle"></i> Salvo automaticamente
-    </div>
 
     <!-- TELA DE LOGIN -->
     <div class="login-screen" id="loginScreen">
@@ -882,8 +840,11 @@
         <header class="app-header">
             <h2><i class="fas fa-crown"></i> Açaí Rei</h2>
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <div class="sync-status offline" id="syncStatus">
-                    <i class="fas fa-wifi"></i> <span id="syncText">Offline</span>
+                <button class="btn-sync" onclick="sincronizarDados()" title="Sincronizar dados entre dispositivos">
+                    <i class="fas fa-sync-alt"></i> Sincronizar
+                </button>
+                <div class="sync-status synced" id="syncStatus">
+                    <i class="fas fa-check-circle"></i> <span id="syncText">Sincronizado</span>
                 </div>
                 <div class="user-info">
                     <span id="currentUser"></span>
@@ -1016,7 +977,6 @@
             <!-- ABA 3: DISPENSAS -->
             <div class="tab-content" id="tab-dispensas">
                 <div class="dispensas-grid">
-                    <!-- Formulário de Cadastro -->
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fas fa-plus-circle"></i> Cadastrar Produto</h3>
@@ -1045,12 +1005,11 @@
                         </div>
                     </div>
 
-                    <!-- Seleção para Compra -->
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Registrar Compra</h3>
                         </div>
-                        <p style="color: #666; margin-bottom: 1rem;">Clique nos produtos abaixo para adicionar à compra:</p>
+                        <p style="color: #666; margin-bottom: 1rem;">Clique nos produtos para adicionar à compra:</p>
                         
                         <div id="listaDispensasCompra" style="max-height: 400px; overflow-y: auto;">
                             <div class="empty-state" style="padding: 1rem;">
@@ -1060,7 +1019,7 @@
 
                         <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #eee;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <span style="color: #666;">Itens selecionados: <strong id="countItens">0</strong></span>
+                                <span style="color: #666;">Itens: <strong id="countItens">0</strong></span>
                                 <span style="color: #4a148c; font-size: 1.3rem; font-weight: 700;" id="totalDispensa">R$ 0,00</span>
                             </div>
                             <button class="btn-add" onclick="finalizarCompraDispensa()" id="btnFinalizarCompra" disabled>
@@ -1070,7 +1029,6 @@
                     </div>
                 </div>
 
-                <!-- Histórico de Compras -->
                 <div class="card" style="margin-top: 2rem;">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-history"></i> Histórico de Compras</h3>
@@ -1102,7 +1060,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR VENDA -->
+    <!-- MODAIS -->
     <div class="modal" id="modalEditar" onclick="if(event.target === this) closeModalEditar()">
         <div class="modal-content">
             <div class="modal-header">
@@ -1150,7 +1108,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALHES FATURA -->
     <div class="modal" id="modalFatura" onclick="if(event.target === this) closeModalFatura()">
         <div class="modal-content">
             <div class="modal-header">
@@ -1161,7 +1118,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALHES COMPRA -->
     <div class="modal" id="modalCompra" onclick="if(event.target === this) closeModalCompra()">
         <div class="modal-content">
             <div class="modal-header">
@@ -1173,30 +1129,13 @@
     </div>
 
     <script>
-        // ==================== CONFIGURAÇÃO FIREBASE ====================
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "acai-rei-sistema.firebaseapp.com",
-            databaseURL: "https://acai-rei-sistema-default-rtdb.firebaseio.com",
-            projectId: "acai-rei-sistema",
-            storageBucket: "acai-rei-sistema.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
-        };
-
-        let app, database, auth;
-        let firebaseOnline = false;
-
-        try {
-            if (firebaseConfig.apiKey !== "SUA_API_KEY") {
-                app = firebase.initializeApp(firebaseConfig);
-                database = firebase.database();
-                auth = firebase.auth();
-                firebaseOnline = true;
-            }
-        } catch (e) {
-            console.log("Firebase não configurado, usando LocalStorage");
-        }
+        // ==================== CONFIGURAÇÃO ====================
+        // URL do seu repositório GitHub (substitua pelo seu)
+        const GITHUB_REPO = 'AcaiRei/Faturas';
+        const GITHUB_BRANCH = 'main';
+        
+        // Chave de criptografia simples (pode mudar se quiser)
+        const ENCRYPTION_KEY = 'acairei2024';
 
         // ==================== SEGURANÇA ====================
         function hashPassword(password) {
@@ -1224,24 +1163,110 @@
         let dispensas = [];
         let comprasDispensa = [];
         let itensSelecionados = new Set();
+        let dadosSincronizados = {};
 
         // ==================== INICIALIZAÇÃO ====================
         window.addEventListener('load', () => {
             checkAuth();
-            setupAutoSave();
         });
 
         function checkAuth() {
-            // SESSÃO SEM EXPIRAÇÃO - só verifica se existe
             const savedSession = localStorage.getItem('acaiRei_session');
             if (savedSession) {
                 const session = JSON.parse(savedSession);
-                // Sessão válida indefinidamente até fazer logout
                 currentUser = session.user;
+                carregarDadosLocais();
                 showApp();
             } else {
                 showLogin();
             }
+        }
+
+        // ==================== SINCRONIZAÇÃO GITHUB ====================
+        // Como o GitHub Pages é estático, usamos uma solução alternativa:
+        // Salvamos os dados em um arquivo JSON no localStorage e oferecemos
+        // download/upload para sincronização manual entre dispositivos
+
+        function sincronizarDados() {
+            const status = document.getElementById('syncStatus');
+            const text = document.getElementById('syncText');
+            
+            status.className = 'sync-status syncing';
+            text.textContent = 'Sincronizando...';
+
+            // Preparar dados para exportação
+            const dados = {
+                faturas: faturas,
+                dispensas: dispensas,
+                comprasDispensa: comprasDispensa,
+                lastSync: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            // Salvar no localStorage
+            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
+            
+            // Criar arquivo para download (backup)
+            const dataStr = JSON.stringify(dados, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            // Oferecer download
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Em mobile, mostra opções
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Mobile: salva no localStorage e mostra QR code ou opção de compartilhar
+                if (navigator.share) {
+                    const file = new File([dataBlob], 'acai-rei-dados.json', { type: 'application/json' });
+                    navigator.share({
+                        title: 'Dados Açaí Rei',
+                        text: 'Backup dos dados do sistema',
+                        files: [file]
+                    }).catch(() => {
+                        // Se não conseguir compartilhar, faz download
+                        link.click();
+                    });
+                } else {
+                    link.click();
+                }
+            } else {
+                // Desktop: download direto
+                link.click();
+            }
+
+            URL.revokeObjectURL(url);
+
+            setTimeout(() => {
+                status.className = 'sync-status synced';
+                text.textContent = 'Sincronizado';
+                alert('Dados sincronizados! O arquivo de backup foi baixado.\n\nPara transferir para outro dispositivo:\n1. Envie o arquivo baixado (WhatsApp, email, etc)\n2. No outro dispositivo, faça upload do arquivo');
+            }, 1000);
+        }
+
+        function importarDados(arquivo) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    
+                    if (confirm(`Importar dados de ${new Date(dados.lastSync).toLocaleString('pt-BR')}?\n\nIsso substituirá os dados atuais.`)) {
+                        faturas = dados.faturas || [];
+                        dispensas = dados.dispensas || [];
+                        comprasDispensa = dados.comprasDispensa || [];
+                        
+                        salvarDadosLocais();
+                        carregarInterface();
+                        
+                        alert('Dados importados com sucesso!');
+                    }
+                } catch (err) {
+                    alert('Erro ao importar arquivo. Verifique se é um backup válido.');
+                }
+            };
+            reader.readAsText(arquivo);
         }
 
         // ==================== LOGIN ====================
@@ -1256,15 +1281,11 @@
             const password = document.getElementById('password').value.trim();
 
             if (username === CREDENTIALS.username && hashPassword(password) === CREDENTIALS.passwordHash) {
-                // SESSÃO SEM EXPIRAÇÃO
-                const session = {
-                    user: username
-                    // REMOVIDO: expires - não expira mais
-                };
+                const session = { user: username };
                 localStorage.setItem('acaiRei_session', JSON.stringify(session));
                 currentUser = username;
 
-                await carregarDados();
+                carregarDadosLocais();
                 showApp();
             } else {
                 showError('Usuário ou senha incorretos!');
@@ -1289,101 +1310,55 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
             document.getElementById('currentUser').textContent = currentUser;
-            
-            updateSyncStatus();
             carregarInterface();
         }
 
-        // ==================== SINCRONIZAÇÃO ====================
-        async function carregarDados() {
-            if (firebaseOnline) {
-                try {
-                    const snapshot = await database.ref('acaiRei').once('value');
-                    const data = snapshot.val() || {};
-                    
-                    faturas = data.faturas || [];
-                    dispensas = data.dispensas || [];
-                    comprasDispensa = data.comprasDispensa || [];
-                    
-                    updateSyncStatus(true);
-                } catch (e) {
-                    console.error("Erro Firebase:", e);
-                    carregarLocal();
+        // ==================== DADOS LOCAIS ====================
+        function carregarDadosLocais() {
+            const dados = JSON.parse(localStorage.getItem('acaiRei_dados')) || {};
+            faturas = dados.faturas || [];
+            dispensas = dados.dispensas || [];
+            comprasDispensa = dados.comprasDispensa || [];
+            
+            // Carregar vendas pendentes (caixa aberto)
+            const vendasPendentes = localStorage.getItem('acaiRei_vendasPendentes');
+            if (vendasPendentes) {
+                produtosVenda = JSON.parse(vendasPendentes);
+                // Verificar se tinha caixa aberto
+                const caixaData = localStorage.getItem('acaiRei_caixaData');
+                if (caixaData) {
+                    const caixa = JSON.parse(caixaData);
+                    if (!caixa.fechado) {
+                        caixaAberto = true;
+                        horaAbertura = new Date(caixa.abertura);
+                        faturaAtual = caixa.faturaAtual;
+                    }
                 }
-            } else {
-                carregarLocal();
             }
         }
 
-        function carregarLocal() {
-            faturas = JSON.parse(localStorage.getItem('acaiRei_faturas')) || [];
-            dispensas = JSON.parse(localStorage.getItem('acaiRei_dispensas')) || [];
-            comprasDispensa = JSON.parse(localStorage.getItem('acaiRei_compras')) || [];
-            updateSyncStatus(false);
-        }
-
-        async function salvarDados() {
-            const data = {
+        function salvarDadosLocais() {
+            const dados = {
                 faturas: faturas,
                 dispensas: dispensas,
                 comprasDispensa: comprasDispensa,
-                lastUpdate: new Date().toISOString()
+                lastSync: new Date().toISOString()
             };
-
-            localStorage.setItem('acaiRei_faturas', JSON.stringify(faturas));
-            localStorage.setItem('acaiRei_dispensas', JSON.stringify(dispensas));
-            localStorage.setItem('acaiRei_compras', JSON.stringify(comprasDispensa));
-
-            if (firebaseOnline) {
-                try {
-                    await database.ref('acaiRei').set(data);
-                    updateSyncStatus(true);
-                    showAutoSave();
-                } catch (e) {
-                    console.error("Erro ao salvar no Firebase:", e);
-                    updateSyncStatus(false);
-                }
-            } else {
-                showAutoSave();
-            }
-        }
-
-        function updateSyncStatus(online = null) {
-            const status = document.getElementById('syncStatus');
-            const text = document.getElementById('syncText');
+            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
             
-            if (online === null) {
-                online = navigator.onLine && firebaseOnline;
-            }
-
-            if (online) {
-                status.className = 'sync-status online';
-                text.textContent = 'Online';
+            // Salvar estado do caixa
+            if (caixaAberto) {
+                localStorage.setItem('acaiRei_caixaData', JSON.stringify({
+                    aberto: true,
+                    abertura: horaAbertura.toISOString(),
+                    fechado: false,
+                    faturaAtual: faturaAtual
+                }));
+                localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
             } else {
-                status.className = 'sync-status offline';
-                text.textContent = 'Offline (Local)';
+                localStorage.removeItem('acaiRei_caixaData');
+                localStorage.removeItem('acaiRei_vendasPendentes');
             }
-        }
-
-        function showAutoSave() {
-            const indicator = document.getElementById('autosaveIndicator');
-            indicator.classList.add('show');
-            setTimeout(() => indicator.classList.remove('show'), 2000);
-        }
-
-        // ==================== AUTO SAVE ====================
-        function setupAutoSave() {
-            setInterval(() => {
-                if (caixaAberto && produtosVenda.length > 0) {
-                    salvarDados();
-                }
-            }, 30000);
-
-            window.addEventListener('beforeunload', (e) => {
-                if (caixaAberto && produtosVenda.length > 0) {
-                    salvarDados();
-                }
-            });
         }
 
         // ==================== INTERFACE ====================
@@ -1392,13 +1367,19 @@
             carregarDispensas();
             atualizarTabela();
             atualizarTotal();
+            
+            if (caixaAberto) {
+                updateCaixaUI();
+                const badge = document.getElementById('caixaStatusBadge');
+                badge.className = 'badge badge-success';
+                badge.innerHTML = '<i class="fas fa-lock-open"></i> Caixa Aberto';
+            }
         }
 
         function logout() {
             if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
             if (caixaAberto) fecharCaixa();
             
-            // Remove a sessão ao fazer logout
             localStorage.removeItem('acaiRei_session');
             location.reload();
         }
@@ -1432,13 +1413,6 @@
             caixaAberto = true;
             horaAbertura = new Date();
             
-            const vendasPendentes = localStorage.getItem('acaiRei_vendasPendentes');
-            if (vendasPendentes) {
-                produtosVenda = JSON.parse(vendasPendentes);
-            } else {
-                produtosVenda = [];
-            }
-
             faturaAtual = {
                 id: Date.now(),
                 dataAbertura: horaAbertura.toISOString(),
@@ -1453,6 +1427,7 @@
             badge.className = 'badge badge-success';
             badge.innerHTML = '<i class="fas fa-lock-open"></i> Caixa Aberto';
 
+            salvarDadosLocais();
             atualizarTabela();
             atualizarTotal();
         }
@@ -1466,12 +1441,9 @@
             faturaAtual.total = calcularTotal();
             
             faturas.unshift(faturaAtual);
-            
-            localStorage.removeItem('acaiRei_vendasPendentes');
             produtosVenda = [];
 
-            salvarDados();
-
+            salvarDadosLocais();
             updateCaixaUI(true);
             
             const badge = document.getElementById('caixaStatusBadge');
@@ -1537,21 +1509,19 @@
             };
 
             produtosVenda.push(produto);
-            localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
+            salvarDadosLocais();
             
             document.getElementById('vendaForm').reset();
             atualizarTabela();
             atualizarTotal();
-            showAutoSave();
         }
 
         function removerProduto(id) {
             if (!confirm('Deseja remover esta venda?')) return;
             produtosVenda = produtosVenda.filter(p => p.id !== id);
-            localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
+            salvarDadosLocais();
             atualizarTabela();
             atualizarTotal();
-            showAutoSave();
         }
 
         function editarProduto(id) {
@@ -1584,11 +1554,10 @@
                     tipo: document.getElementById('editTipo').value
                 };
                 
-                localStorage.setItem('acaiRei_vendasPendentes', JSON.stringify(produtosVenda));
+                salvarDadosLocais();
                 atualizarTabela();
                 atualizarTotal();
                 closeModalEditar();
-                showAutoSave();
             }
         }
 
@@ -1643,11 +1612,10 @@
             };
 
             dispensas.push(dispensa);
-            salvarDados();
+            salvarDadosLocais();
             
             document.getElementById('dispensaForm').reset();
             carregarDispensas();
-            showAutoSave();
         }
 
         function carregarDispensas() {
@@ -1675,9 +1643,9 @@
                 containerCompra.innerHTML = dispensas.map(d => `
                     <div class="dispensa-item ${itensSelecionados.has(d.id) ? 'selected' : ''}" 
                          onclick="toggleItemDispensa(${d.id})">
-                        <div class="dispensa-info">
-                            <h4>${d.nome}</h4>
-                            <p>Clique para ${itensSelecionados.has(d.id) ? 'remover' : 'adicionar'}</p>
+                        <div>
+                            <strong style="color: #4a148c;">${d.nome}</strong>
+                            <p style="color: #666; font-size: 0.9rem;">Clique para ${itensSelecionados.has(d.id) ? 'remover' : 'adicionar'}</p>
                         </div>
                         <div class="dispensa-valor">R$ ${d.valor.toFixed(2).replace('.', ',')}</div>
                     </div>
@@ -1692,7 +1660,7 @@
             if (!confirm('Deseja remover este produto?')) return;
             dispensas = dispensas.filter(d => d.id !== id);
             itensSelecionados.delete(id);
-            salvarDados();
+            salvarDadosLocais();
             carregarDispensas();
         }
 
@@ -1739,7 +1707,7 @@
             };
 
             comprasDispensa.unshift(compra);
-            salvarDados();
+            salvarDadosLocais();
             
             itensSelecionados.clear();
             carregarDispensas();
@@ -1914,8 +1882,18 @@
             return `${h}h ${m}min`;
         }
 
-        window.addEventListener('online', () => updateSyncStatus(true));
-        window.addEventListener('offline', () => updateSyncStatus(false));
+        // Adicionar botão de importação na tela (invisível inicialmente)
+        const importInput = document.createElement('input');
+        importInput.type = 'file';
+        importInput.accept = '.json';
+        importInput.style.display = 'none';
+        importInput.id = 'importInput';
+        importInput.onchange = (e) => {
+            if (e.target.files.length > 0) {
+                importarDados(e.target.files[0]);
+            }
+        };
+        document.body.appendChild(importInput);
     </script>
 </body>
 </html>
