@@ -3,51 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Rei - Sistema Online</title>
+    <title>Açaí Rei - Sistema Sincronizado</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- FIREBASE SDK (Versão 9 - Modular) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-
-        // ==================== CONFIGURAÇÃO FIREBASE ====================
-        // SUBSTITUA ESTE OBJETO PELAS SUAS CREDENCIAIS DO FIREBASE!
-        const firebaseConfig = {
-            apiKey: "AIzaSyDi3S2ujrwKE19a5FGRZafWKIXw-8tbJ9A",
-            authDomain: "acairei-b4bca.firebaseapp.com",
-            databaseURL: "https://acairei-b4bca-default-rtdb.firebaseio.com",
-            projectId: "acairei-b4bca",
-            storageBucket: "acairei-b4bca.firebasestorage.app",
-            messagingSenderId: "591817620965",
-            appId: "1:591817620965:web:f634d2ac90dd033872430c"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        // Tornar disponível globalmente
-        window.firebaseDB = database;
-        window.dbRef = ref;
-        window.dbSet = set;
-        window.dbPush = push;
-        window.dbOnValue = onValue;
-        window.dbRemove = remove;
-        window.dbUpdate = update;
-        window.dbGet = get;
-        window.dbChild = child;
-    </script>
-    
     <style>
-        /* [MANTENHA TODO O SEU CSS EXISTENTE AQUI - NÃO ALTEREI PARA ECONOMIZAR ESPAÇO] */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a0a2e 0%, #4a148c 50%, #7c43bd 100%);
             min-height: 100vh;
             color: #333;
         }
+
+        /* Login */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -55,6 +28,7 @@
             justify-content: center;
             padding: 20px;
         }
+
         .login-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -65,256 +39,758 @@
             max-width: 420px;
             animation: slideUp 0.6s ease-out;
         }
+
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .logo-section { text-align: center; margin-bottom: 2rem; }
-        .logo-container { width: 100px; height: 100px; margin: 0 auto 1rem; }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+        }
+
         .logo-image {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            border: 4px solid white; box-shadow: 0 10px 30px rgba(124, 67, 189, 0.4);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(124, 67, 189, 0.4);
         }
-        h1 { color: #4a148c; font-size: 1.8rem; margin-bottom: 0.3rem; }
-        .subtitle { color: #666; font-size: 0.9rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.4rem; color: #4a148c; font-weight: 600; font-size: 0.85rem; }
-        .input-wrapper { position: relative; }
-        .input-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #7c43bd; }
+
+        h1 {
+            color: #4a148c;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #4a148c;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7c43bd;
+        }
+
         input, select {
-            width: 100%; padding: 0.9rem 1rem 0.9rem 2.8rem;
-            border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1rem;
-            transition: all 0.3s; background: #fafafa;
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #fafafa;
         }
+
         input:focus, select:focus {
-            outline: none; border-color: #7c43bd; background: white;
+            outline: none;
+            border-color: #7c43bd;
+            background: white;
             box-shadow: 0 0 0 4px rgba(124, 67, 189, 0.1);
         }
+
         .toggle-password {
-            position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
-            cursor: pointer; color: #999;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
         }
+
         .login-btn {
-            width: 100%; padding: 1rem;
+            width: 100%;
+            padding: 1rem;
             background: linear-gradient(135deg, #7c43bd 0%, #4a148c 100%);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 600; cursor: pointer;
-            transition: all 0.3s; margin-top: 0.5rem;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
         }
+
         .login-btn:hover:not(:disabled) {
-            transform: translateY(-2px); box-shadow: 0 10px 25px rgba(124, 67, 189, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(124, 67, 189, 0.4);
         }
-        .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .error-message {
-            background: #ffebee; color: #c62828; padding: 0.75rem;
-            border-radius: 8px; margin-bottom: 1rem; display: none;
-            align-items: center; gap: 0.5rem; font-size: 0.9rem;
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
         }
+
         .loading {
-            display: inline-block; width: 20px; height: 20px;
-            border: 3px solid rgba(255,255,255,.3); border-radius: 50%;
-            border-top-color: white; animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .app-screen { display: none; min-height: 100vh; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* App */
+        .app-screen {
+            display: none;
+            min-height: 100vh;
+        }
+
         .app-header {
-            background: white; padding: 1rem 2rem;
+            background: white;
+            padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .app-header h2 { color: #4a148c; display: flex; align-items: center; gap: 0.5rem; }
+
+        .app-header h2 {
+            color: #4a148c;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .sync-status {
-            display: flex; align-items: center; gap: 0.5rem;
-            font-size: 0.85rem; color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
         }
-        .sync-status.synced { color: #4caf50; }
-        .sync-status.syncing { color: #ff9800; }
-        .sync-status.offline { color: #f44336; }
-        .user-info { display: flex; align-items: center; gap: 1rem; color: #666; font-size: 0.9rem; }
+
+        .sync-status.synced {
+            color: #4caf50;
+        }
+
+        .sync-status.syncing {
+            color: #ff9800;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
         .logout-btn {
-            background: #ffebee; color: #c62828; border: none;
-            padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem; transition: all 0.3s;
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
         }
-        .logout-btn:hover { background: #ffcdd2; }
+
+        .logout-btn:hover {
+            background: #ffcdd2;
+        }
+
         .btn-sync {
-            background: #e3f2fd; color: #1565c0; border: none;
-            padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem; transition: all 0.3s;
-            display: flex; align-items: center; gap: 0.5rem;
+            background: #e3f2fd;
+            color: #1565c0;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .btn-sync:hover { background: #bbdefb; }
-        .tabs-container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; }
+
+        .btn-sync:hover {
+            background: #bbdefb;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
         .tabs-nav {
-            display: flex; gap: 0.5rem; margin-bottom: 2rem;
-            background: white; padding: 0.5rem; border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto;
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
         }
+
         .tab-btn {
-            flex: 1; padding: 1rem; border: none; background: transparent;
-            color: #666; font-weight: 600; cursor: pointer; border-radius: 12px;
-            transition: all 0.3s; display: flex; align-items: center;
-            justify-content: center; gap: 0.5rem; white-space: nowrap; min-width: 100px;
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            min-width: 100px;
         }
+
         .tab-btn.active {
             background: linear-gradient(135deg, #7c43bd 0%, #4a148c 100%);
-            color: white; box-shadow: 0 4px 15px rgba(124, 67, 189, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 67, 189, 0.3);
         }
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         .card {
-            background: white; border-radius: 20px; padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
+
         .card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .card-title { color: #4a148c; font-size: 1.3rem; display: flex; align-items: center; gap: 0.5rem; }
-        .caixa-status { text-align: center; padding: 2rem 1rem; }
+
+        .card-title {
+            color: #4a148c;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Caixa */
+        .caixa-status {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
         .caixa-icon {
-            width: 100px; height: 100px;
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; margin: 0 auto 1rem;
-            font-size: 2.5rem; color: #c62828; transition: all 0.3s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            color: #c62828;
+            transition: all 0.3s;
         }
+
         .caixa-icon.aberto {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            color: #4caf50; animation: pulse 2s infinite;
+            color: #4caf50;
+            animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .caixa-info {
-            margin: 1.5rem 0; padding: 1.5rem; background: #f5f5f5;
-            border-radius: 12px; display: none;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+            display: none;
         }
-        .caixa-info.show { display: block; }
-        .caixa-info p { margin: 0.5rem 0; color: #555; font-size: 1rem; }
-        .caixa-info strong { color: #4a148c; }
+
+        .caixa-info.show {
+            display: block;
+        }
+
+        .caixa-info p {
+            margin: 0.5rem 0;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .caixa-info strong {
+            color: #4a148c;
+        }
+
         .btn-caixa {
-            padding: 1rem 2rem; font-size: 1rem; border: none;
-            border-radius: 12px; cursor: pointer; font-weight: 600;
-            transition: all 0.3s; display: inline-flex; align-items: center;
-            gap: 0.5rem; margin: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
         }
-        .btn-abrir { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; }
-        .btn-fechar { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); color: white; }
-        .btn-caixa:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .btn-caixa:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-abrir {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .btn-fechar {
+            background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+            color: white;
+        }
+
+        .btn-caixa:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-caixa:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Formulários */
         .form-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem; margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
-        .form-group-compact { display: flex; flex-direction: column; }
-        .form-group-compact label { font-size: 0.8rem; margin-bottom: 0.3rem; }
-        .form-group-compact input, .form-group-compact select {
-            padding: 0.8rem; border: 2px solid #e0e0e0;
-            border-radius: 10px; font-size: 0.95rem;
+
+        .form-group-compact {
+            display: flex;
+            flex-direction: column;
         }
+
+        .form-group-compact label {
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group-compact input, 
+        .form-group-compact select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
         .btn-add {
             background: linear-gradient(135deg, #7c43bd 0%, #4a148c 100%);
-            color: white; border: none; padding: 0.8rem 2rem;
-            border-radius: 10px; cursor: pointer; font-weight: 600;
-            transition: all 0.3s; margin-top: 1.5rem; width: 100%;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+            width: 100%;
         }
-        .btn-add:hover:not(:disabled) { transform: scale(1.02); }
-        .btn-add:disabled { opacity: 0.6; cursor: not-allowed; }
-        .table-container { overflow-x: auto; margin-top: 1.5rem; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #f5f5f5; color: #4a148c; padding: 0.8rem; text-align: left; font-weight: 600; font-size: 0.85rem; }
-        td { padding: 0.8rem; border-bottom: 1px solid #eee; color: #555; }
-        tr:hover { background: #fafafa; }
-        .btn-action { background: none; border: none; padding: 0.4rem; cursor: pointer; border-radius: 6px; transition: all 0.3s; margin: 0 0.2rem; }
-        .btn-edit { color: #2196f3; }
-        .btn-edit:hover { background: #e3f2fd; }
-        .btn-delete { color: #f44336; }
-        .btn-delete:hover { background: #ffebee; }
-        .tag { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-        .tag-presencial { background: #e3f2fd; color: #1565c0; }
-        .tag-delivery { background: #fff3e0; color: #e65100; }
+
+        .btn-add:hover:not(:disabled) {
+            transform: scale(1.02);
+        }
+
+        .btn-add:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Tabelas */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f5f5f5;
+            color: #4a148c;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 0.4rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            margin: 0 0.2rem;
+        }
+
+        .btn-edit {
+            color: #2196f3;
+        }
+
+        .btn-edit:hover {
+            background: #e3f2fd;
+        }
+
+        .btn-delete {
+            color: #f44336;
+        }
+
+        .btn-delete:hover {
+            background: #ffebee;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tag-presencial {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .tag-delivery {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
         .total-section {
             background: linear-gradient(135deg, #4a148c 0%, #7c43bd 100%);
-            color: white; padding: 1.5rem; border-radius: 16px;
-            margin-top: 1.5rem; display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; gap: 1rem;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .total-label { font-size: 1rem; opacity: 0.9; }
-        .total-value { font-size: 1.8rem; font-weight: 700; }
-        .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .badge-success { background: #e8f5e9; color: #2e7d32; }
-        .badge-danger { background: #ffebee; color: #c62828; }
-        .faturas-list { display: grid; gap: 1rem; }
+
+        .total-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .total-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-danger {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Faturas */
+        .faturas-list {
+            display: grid;
+            gap: 1rem;
+        }
+
         .fatura-card {
-            background: #f8f9fa; border-radius: 16px; padding: 1.5rem;
-            cursor: pointer; transition: all 0.3s; border: 2px solid transparent;
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
-        .fatura-card:hover { border-color: #7c43bd; transform: translateX(5px); }
-        .fatura-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .fatura-numero { color: #4a148c; font-weight: 700; font-size: 1.1rem; }
-        .fatura-status { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-        .status-aberta { background: #e8f5e9; color: #2e7d32; }
-        .status-fechada { background: #e3f2fd; color: #1565c0; }
-        .fatura-info { color: #666; font-size: 0.9rem; display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-        .fatura-total { color: #4a148c; font-weight: 700; font-size: 1.1rem; }
-        .dispensas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+        .fatura-card:hover {
+            border-color: #7c43bd;
+            transform: translateX(5px);
+        }
+
+        .fatura-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .fatura-numero {
+            color: #4a148c;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .fatura-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-aberta {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-fechada {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .fatura-info {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .fatura-total {
+            color: #4a148c;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Dispensas */
+        .dispensas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
         .dispensa-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem; background: #f5f5f5; border-radius: 12px;
-            margin-bottom: 0.8rem; cursor: pointer; transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .dispensa-item:hover { background: #e8f5e9; transform: translateX(5px); }
-        .dispensa-item.selected { background: #e8f5e9; border: 2px solid #4caf50; }
-        .dispensa-valor { font-size: 1.2rem; font-weight: 700; color: #4caf50; }
+
+        .dispensa-item:hover {
+            background: #e8f5e9;
+            transform: translateX(5px);
+        }
+
+        .dispensa-item.selected {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .dispensa-valor {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4caf50;
+        }
+
+        /* Modal */
         .modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
-            z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
-        .modal.active { display: flex; }
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
-            background: white; border-radius: 24px; padding: 2rem;
-            max-width: 700px; width: 100%; max-height: 90vh;
-            overflow-y: auto; animation: slideUp 0.3s ease;
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
         }
+
         .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
         }
-        .modal-title { color: #4a148c; font-size: 1.3rem; }
-        .btn-close { background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer; }
-        .btn-close:hover { color: #333; }
-        .empty-state { text-align: center; color: #999; padding: 3rem; }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-        @media (max-width: 968px) { .dispensas-grid { grid-template-columns: 1fr; } }
+
+        .modal-title {
+            color: #4a148c;
+            font-size: 1.3rem;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .btn-close:hover {
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 3rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Responsivo */
+        @media (max-width: 968px) {
+            .dispensas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .tabs-nav { flex-direction: column; }
-            .app-header { flex-direction: column; text-align: center; }
-            table { font-size: 0.8rem; }
-            th, td { padding: 0.5rem; }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-nav {
+                flex-direction: column;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
         }
-        .connection-status {
-            position: fixed; bottom: 20px; right: 20px;
-            padding: 10px 20px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
-            z-index: 9999; transition: all 0.3s;
-        }
-        .connection-online { background: #4caf50; color: white; }
-        .connection-offline { background: #f44336; color: white; }
     </style>
 </head>
 <body>
-
-    <!-- INDICADOR DE CONEXÃO -->
-    <div id="connectionStatus" class="connection-status connection-online" style="display: none;">
-        <i class="fas fa-wifi"></i> <span id="connectionText">Online</span>
-    </div>
 
     <!-- TELA DE LOGIN -->
     <div class="login-screen" id="loginScreen">
@@ -327,7 +803,7 @@
                          onerror="this.src='https://via.placeholder.com/100/4a148c/ffffff?text=Açaí+Rei'">
                 </div>
                 <h1>Açaí Rei</h1>
-                <p class="subtitle">Sistema Online Sincronizado</p>
+                <p class="subtitle">Sistema de Controle de Caixa</p>
             </div>
 
             <div class="error-message" id="errorMessage">
@@ -365,7 +841,7 @@
         <header class="app-header">
             <h2><i class="fas fa-crown"></i> Açaí Rei</h2>
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <button class="btn-sync" onclick="sincronizarDados()" title="Sincronizar dados manualmente">
+                <button class="btn-sync" onclick="sincronizarDados()" title="Sincronizar dados entre dispositivos">
                     <i class="fas fa-sync-alt"></i> Sincronizar
                 </button>
                 <div class="sync-status synced" id="syncStatus">
@@ -653,17 +1129,37 @@
         </div>
     </div>
 
+    <!-- FIREBASE SDK -->
     <script type="module">
-        // Aguardar Firebase carregar
-        await new Promise(resolve => {
-            if (window.firebaseDB) resolve();
-            else setTimeout(resolve, 1000);
-        });
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove, update, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        const db = window.firebaseDB;
-        const { ref, set, push, onValue, remove, update, get, child } = window;
+        const firebaseConfig = {
+            apiKey: "AIzaSyDi3S2ujrwKE19a5FGRZafWKIXw-8tbJ9A",
+            authDomain: "acairei-b4bca.firebaseapp.com",
+            databaseURL: "https://acairei-b4bca-default-rtdb.firebaseio.com",
+            projectId: "acairei-b4bca",
+            storageBucket: "acairei-b4bca.firebasestorage.app",
+            messagingSenderId: "591817620965",
+            appId: "1:591817620965:web:f634d2ac90dd033872430c"
+        };
 
-        // ==================== CREDENCIAIS ====================
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.firebaseDB = database;
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbPush = push;
+        window.dbOnValue = onValue;
+        window.dbRemove = remove;
+        window.dbUpdate = update;
+        window.dbGet = get;
+        window.dbChild = child;
+    </script>
+
+    <script>
+        // ==================== CREDENCIAIS CORRETAS ====================
         const CREDENTIALS = {
             username: 'Açai Rei001',
             password: '170920'
@@ -679,51 +1175,81 @@
         let dispensas = [];
         let comprasDispensa = [];
         let itensSelecionados = new Set();
-        let isOnline = true;
-
-        // ==================== REFERÊNCIAS DO BANCO ====================
-        const dbRefs = {
-            caixa: ref(db, 'caixa'),
-            vendas: ref(db, 'vendas'),
-            faturas: ref(db, 'faturas'),
-            dispensas: ref(db, 'dispensas'),
-            compras: ref(db, 'compras'),
-            conexao: ref(db, '.info/connected')
-        };
-
-        // ==================== MONITORAMENTO DE CONEXÃO ====================
-        onValue(dbRefs.conexao, (snap) => {
-            isOnline = snap.val() === true;
-            updateConnectionStatus();
-        });
-
-        function updateConnectionStatus() {
-            const statusEl = document.getElementById('connectionStatus');
-            const textEl = document.getElementById('connectionText');
-            const syncStatus = document.getElementById('syncStatus');
-            const syncText = document.getElementById('syncText');
-            
-            if (isOnline) {
-                statusEl.className = 'connection-status connection-online';
-                statusEl.style.display = 'flex';
-                textEl.textContent = 'Online';
-                syncStatus.className = 'sync-status synced';
-                syncText.textContent = 'Sincronizado';
-                setTimeout(() => statusEl.style.display = 'none', 3000);
-            } else {
-                statusEl.className = 'connection-status connection-offline';
-                statusEl.style.display = 'flex';
-                textEl.textContent = 'Offline - Modo Local';
-                syncStatus.className = 'sync-status offline';
-                syncText.textContent = 'Offline';
-            }
-        }
+        let db = null;
+        let dbRefs = {};
 
         // ==================== INICIALIZAÇÃO ====================
         window.addEventListener('load', () => {
-            checkAuth();
-            setupRealtimeListeners();
+            initFirebase();
         });
+
+        function initFirebase() {
+            if (window.firebaseDB) {
+                db = window.firebaseDB;
+                dbRefs = {
+                    caixa: window.dbRef(db, 'caixa'),
+                    vendas: window.dbRef(db, 'vendas'),
+                    faturas: window.dbRef(db, 'faturas'),
+                    dispensas: window.dbRef(db, 'dispensas'),
+                    compras: window.dbRef(db, 'compras'),
+                    conexao: window.dbRef(db, '.info/connected')
+                };
+                setupRealtimeListeners();
+                checkAuth();
+            } else {
+                setTimeout(initFirebase, 500);
+            }
+        }
+
+        function setupRealtimeListeners() {
+            window.dbOnValue(dbRefs.caixa, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    caixaAberto = data.aberto || false;
+                    horaAbertura = data.horaAbertura ? new Date(data.horaAbertura) : null;
+                    faturaAtual = data.faturaAtual || null;
+                    updateCaixaUI();
+                }
+            });
+
+            window.dbOnValue(dbRefs.vendas, (snapshot) => {
+                const data = snapshot.val();
+                produtosVenda = data ? Object.values(data) : [];
+                atualizarTabela();
+                atualizarTotal();
+            });
+
+            window.dbOnValue(dbRefs.faturas, (snapshot) => {
+                const data = snapshot.val();
+                faturas = data ? Object.values(data).reverse() : [];
+                carregarFaturas();
+            });
+
+            window.dbOnValue(dbRefs.dispensas, (snapshot) => {
+                const data = snapshot.val();
+                dispensas = data ? Object.values(data) : [];
+                carregarDispensas();
+            });
+
+            window.dbOnValue(dbRefs.compras, (snapshot) => {
+                const data = snapshot.val();
+                comprasDispensa = data ? Object.values(data).reverse() : [];
+                carregarHistoricoDispensas();
+            });
+
+            window.dbOnValue(dbRefs.conexao, (snap) => {
+                const isOnline = snap.val() === true;
+                const syncStatus = document.getElementById('syncStatus');
+                const syncText = document.getElementById('syncText');
+                if (isOnline) {
+                    syncStatus.className = 'sync-status synced';
+                    syncText.textContent = 'Sincronizado';
+                } else {
+                    syncStatus.className = 'sync-status syncing';
+                    syncText.textContent = 'Offline';
+                }
+            });
+        }
 
         function checkAuth() {
             const savedSession = localStorage.getItem('acaiRei_session');
@@ -734,48 +1260,6 @@
             } else {
                 showLogin();
             }
-        }
-
-        function setupRealtimeListeners() {
-            // Ouvir mudanças no caixa em tempo real
-            onValue(dbRefs.caixa, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    caixaAberto = data.aberto || false;
-                    horaAbertura = data.horaAbertura ? new Date(data.horaAbertura) : null;
-                    faturaAtual = data.faturaAtual || null;
-                    updateCaixaUI();
-                }
-            });
-
-            // Ouvir vendas em tempo real
-            onValue(dbRefs.vendas, (snapshot) => {
-                const data = snapshot.val();
-                produtosVenda = data ? Object.values(data) : [];
-                atualizarTabela();
-                atualizarTotal();
-            });
-
-            // Ouvir faturas em tempo real
-            onValue(dbRefs.faturas, (snapshot) => {
-                const data = snapshot.val();
-                faturas = data ? Object.values(data).reverse() : [];
-                carregarFaturas();
-            });
-
-            // Ouvir dispensas em tempo real
-            onValue(dbRefs.dispensas, (snapshot) => {
-                const data = snapshot.val();
-                dispensas = data ? Object.values(data) : [];
-                carregarDispensas();
-            });
-
-            // Ouvir compras em tempo real
-            onValue(dbRefs.compras, (snapshot) => {
-                const data = snapshot.val();
-                comprasDispensa = data ? Object.values(data).reverse() : [];
-                carregarHistoricoDispensas();
-            });
         }
 
         // ==================== LOGIN ====================
@@ -827,85 +1311,185 @@
                 faturaAtual: faturaAtual,
                 lastUpdate: new Date().toISOString()
             };
-            await set(dbRefs.caixa, dados);
+            await window.dbSet(dbRefs.caixa, dados);
         }
 
         async function adicionarVendaFirebase(venda) {
-            const novaVendaRef = push(dbRefs.vendas);
-            await set(novaVendaRef, { ...venda, firebaseId: novaVendaRef.key });
-            return novaVendaRef.key;
+            const novaVendaRef = window.dbPush(dbRefs.vendas);
+            await window.dbSet(novaVendaRef, { ...venda, firebaseId: novaVendaRef.key });
         }
 
         async function removerVendaFirebase(firebaseId) {
-            await remove(child(dbRefs.vendas, firebaseId));
+            await window.dbRemove(window.dbChild(dbRefs.vendas, firebaseId));
         }
 
         async function atualizarVendaFirebase(firebaseId, dados) {
-            await update(child(dbRefs.vendas, firebaseId), dados);
+            await window.dbUpdate(window.dbChild(dbRefs.vendas, firebaseId), dados);
         }
 
         async function adicionarFaturaFirebase(fatura) {
-            const novaFaturaRef = push(dbRefs.faturas);
-            await set(novaFaturaRef, { ...fatura, firebaseId: novaFaturaRef.key });
+            const novaFaturaRef = window.dbPush(dbRefs.faturas);
+            await window.dbSet(novaFaturaRef, { ...fatura, firebaseId: novaFaturaRef.key });
         }
 
         async function adicionarDispensaFirebase(dispensa) {
-            const novaDispensaRef = push(dbRefs.dispensas);
-            await set(novaDispensaRef, { ...dispensa, firebaseId: novaDispensaRef.key });
+            const novaDispensaRef = window.dbPush(dbRefs.dispensas);
+            await window.dbSet(novaDispensaRef, { ...dispensa, firebaseId: novaDispensaRef.key });
         }
 
         async function removerDispensaFirebase(firebaseId) {
-            await remove(child(dbRefs.dispensas, firebaseId));
+            await window.dbRemove(window.dbChild(dbRefs.dispensas, firebaseId));
         }
 
         async function adicionarCompraFirebase(compra) {
-            const novaCompraRef = push(dbRefs.compras);
-            await set(novaCompraRef, { ...compra, firebaseId: novaCompraRef.key });
+            const novaCompraRef = window.dbPush(dbRefs.compras);
+            await window.dbSet(novaCompraRef, { ...compra, firebaseId: novaCompraRef.key });
         }
 
         async function limparVendasFirebase() {
-            await set(dbRefs.vendas, null);
+            await window.dbSet(dbRefs.vendas, null);
         }
 
-        // ==================== SINCRONIZAÇÃO MANUAL ====================
-        window.sincronizarDados = async function() {
+        // ==================== SINCRONIZAÇÃO ====================
+        function sincronizarDados() {
             const status = document.getElementById('syncStatus');
             const text = document.getElementById('syncText');
             
             status.className = 'sync-status syncing';
             text.textContent = 'Sincronizando...';
 
-            try {
-                // Forçar sincronização manual (útil quando offline/online)
-                await get(ref(db, '.info/connected'));
-                
+            const dados = {
+                faturas: faturas,
+                dispensas: dispensas,
+                comprasDispensa: comprasDispensa,
+                lastSync: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
+
+            const dataStr = JSON.stringify(dados, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                if (navigator.share) {
+                    const file = new File([dataBlob], 'acai-rei-dados.json', { type: 'application/json' });
+                    navigator.share({
+                        title: 'Dados Açaí Rei',
+                        text: 'Backup dos dados do sistema',
+                        files: [file]
+                    }).catch(() => {
+                        link.click();
+                    });
+                } else {
+                    link.click();
+                }
+            } else {
+                link.click();
+            }
+
+            URL.revokeObjectURL(url);
+
+            setTimeout(() => {
                 status.className = 'sync-status synced';
                 text.textContent = 'Sincronizado';
-                
-                // Backup local como fallback
-                const dados = {
-                    faturas, dispensas, comprasDispensa,
-                    lastSync: new Date().toISOString()
-                };
-                localStorage.setItem('acaiRei_backup', JSON.stringify(dados));
-                
-            } catch (error) {
-                console.error('Erro sincronização:', error);
-                status.className = 'sync-status offline';
-                text.textContent = 'Erro na sincronização';
+                alert('Dados sincronizados! O arquivo de backup foi baixado.');
+            }, 1000);
+        }
+
+        function importarDados(arquivo) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    
+                    if (confirm(`Importar dados de ${new Date(dados.lastSync).toLocaleString('pt-BR')}?\n\nIsso substituirá os dados atuais.`)) {
+                        faturas = dados.faturas || [];
+                        dispensas = dados.dispensas || [];
+                        comprasDispensa = dados.comprasDispensa || [];
+                        
+                        salvarDadosLocais();
+                        carregarInterface();
+                        
+                        alert('Dados importados com sucesso!');
+                    }
+                } catch (err) {
+                    alert('Erro ao importar arquivo. Verifique se é um backup válido.');
+                }
+            };
+            reader.readAsText(arquivo);
+        }
+
+        // ==================== DADOS LOCAIS ====================
+        function carregarDadosLocais() {
+            const dados = JSON.parse(localStorage.getItem('acaiRei_dados')) || {};
+            faturas = dados.faturas || [];
+            dispensas = dados.dispensas || [];
+            comprasDispensa = dados.comprasDispensa || [];
+        }
+
+        function salvarDadosLocais() {
+            const dados = {
+                faturas: faturas,
+                dispensas: dispensas,
+                comprasDispensa: comprasDispensa,
+                lastSync: new Date().toISOString()
+            };
+            localStorage.setItem('acaiRei_dados', JSON.stringify(dados));
+        }
+
+        // ==================== INTERFACE ====================
+        function carregarInterface() {
+            carregarFaturas();
+            carregarDispensas();
+            atualizarTabela();
+            atualizarTotal();
+            
+            if (caixaAberto) {
+                updateCaixaUI();
+                const badge = document.getElementById('caixaStatusBadge');
+                badge.className = 'badge badge-success';
+                badge.innerHTML = '<i class="fas fa-lock-open"></i> Caixa Aberto';
             }
-        };
+        }
+
+        function logout() {
+            if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
+            if (caixaAberto) fecharCaixa();
+            
+            localStorage.removeItem('acaiRei_session');
+            location.reload();
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
 
         // ==================== CAIXA ====================
-        window.toggleCaixa = async function() {
+        function toggleCaixa() {
             if (!caixaAberto) {
-                await abrirCaixa();
+                abrirCaixa();
             } else {
                 if (confirm('Deseja realmente fechar o caixa?')) {
-                    await fecharCaixa();
+                    fecharCaixa();
                 }
             }
-        };
+        }
 
         async function abrirCaixa() {
             caixaAberto = true;
@@ -928,8 +1512,7 @@
 
         async function fecharCaixa() {
             const horaFechamento = new Date();
-            caixaAberto = false;
-
+            
             faturaAtual.dataFechamento = horaFechamento.toISOString();
             faturaAtual.produtos = [...produtosVenda];
             faturaAtual.total = calcularTotal();
@@ -972,7 +1555,12 @@
                 icon.innerHTML = '<i class="fas fa-lock"></i>';
                 icon.classList.remove('aberto');
                 titulo.textContent = 'Caixa Fechado';
-                info.classList.remove('show');
+                
+                if (fechado) {
+                    const fechamento = new Date(faturaAtual.dataFechamento);
+                    document.getElementById('horaFechamento').textContent = formatarDataHora(fechamento);
+                    document.getElementById('duracao').textContent = calcularDuracao(horaAbertura, fechamento);
+                }
                 
                 btn.innerHTML = '<i class="fas fa-lock-open"></i> Abrir Caixa';
                 btn.classList.remove('btn-fechar');
@@ -981,7 +1569,7 @@
         }
 
         // ==================== PRODUTOS / VENDAS ====================
-        window.addProduto = async function(e) {
+        async function addProduto(e) {
             e.preventDefault();
             
             if (!caixaAberto) {
@@ -1001,17 +1589,17 @@
 
             await adicionarVendaFirebase(produto);
             document.getElementById('vendaForm').reset();
-        };
+        }
 
-        window.removerProduto = async function(id) {
+        async function removerProduto(id) {
             if (!confirm('Deseja remover esta venda?')) return;
             const venda = produtosVenda.find(p => p.id === id);
             if (venda && venda.firebaseId) {
                 await removerVendaFirebase(venda.firebaseId);
             }
-        };
+        }
 
-        window.editarProduto = function(id) {
+        function editarProduto(id) {
             const produto = produtosVenda.find(p => p.id === id);
             if (!produto) return;
 
@@ -1023,9 +1611,9 @@
             document.getElementById('editTipo').value = produto.tipo;
 
             document.getElementById('modalEditar').classList.add('active');
-        };
+        }
 
-        window.salvarEdicao = async function(e) {
+        async function salvarEdicao(e) {
             e.preventDefault();
             
             const id = parseInt(document.getElementById('editId').value);
@@ -1043,7 +1631,7 @@
                 await atualizarVendaFirebase(produto.firebaseId, novosDados);
                 closeModalEditar();
             }
-        };
+        }
 
         function atualizarTabela() {
             const tbody = document.getElementById('tabelaProdutos');
@@ -1080,12 +1668,12 @@
             document.getElementById('totalVendas').textContent = 'R$ ' + calcularTotal().toFixed(2).replace('.', ',');
         }
 
-        window.closeModalEditar = function() {
+        function closeModalEditar() {
             document.getElementById('modalEditar').classList.remove('active');
-        };
+        }
 
         // ==================== DISPENSAS ====================
-        window.addDispensa = async function(e) {
+        async function addDispensa(e) {
             e.preventDefault();
             
             const dispensa = {
@@ -1097,7 +1685,7 @@
 
             await adicionarDispensaFirebase(dispensa);
             document.getElementById('dispensaForm').reset();
-        };
+        }
 
         function carregarDispensas() {
             const containerCadastrados = document.getElementById('listaDispensasCadastradas');
@@ -1136,20 +1724,20 @@
             atualizarTotalDispensa();
         }
 
-        window.removerDispensa = async function(id, firebaseId) {
+        async function removerDispensa(id, firebaseId) {
             if (!confirm('Deseja remover este produto?')) return;
             itensSelecionados.delete(id);
             await removerDispensaFirebase(firebaseId);
-        };
+        }
 
-        window.toggleItemDispensa = function(id) {
+        function toggleItemDispensa(id) {
             if (itensSelecionados.has(id)) {
                 itensSelecionados.delete(id);
             } else {
                 itensSelecionados.add(id);
             }
             carregarDispensas();
-        };
+        }
 
         function atualizarTotalDispensa() {
             let total = 0;
@@ -1163,7 +1751,7 @@
             document.getElementById('btnFinalizarCompra').disabled = itensSelecionados.size === 0;
         }
 
-        window.finalizarCompraDispensa = async function() {
+        async function finalizarCompraDispensa() {
             if (itensSelecionados.size === 0) return;
 
             const itens = [];
@@ -1189,7 +1777,7 @@
             carregarDispensas();
             
             alert(`Compra registrada!\nTotal: R$ ${total.toFixed(2).replace('.', ',')}`);
-        };
+        }
 
         function carregarHistoricoDispensas() {
             const container = document.getElementById('historicoDispensas');
@@ -1222,7 +1810,7 @@
             }).join('');
         }
 
-        window.verDetalhesCompra = function(id) {
+        function verDetalhesCompra(id) {
             const compra = comprasDispensa.find(c => c.id === id);
             if (!compra) return;
 
@@ -1254,11 +1842,11 @@
 
             document.getElementById('modalCompraBody').innerHTML = html;
             document.getElementById('modalCompra').classList.add('active');
-        };
+        }
 
-        window.closeModalCompra = function() {
+        function closeModalCompra() {
             document.getElementById('modalCompra').classList.remove('active');
-        };
+        }
 
         // ==================== FATURAS ====================
         function carregarFaturas() {
@@ -1296,7 +1884,7 @@
             }).join('');
         }
 
-        window.verFatura = function(id) {
+        function verFatura(id) {
             const f = faturas.find(x => x.id === id);
             if (!f) return;
 
@@ -1340,45 +1928,36 @@
 
             document.getElementById('modalBody').innerHTML = html;
             document.getElementById('modalFatura').classList.add('active');
-        };
+        }
 
-        window.closeModalFatura = function() {
+        function closeModalFatura() {
             document.getElementById('modalFatura').classList.remove('active');
-        };
+        }
 
         // ==================== UTILITÁRIOS ====================
         function formatarDataHora(date) {
             return date.toLocaleString('pt-BR');
         }
 
-        window.switchTab = function(tabName, btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
+        function calcularDuracao(inicio, fim) {
+            const diff = Math.floor((fim - inicio) / 1000 / 60);
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            return `${h}h ${m}min`;
+        }
+
+        // Input de importação
+        const importInput = document.createElement('input');
+        importInput.type = 'file';
+        importInput.accept = '.json';
+        importInput.style.display = 'none';
+        importInput.id = 'importInput';
+        importInput.onchange = (e) => {
+            if (e.target.files.length > 0) {
+                importarDados(e.target.files[0]);
+            }
         };
-
-        window.logout = async function() {
-            if (caixaAberto && !confirm('O caixa está aberto! Deseja fechar e sair?')) return;
-            if (caixaAberto) await fecharCaixa();
-            
-            localStorage.removeItem('acaiRei_session');
-            location.reload();
-        };
-
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const input = document.getElementById('password');
-            input.type = input.type === 'password' ? 'text' : 'password';
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Tornar funções globais para os event handlers inline
-        Object.assign(window, {
-            db, caixaAberto, horaAbertura, produtosVenda, faturas, 
-            faturaAtual, currentUser, dispensas, comprasDispensa, itensSelecionados
-        });
+        document.body.appendChild(importInput);
     </script>
 </body>
 </html>
