@@ -2087,22 +2087,94 @@ function imprimirFiadoBobina(id){
   abrirModalBobina(f);
 }
 
-// Função de impressão otimizada para MP-4200 TH
+// Impressão direta via iframe — não trava na tela do navegador
 function imprimirBobina(){
   if(!fiadoAtualPrint){toast('error','Nenhum fiado selecionado');return;}
 
-  // Força o foco na bobina antes de imprimir
   const bobina = document.getElementById('bobinaPrint');
-  if(bobina){
-    bobina.style.display = 'block';
-    bobina.style.visibility = 'visible';
-  }
+  if(!bobina){toast('error','Erro ao gerar bobina');return;}
 
-  // Pequeno delay para garantir renderização
+  // Cria iframe invisível
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.left = '-9999px';
+  iframe.style.top = '-9999px';
+  iframe.style.width = '79mm';
+  iframe.style.height = '1px';
+  iframe.style.border = 'none';
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        @page { size: 79mm auto; margin: 0; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+          width: 79mm;
+          max-width: 79mm;
+          min-width: 79mm;
+          margin: 0;
+          padding: 4mm 2mm;
+          background: #fff;
+          color: #000;
+          font-family: 'Courier New', 'Consolas', monospace;
+          font-size: 11pt;
+          font-weight: bold;
+          line-height: 1.35;
+        }
+        .center { text-align: center; }
+        .right { text-align: right; }
+        .linha { border-top: 1px dashed #000; margin: 3px 0; }
+        .linha-esp { margin: 6px 0; }
+        .bold { font-weight: bold; }
+        .item-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 10pt;
+          font-weight: bold;
+          margin-bottom: 1px;
+        }
+        .item-row .desc { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-row .qtd { width: 32px; text-align: center; flex-shrink: 0; }
+        .item-row .val { width: 58px; text-align: right; flex-shrink: 0; }
+        .item-row .tot { width: 58px; text-align: right; flex-shrink: 0; }
+        .assinatura { margin-top: 16px; border-top: 1px dashed #000; padding-top: 6px; }
+        .assinatura-line { border-bottom: 1.5px solid #000; width: 70%; margin: 16px auto 4px; height: 18px; }
+        .cabecalho { font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 2px; }
+        .sub-cabecalho { font-size: 9pt; text-align: center; margin-bottom: 4px; }
+        .nota-num { font-size: 11pt; font-weight: bold; text-align: center; margin: 3px 0; }
+        .info-row { font-size: 10pt; margin-bottom: 1px; }
+        .info-label { display: inline-block; width: 85px; }
+        .total-row { font-size: 12pt; font-weight: bold; text-align: right; margin: 2px 0; }
+        .forma-pag { font-size: 10pt; margin: 2px 0; }
+      </style>
+    </head>
+    <body>
+      ${bobina.innerHTML}
+    </body>
+    </html>
+  `);
+  doc.close();
+
+  // Aguarda renderização e imprime
   setTimeout(() => {
-    window.print();
-    toast('success','Enviado para impressão!');
-  }, 200);
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      toast('success', 'Imprimindo...');
+    } catch(e) {
+      toast('error', 'Erro na impressão: ' + e.message);
+    }
+    // Remove iframe após impressão
+    setTimeout(() => {
+      if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    }, 3000);
+  }, 300);
 }
 
 // ── RELATÓRIO ──
