@@ -388,24 +388,116 @@ tbody tr:last-child td{border-bottom:none}
 
 /* ======== IMPRESSÃO BOBINA 79MM ======== */
 @media print{
-  body *{visibility:hidden}
-  .bobina-print,.bobina-print *{visibility:visible}
-  .bobina-print{position:absolute;left:0;top:0;width:79mm;max-width:79mm;margin:0;padding:0;background:#fff;color:#000;font-family:'Courier New',monospace;font-size:10pt;line-height:1.4}
+  @page {
+    size: 79mm auto;
+    margin: 0;
+  }
+  body *{visibility:hidden !important}
+  .bobina-print,.bobina-print *{visibility:visible !important}
+  .bobina-print{
+    position:fixed !important;
+    left:0 !important;
+    top:0 !important;
+    width:79mm !important;
+    max-width:79mm !important;
+    min-width:79mm !important;
+    margin:0 !important;
+    padding:4mm 2mm !important;
+    background:#fff !important;
+    color:#000 !important;
+    font-family:'Courier New','Consolas',monospace !important;
+    font-size:11pt !important;
+    font-weight:bold !important;
+    line-height:1.35 !important;
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
 }
 
-.bobina-preview{background:#fff;color:#000;font-family:'Courier New',monospace;font-size:10pt;line-height:1.4;width:79mm;max-width:79mm;margin:0 auto;padding:8px;border:1px dashed #ccc}
+.bobina-preview{
+  background:#fff;
+  color:#000;
+  font-family:'Courier New','Consolas',monospace;
+  font-size:11pt;
+  font-weight:bold;
+  line-height:1.35;
+  width:79mm;
+  max-width:79mm;
+  margin:0 auto;
+  padding:4mm 2mm;
+  border:1px dashed #999;
+  box-sizing:border-box;
+}
 .bobina-preview .center{text-align:center}
 .bobina-preview .right{text-align:right}
-.bobina-preview .linha{border-top:1px dashed #000;margin:4px 0}
-.bobina-preview .linha-esp{margin:8px 0}
+.bobina-preview .linha{border-top:1px dashed #000;margin:3px 0}
+.bobina-preview .linha-esp{margin:6px 0}
 .bobina-preview .bold{font-weight:bold}
-.bobina-preview .item-row{display:flex;justify-content:space-between;font-size:9pt}
-.bobina-preview .item-row .desc{flex:1}
-.bobina-preview .item-row .qtd{width:30px;text-align:center}
-.bobina-preview .item-row .val{width:55px;text-align:right}
-.bobina-preview .item-row .tot{width:55px;text-align:right}
-.bobina-preview .assinatura{margin-top:20px;border-top:1px dashed #000;padding-top:8px}
-.bobina-preview .assinatura-line{border-bottom:1px solid #000;width:60%;margin:20px auto 5px;height:20px}
+.bobina-preview .item-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:10pt;
+  font-weight:bold;
+  margin-bottom:1px;
+}
+.bobina-preview .item-row .desc{
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.bobina-preview .item-row .qtd{
+  width:32px;
+  text-align:center;
+  flex-shrink:0;
+}
+.bobina-preview .item-row .val{
+  width:58px;
+  text-align:right;
+  flex-shrink:0;
+}
+.bobina-preview .item-row .tot{
+  width:58px;
+  text-align:right;
+  flex-shrink:0;
+}
+.bobina-preview .assinatura{margin-top:16px;border-top:1px dashed #000;padding-top:6px}
+.bobina-preview .assinatura-line{border-bottom:1.5px solid #000;width:70%;margin:16px auto 4px;height:18px}
+.bobina-preview .cabecalho{
+  font-size:14pt;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:2px;
+}
+.bobina-preview .sub-cabecalho{
+  font-size:9pt;
+  text-align:center;
+  margin-bottom:4px;
+}
+.bobina-preview .nota-num{
+  font-size:11pt;
+  font-weight:bold;
+  text-align:center;
+  margin:3px 0;
+}
+.bobina-preview .info-row{
+  font-size:10pt;
+  margin-bottom:1px;
+}
+.bobina-preview .info-label{
+  display:inline-block;
+  width:85px;
+}
+.bobina-preview .total-row{
+  font-size:12pt;
+  font-weight:bold;
+  text-align:right;
+  margin:2px 0;
+}
+.bobina-preview .forma-pag{
+  font-size:10pt;
+  margin:2px 0;
+}
 
 .btn-print-bobina{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fcd34d;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
 .btn-print-bobina:hover{background:rgba(245,158,11,.25)}
@@ -443,6 +535,7 @@ tbody tr:last-child td{border-bottom:none}
 ::-webkit-scrollbar-thumb{background:rgba(167,139,250,.2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(167,139,250,.4)}
 </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 </head>
@@ -1923,7 +2016,7 @@ async function removerFiado(id){
 
 // ======== IMPRESSÃO BOBINA 79MM ========
 
-// Gerar HTML da bobina no formato da nota fiscal da foto
+// Gerar HTML da bobina otimizado para MP-4200 TH + bobina 79mm
 function gerarBobinaHTML(dados){
   const d=new Date(dados.data);
   const dataStr=d.toLocaleDateString('pt-BR');
@@ -1941,41 +2034,39 @@ function gerarBobinaHTML(dados){
 
   return `
     <div class="bobina-print" id="bobinaPrint">
-      <div class="center bold">AÇAÍ REI</div>
-      <div class="center">Sistema de Controle de Caixa</div>
+      <div class="cabecalho">AÇAÍ REI</div>
+      <div class="sub-cabecalho">Sistema de Controle de Caixa</div>
       <div class="linha"></div>
-      <div class="center bold">*************NOTA No. ${notaNum}*************</div>
+      <div class="nota-num">*** NOTA No. ${notaNum} ***</div>
       <div class="linha"></div>
-      <div>Cliente...: ${dados.cliente}</div>
-      ${dados.telefone?`<div>Telefone..: ${dados.telefone}</div>`:''}
-      <div>Emitido em:${dataStr}</div>
-      <div>Hora......:${horaStr}</div>
-      <div>Vendedor..:${dados.vendedor||'LOJA'}</div>
-      ${dados.entregador?`<div>ENTREGADOR: ${dados.entregador}</div>`:''}
+      <div class="info-row"><span class="info-label">Cliente:</span>${dados.cliente}</div>
+      ${dados.telefone?`<div class="info-row"><span class="info-label">Telefone:</span>${dados.telefone}</div>`:''}
+      <div class="info-row"><span class="info-label">Emitido em:</span>${dataStr}</div>
+      <div class="info-row"><span class="info-label">Hora:</span>${horaStr}</div>
+      <div class="info-row"><span class="info-label">Vendedor:</span>${dados.vendedor||'LOJA'}</div>
+      ${dados.entregador?`<div class="info-row"><span class="info-label">Entregador:</span>${dados.entregador}</div>`:''}
       <div class="linha"></div>
-      <div style="display:flex;justify-content:space-between;font-size:9pt;font-weight:bold">
-        <span style="width:30px">COD</span>
-        <span style="flex:1">PRODUTO</span>
-        <span style="width:30px;text-align:center">QTD</span>
-        <span style="width:55px;text-align:right">VALOR</span>
-        <span style="width:55px;text-align:right">TOTAL</span>
+      <div class="item-row" style="border-bottom:1px dashed #000;padding-bottom:2px;margin-bottom:2px">
+        <span class="desc">PRODUTO</span>
+        <span class="qtd">QTD</span>
+        <span class="val">UNIT</span>
+        <span class="tot">TOTAL</span>
       </div>
-      <div class="linha"></div>
       ${itensHTML}
       <div class="linha"></div>
-      <div class="right">SubTotal..: ${fmt(dados.total).replace('R$ ','')}</div>
-      <div class="right">Total: ${fmt(dados.total).replace('R$ ','')}</div>
-      <div class="right">Troco.......: 0,00</div>
+      <div class="total-row">SubTotal: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="total-row">Total: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="total-row">Troco: 0,00</div>
       <div class="linha"></div>
-      <div class="center bold">***********Forma de pagamento***********</div>
-      <div>FIADO (PAGAR DEPOIS)..........: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="center bold" style="font-size:10pt">FORMA DE PAGAMENTO</div>
+      <div class="forma-pag">FIADO (PAGAR DEPOIS): ${fmt(dados.total).replace('R$ ','')}</div>
       <div class="linha"></div>
-      <div>Declaro ter recebido a mercadoria,</div>
-      <div>Assinatura:</div>
+      <div style="font-size:9pt;margin-top:4px">Declaro ter recebido a mercadoria.</div>
+      <div style="font-size:9pt">Assinatura:</div>
       <div class="assinatura-line"></div>
       <div class="linha-esp"></div>
-      <div class="center bold">DOCUMENTO NAO FISCAL</div>
-      <div class="center bold">**Obrigado Pela Preferencia**</div>
+      <div class="center bold" style="font-size:10pt">DOCUMENTO NAO FISCAL</div>
+      <div class="center bold" style="font-size:10pt">** Obrigado Pela Preferencia **</div>
       <div class="linha"></div>
     </div>
   `;
@@ -1996,11 +2087,22 @@ function imprimirFiadoBobina(id){
   abrirModalBobina(f);
 }
 
-// Função de impressão real
+// Função de impressão otimizada para MP-4200 TH
 function imprimirBobina(){
   if(!fiadoAtualPrint){toast('error','Nenhum fiado selecionado');return;}
-  window.print();
-  toast('success','Enviado para impressão!');
+
+  // Força o foco na bobina antes de imprimir
+  const bobina = document.getElementById('bobinaPrint');
+  if(bobina){
+    bobina.style.display = 'block';
+    bobina.style.visibility = 'visible';
+  }
+
+  // Pequeno delay para garantir renderização
+  setTimeout(() => {
+    window.print();
+    toast('success','Enviado para impressão!');
+  }, 200);
 }
 
 // ── RELATÓRIO ──
