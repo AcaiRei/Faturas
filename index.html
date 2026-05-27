@@ -367,6 +367,60 @@ tbody tr:last-child td{border-bottom:none}
 .btn-secondary{padding:.7rem 1.2rem;background:var(--gb);border:1px solid var(--gbr);border-radius:10px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.4rem}
 .btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--tp)}
 
+/* ======== FIADO / CREDIÁRIO ======== */
+.fiado-lista{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.fiado-item{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;transition:all .25s}
+.fiado-item:hover{background:rgba(255,255,255,.07)}
+.fiado-item.pago{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.2)}
+.fiado-info{flex:1;min-width:200px}
+.fiado-nome{font-size:.95rem;color:var(--tp);font-weight:600;margin-bottom:.2rem}
+.fiado-meta{font-size:.78rem;color:var(--tm);display:flex;gap:1rem;flex-wrap:wrap}
+.fiado-meta i{color:var(--vs);margin-right:.2rem}
+.fiado-valor{font-family:'Playfair Display',serif;font-size:1.2rem;color:#a78bfa}
+.fiado-valor.pago{color:#86efac}
+.fiado-acoes{display:flex;gap:.4rem}
+
+.fiado-itens-lista{background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:1rem;margin-top:1rem}
+.fiado-itens-lista h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.8rem}
+.fiado-item-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
+.fiado-item-row:last-child{border-bottom:none}
+.fiado-item-row strong{color:var(--tp)}
+
+/* ======== IMPRESSÃO BOBINA 79MM ======== */
+@media print{
+  body *{visibility:hidden}
+  .bobina-print,.bobina-print *{visibility:visible}
+  .bobina-print{position:absolute;left:0;top:0;width:79mm;max-width:79mm;margin:0;padding:0;background:#fff;color:#000;font-family:'Courier New',monospace;font-size:10pt;line-height:1.4}
+}
+
+.bobina-preview{background:#fff;color:#000;font-family:'Courier New',monospace;font-size:10pt;line-height:1.4;width:79mm;max-width:79mm;margin:0 auto;padding:8px;border:1px dashed #ccc}
+.bobina-preview .center{text-align:center}
+.bobina-preview .right{text-align:right}
+.bobina-preview .linha{border-top:1px dashed #000;margin:4px 0}
+.bobina-preview .linha-esp{margin:8px 0}
+.bobina-preview .bold{font-weight:bold}
+.bobina-preview .item-row{display:flex;justify-content:space-between;font-size:9pt}
+.bobina-preview .item-row .desc{flex:1}
+.bobina-preview .item-row .qtd{width:30px;text-align:center}
+.bobina-preview .item-row .val{width:55px;text-align:right}
+.bobina-preview .item-row .tot{width:55px;text-align:right}
+.bobina-preview .assinatura{margin-top:20px;border-top:1px dashed #000;padding-top:8px}
+.bobina-preview .assinatura-line{border-bottom:1px solid #000;width:60%;margin:20px auto 5px;height:20px}
+
+.btn-print-bobina{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fcd34d;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
+.btn-print-bobina:hover{background:rgba(245,158,11,.25)}
+
+/* ======== FIADO FORM ======== */
+.fiado-form-produto{display:flex;gap:.5rem;align-items:flex-end;margin-bottom:.8rem}
+.fiado-form-produto .fg{flex:1}
+.fiado-form-produto .btn-add-prod{padding:.8rem 1rem;background:var(--vb);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:.9rem;transition:all .3s}
+.fiado-form-produto .btn-add-prod:hover{background:#6d28d9}
+.fiado-itens-temp{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;padding:1rem;margin-top:.5rem;margin-bottom:1rem}
+.fiado-itens-temp h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.6rem}
+.fiado-temp-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
+.fiado-temp-row:last-child{border-bottom:none}
+.fiado-temp-row .del{color:var(--rose);cursor:pointer;font-size:.8rem;margin-left:.5rem}
+
 @media(max-width:1024px){
   .sidebar{display:none}
   .tabs-mobile{display:flex;gap:.4rem;margin-bottom:1.5rem;background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:.4rem;overflow-x:auto}
@@ -382,12 +436,14 @@ tbody tr:last-child td{border-bottom:none}
 @media(max-width:480px){
   .form-grid{grid-template-columns:1fr}.glass-card{padding:1.2rem}
   .stats-grid{grid-template-columns:1fr}
+  .fiado-form-produto{flex-direction:column;align-items:stretch}
 }
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(167,139,250,.2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(167,139,250,.4)}
 </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -447,6 +503,7 @@ tbody tr:last-child td{border-bottom:none}
         <button class="nav-item" onclick="switchTab('vendas',this)"><i class="fas fa-ice-cream"></i> Vendas</button>
         <button class="nav-item" onclick="switchTab('dispensas',this)"><i class="fas fa-cart-shopping"></i> Despesas</button>
         <button class="nav-item" onclick="switchTab('faturas',this)"><i class="fas fa-receipt"></i> Faturas</button>
+        <button class="nav-item" onclick="switchTab('fiado',this)"><i class="fas fa-hand-holding-dollar"></i> Fiado</button>
       </nav>
     </aside>
 
@@ -457,6 +514,7 @@ tbody tr:last-child td{border-bottom:none}
         <button class="nav-item" onclick="switchTab('vendas',this)"><i class="fas fa-ice-cream"></i> Vendas</button>
         <button class="nav-item" onclick="switchTab('dispensas',this)"><i class="fas fa-cart-shopping"></i> Despesas</button>
         <button class="nav-item" onclick="switchTab('faturas',this)"><i class="fas fa-receipt"></i> Faturas</button>
+        <button class="nav-item" onclick="switchTab('fiado',this)"><i class="fas fa-hand-holding-dollar"></i> Fiado</button>
       </div>
 
       <!-- DASHBOARD -->
@@ -495,6 +553,12 @@ tbody tr:last-child td{border-bottom:none}
             <div class="stat-label">Pendente (Presencial)</div>
             <div class="stat-value" id="dashPendente">R$ 0,00</div>
             <div class="stat-sub" id="dashQtdPendente">0 pedidos</div>
+          </div>
+          <div class="stat-card s-violet">
+            <div class="stat-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+            <div class="stat-label">Total em Fiado</div>
+            <div class="stat-value" id="dashFiado">R$ 0,00</div>
+            <div class="stat-sub" id="dashQtdFiado">0 contas</div>
           </div>
         </div>
 
@@ -740,6 +804,100 @@ tbody tr:last-child td{border-bottom:none}
           <div id="listaFaturas"><div class="empty"><i class="fas fa-receipt"></i><p>Nenhuma fatura</p></div></div>
         </div>
       </div>
+
+      <!-- ======== NOVA ABA: FIADO / CREDIÁRIO ======== -->
+      <div class="tab-pane" id="tab-fiado">
+        <div class="glass-card">
+          <div class="card-head">
+            <h3 class="card-title"><i class="fas fa-hand-holding-dollar"></i> Registrar Fiado (Pagar Depois)</h3>
+            <span class="status-badge badge-closed" id="fiadoBadge"><i class="fas fa-lock"></i> Caixa Fechado</span>
+          </div>
+
+          <!-- Formulário de Fiado -->
+          <form id="fiadoForm" onsubmit="registrarFiado(event)">
+            <div class="form-grid">
+              <div class="fg"><label>Cliente *</label><input type="text" id="fiadoCliente" placeholder="Nome completo do cliente" required></div>
+              <div class="fg"><label>Telefone</label><input type="tel" id="fiadoTelefone" placeholder="(27) 99999-9999"></div>
+              <div class="fg"><label>Endereço</label><input type="text" id="fiadoEndereco" placeholder="Rua, número, bairro…"></div>
+              <div class="fg"><label>Vendedor *</label><input type="text" id="fiadoVendedor" placeholder="Nome do vendedor" required></div>
+              <div class="fg"><label>Entregador</label><input type="text" id="fiadoEntregador" placeholder="Nome do entregador"></div>
+              <div class="fg"><label>Observação</label><input type="text" id="fiadoObs" placeholder="Ex: pagar dia 05, sem juros…"></div>
+            </div>
+
+            <!-- Adicionar Produtos ao Fiado -->
+            <div style="margin-top:1.5rem">
+              <h4 style="font-size:.78rem;color:var(--ts);letter-spacing:.8px;text-transform:uppercase;margin-bottom:1rem">
+                <i class="fas fa-list" style="margin-right:.4rem"></i> Itens da Compra
+              </h4>
+              <div class="fiado-form-produto">
+                <div class="fg">
+                  <label>Código</label>
+                  <input type="text" id="fiadoCodProd" placeholder="Cód" style="width:80px">
+                </div>
+                <div class="fg" style="flex:2">
+                  <label>Produto</label>
+                  <input type="text" id="fiadoNomeProd" placeholder="Nome do produto">
+                </div>
+                <div class="fg" style="width:100px">
+                  <label>Qtd</label>
+                  <input type="number" id="fiadoQtdProd" placeholder="1" step="0.01" min="0.01" value="1">
+                </div>
+                <div class="fg" style="width:120px">
+                  <label>Valor Unit. (R$)</label>
+                  <input type="number" id="fiadoValorProd" placeholder="0,00" step="0.01" min="0">
+                </div>
+                <button type="button" class="btn-add-prod" onclick="addProdutoFiado()" style="margin-bottom:.2rem">
+                  <i class="fas fa-plus"></i> Add
+                </button>
+              </div>
+
+              <!-- Lista temporária de itens -->
+              <div class="fiado-itens-temp" id="fiadoItensTemp" style="display:none">
+                <h4>Itens Adicionados</h4>
+                <div id="fiadoItensTempList"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--gbr)">
+                  <span style="font-size:.85rem;color:var(--tm)">SubTotal</span>
+                  <span style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#a78bfa" id="fiadoSubTotal">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Status do Fiado -->
+            <div style="margin-top:1rem">
+              <div class="fg">
+                <label>Status do Fiado</label>
+                <div class="pagamento-status">
+                  <button type="button" class="status-opt sel-pendente" id="optFiadoPendente" onclick="setStatusFiado('pendente')">
+                    <i class="fas fa-clock"></i> Pendente
+                  </button>
+                  <button type="button" class="status-opt" id="optFiadoPago" onclick="setStatusFiado('pago')">
+                    <i class="fas fa-check-circle"></i> Pago
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top:1.5rem" id="btnRegistrarFiado" disabled>
+              <i class="fas fa-save"></i> Registrar Fiado
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista de Fiados -->
+        <div class="glass-card">
+          <div class="card-head">
+            <h3 class="card-title"><i class="fas fa-list-check"></i> Contas em Aberto</h3>
+            <div class="filter-bar" style="margin:0">
+              <div class="search-box" style="min-width:200px"><i class="fas fa-search"></i><input type="text" id="searchFiado" placeholder="Buscar cliente…" oninput="renderFiados()"></div>
+              <select class="filter-select" id="filtStatusFiado" onchange="renderFiados()">
+                <option value="">Todos</option><option value="pendente">Pendentes</option><option value="pago">Pagos</option>
+              </select>
+            </div>
+          </div>
+          <div class="result-count" id="resultCountFiado"></div>
+          <div id="listaFiados"><div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div></div>
+        </div>
+      </div>
     </main>
   </div>
 </div>
@@ -828,6 +986,39 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
+<!-- NOVO: Modal Detalhes do Fiado -->
+<div class="modal" id="modalFiado" onclick="if(event.target===this)closeModal('modalFiado')">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-head">
+      <h3><i class="fas fa-hand-holding-dollar" style="color:var(--gold);margin-right:.5rem"></i> Detalhes do Fiado</h3>
+      <button class="btn-close" onclick="closeModal('modalFiado')">&times;</button>
+    </div>
+    <div id="modalFiadoBody"></div>
+  </div>
+</div>
+
+<!-- NOVO: Modal Impressão Bobina 79mm -->
+<div class="modal" id="modalBobina" onclick="if(event.target===this)closeModal('modalBobina')">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-head">
+      <h3><i class="fas fa-print" style="color:var(--gold);margin-right:.5rem"></i> Prévia da Bobina</h3>
+      <button class="btn-close" onclick="closeModal('modalBobina')">&times;</button>
+    </div>
+    <p style="font-size:.8rem;color:var(--tm);margin-bottom:1rem">
+      <i class="fas fa-ruler" style="margin-right:.3rem"></i> Formato: Bobina Térmica 79mm x 40m
+    </p>
+    <div id="modalBobinaBody"></div>
+    <div style="display:flex;gap:.5rem;margin-top:1rem">
+      <button class="btn-print-bobina" onclick="imprimirBobina()" style="flex:1">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+      <button class="btn-secondary" onclick="closeModal('modalBobina')">
+        <i class="fas fa-times"></i> Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -846,6 +1037,12 @@ let itensSelecionados=new Map();
 let db=null,dbRefs={},currentUser=null;
 let timerInterval=null,notificacoes=[],favoritos=[],metaDia=0;
 let statusPagAtual='pago',soundEnabled=true;
+
+// ======== NOVAS VARIÁVEIS FIADO ========
+let fiados=[];
+let fiadoItensTemp=[];
+let statusFiadoAtual='pendente';
+let fiadoAtualPrint=null;
 
 // Audio context for sounds
 let audioCtx=null;
@@ -880,7 +1077,8 @@ function initFirebase(){
   dbRefs={
     caixa:window.dbRef(db,'caixa'),vendas:window.dbRef(db,'vendas'),
     faturas:window.dbRef(db,'faturas'),dispensas:window.dbRef(db,'dispensas'),
-    compras:window.dbRef(db,'compras'),conn:window.dbRef(db,'.info/connected')
+    compras:window.dbRef(db,'compras'),conn:window.dbRef(db,'.info/connected'),
+    fiados:window.dbRef(db,'fiados')
   };
   setupListeners();checkAuth();
 }
@@ -908,6 +1106,11 @@ function setupListeners(){
   window.dbOnValue(dbRefs.compras,snap=>{
     comprasDispensa=snap.val()?Object.values(snap.val()).reverse():[];
     renderHistoricoDispensas();updateDashboard();
+  });
+  // NOVO: Listener de fiados
+  window.dbOnValue(dbRefs.fiados,snap=>{
+    fiados=snap.val()?Object.values(snap.val()).reverse():[];
+    renderFiados();updateDashboard();
   });
   window.dbOnValue(dbRefs.conn,snap=>{
     const on=snap.val()===true;
@@ -1025,8 +1228,13 @@ function updateCaixaUI(){
 }
 function updateBadge(){
   const b=document.getElementById('caixaBadge');
+  const fb=document.getElementById('fiadoBadge');
   if(caixaAberto){b.className='status-badge badge-open';b.innerHTML='<i class="fas fa-lock-open"></i> Caixa Aberto'}
   else{b.className='status-badge badge-closed';b.innerHTML='<i class="fas fa-lock"></i> Caixa Fechado'}
+  if(fb){
+    if(caixaAberto){fb.className='status-badge badge-open';fb.innerHTML='<i class="fas fa-lock-open"></i> Caixa Aberto'}
+    else{fb.className='status-badge badge-closed';fb.innerHTML='<i class="fas fa-lock"></i> Caixa Fechado'}
+  }
 }
 function startTimer(){
   stopTimer();if(!caixaAberto||!horaAbertura)return;
@@ -1057,6 +1265,9 @@ function updateDashboard(){
   const delivTotal=deliv.reduce((s,p)=>s+p.valor,0);
   const pendentes=produtosVenda.filter(p=>p.status==='pendente'&&p.tipo==='Presencial');
   const totalPend=pendentes.reduce((s,p)=>s+p.valor,0);
+  // NOVO: Total fiado
+  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
+  const totalFiado=fiadosPendentes.reduce((s,f)=>s+f.total,0);
 
   document.getElementById('dashTotalVendas').textContent=fmt(totalV);
   document.getElementById('dashQtdVendas').textContent=qtdV+' venda'+(qtdV!==1?'s':'');
@@ -1068,6 +1279,12 @@ function updateDashboard(){
   sEl.textContent=fmt(Math.abs(saldo));sEl.style.color=saldo>=0?'#5eead4':'#fb7185';
   document.getElementById('dashPendente').textContent=fmt(totalPend);
   document.getElementById('dashQtdPendente').textContent=pendentes.length+' pedido'+(pendentes.length!==1?'s':'');
+  // NOVO: Dashboard fiado
+  const dfEl=document.getElementById('dashFiado');
+  if(dfEl){dfEl.textContent=fmt(totalFiado);dfEl.style.color=totalFiado>0?'#fcd34d':'#5eead4';}
+  const dqfEl=document.getElementById('dashQtdFiado');
+  if(dqfEl){dqfEl.textContent=fiadosPendentes.length+' conta'+(fiadosPendentes.length!==1?'s':'');}
+
   document.getElementById('balReceita').textContent=fmt(totalV);
   document.getElementById('balDespesas').textContent=fmt(totalD);
   const bsEl=document.getElementById('balSaldo');
@@ -1308,7 +1525,7 @@ function renderTabela(){
     return`<tr style="${isPendente?'background:rgba(245,158,11,.04)':''}">
       <td>
         <strong style="color:var(--tp)">${p.cliente}</strong>
-        <div class="cliente-hist-btn" onclick="verHistoricoCliente('${p.cliente.replace(/'/g,"\\'")}')">${p.obs?'<span style="color:var(--tm);font-size:.72rem">📝 '+p.obs+'</span><br>':''}ver histórico</div>
+        <div class="cliente-hist-btn" onclick="verHistoricoCliente('${p.cliente.replace(/'/g,"\'")}')">${p.obs?'<span style="color:var(--tm);font-size:.72rem">📝 '+p.obs+'</span><br>':''}ver histórico</div>
       </td>
       <td>${p.nome}</td>
       <td style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</td>
@@ -1493,6 +1710,299 @@ function verFatura(id){
   openModal('modalFatura');
 }
 
+// ======== NOVAS FUNÇÕES: FIADO / CREDIÁRIO ========
+
+// Status do fiado
+function setStatusFiado(s){
+  statusFiadoAtual=s;
+  document.getElementById('optFiadoPendente').className='status-opt'+(s==='pendente'?' sel-pendente':'');
+  document.getElementById('optFiadoPago').className='status-opt'+(s==='pago'?' sel-pago':'');
+}
+
+// Adicionar produto temporário ao fiado
+function addProdutoFiado(){
+  const cod=document.getElementById('fiadoCodProd').value.trim()||'—';
+  const nome=document.getElementById('fiadoNomeProd').value.trim();
+  const qtd=parseFloat(document.getElementById('fiadoQtdProd').value)||1;
+  const valor=parseFloat(document.getElementById('fiadoValorProd').value)||0;
+
+  if(!nome){toast('error','Informe o nome do produto');return;}
+  if(valor<=0){toast('error','Informe o valor unitário');return;}
+
+  fiadoItensTemp.push({cod,nome,qtd,valor,subtotal:valor*qtd});
+
+  // Limpar campos
+  document.getElementById('fiadoCodProd').value='';
+  document.getElementById('fiadoNomeProd').value='';
+  document.getElementById('fiadoQtdProd').value='1';
+  document.getElementById('fiadoValorProd').value='';
+  document.getElementById('fiadoNomeProd').focus();
+
+  renderFiadoItensTemp();
+  soundSuccess();
+}
+
+// Renderizar itens temporários do fiado
+function renderFiadoItensTemp(){
+  const box=document.getElementById('fiadoItensTemp');
+  const list=document.getElementById('fiadoItensTempList');
+  const btn=document.getElementById('btnRegistrarFiado');
+
+  if(!fiadoItensTemp.length){box.style.display='none';btn.disabled=true;return;}
+
+  box.style.display='block';btn.disabled=false;
+
+  const total=fiadoItensTemp.reduce((s,it)=>s+it.subtotal,0);
+
+  list.innerHTML=fiadoItensTemp.map((it,i)=>`
+    <div class="fiado-temp-row">
+      <span><strong>${it.cod}</strong> ${it.nome} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
+      <div>
+        <strong style="color:#a78bfa">${fmt(it.subtotal)}</strong>
+        <span class="del" onclick="removerProdutoFiadoTemp(${i})"><i class="fas fa-times"></i></span>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('fiadoSubTotal').textContent=fmt(total);
+}
+
+// Remover produto temporário
+function removerProdutoFiadoTemp(idx){
+  fiadoItensTemp.splice(idx,1);
+  renderFiadoItensTemp();
+}
+
+// Registrar fiado no Firebase
+async function registrarFiado(e){
+  e.preventDefault();
+  if(!caixaAberto){toast('error','Abra o caixa primeiro!');soundError();return;}
+  if(!fiadoItensTemp.length){toast('error','Adicione pelo menos um produto');return;}
+
+  const total=fiadoItensTemp.reduce((s,it)=>s+it.subtotal,0);
+  const now=new Date();
+
+  const fiadoData={
+    id:Date.now(),
+    cliente:document.getElementById('fiadoCliente').value.trim(),
+    telefone:document.getElementById('fiadoTelefone').value.trim(),
+    endereco:document.getElementById('fiadoEndereco').value.trim(),
+    vendedor:document.getElementById('fiadoVendedor').value.trim(),
+    entregador:document.getElementById('fiadoEntregador').value.trim(),
+    obs:document.getElementById('fiadoObs').value.trim(),
+    itens:[...fiadoItensTemp],
+    total,
+    status:statusFiadoAtual,
+    data:now.toISOString(),
+    dataPagamento:null
+  };
+
+  await fbAdd(dbRefs.fiados,fiadoData);
+
+  // Limpar formulário
+  document.getElementById('fiadoForm').reset();
+  fiadoItensTemp=[];
+  renderFiadoItensTemp();
+  statusFiadoAtual='pendente';
+  setStatusFiado('pendente');
+
+  toast('success','Fiado registrado! Total: '+fmt(total));
+  soundSuccess();
+  pushNotif('warning','Novo Fiado',fiadoData.cliente+' — '+fmt(total));
+
+  // Abrir prévia da bobina automaticamente
+  fiadoAtualPrint=fiadoData;
+  abrirModalBobina(fiadoData);
+}
+
+// Renderizar lista de fiados
+function renderFiados(){
+  const c=document.getElementById('listaFiados');
+  const q=(document.getElementById('searchFiado')?.value||'').toLowerCase();
+  const fs=document.getElementById('filtStatusFiado')?.value||'';
+
+  let list=fiados;
+  if(q)list=list.filter(f=>f.cliente.toLowerCase().includes(q));
+  if(fs)list=list.filter(f=>f.status===fs);
+
+  const rc=document.getElementById('resultCountFiado');
+  rc.textContent=fiados.length?`Mostrando ${list.length} de ${fiados.length} contas`:'';
+
+  if(!list.length){
+    c.innerHTML='<div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div>';
+    return;
+  }
+
+  c.innerHTML='<div class="fiado-lista">'+list.map((f,i)=>{
+    const d=new Date(f.data);
+    const isPago=f.status==='pago';
+    return`
+      <div class="fiado-item ${isPago?'pago':''}">
+        <div class="fiado-info">
+          <div class="fiado-nome">${f.cliente} ${isPago?'<span style="color:#86efac;font-size:.75rem">✓ PAGO</span>':''}</div>
+          <div class="fiado-meta">
+            <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
+            <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span><i class="fas fa-cubes"></i>${f.itens.length} item(s)</span>
+            ${f.telefone?`<span><i class="fas fa-phone"></i>${f.telefone}</span>`:''}
+            ${f.vendedor?`<span><i class="fas fa-user"></i>${f.vendedor}</span>`:''}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="fiado-valor ${isPago?'pago':''}">${fmt(f.total)}</div>
+          <div class="fiado-acoes">
+            <button class="btn-act edit" onclick="verDetalhesFiado(${f.id})" title="Ver detalhes"><i class="fas fa-eye"></i></button>
+            <button class="btn-act pago" onclick="imprimirFiadoBobina(${f.id})" title="Imprimir bobina"><i class="fas fa-print"></i></button>
+            ${!isPago?`<button class="btn-act pago" onclick="marcarFiadoPago(${f.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>`:''}
+            <button class="btn-act del" onclick="removerFiado(${f.id})" title="Remover"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>`;
+  }).join('')+'</div>';
+}
+
+// Ver detalhes do fiado
+function verDetalhesFiado(id){
+  const f=fiados.find(x=>x.id===id);if(!f)return;
+  const d=new Date(f.data);
+  const body=document.getElementById('modalFiadoBody');
+
+  body.innerHTML=`
+    <div class="detail-row"><span>Cliente</span><strong>${f.cliente}</strong></div>
+    ${f.telefone?`<div class="detail-row"><span>Telefone</span><strong>${f.telefone}</strong></div>`:''}
+    ${f.endereco?`<div class="detail-row"><span>Endereço</span><strong>${f.endereco}</strong></div>`:''}
+    <div class="detail-row"><span>Vendedor</span><strong>${f.vendedor||'—'}</strong></div>
+    ${f.entregador?`<div class="detail-row"><span>Entregador</span><strong>${f.entregador}</strong></div>`:''}
+    <div class="detail-row"><span>Data</span><strong>${formatDT(d)}</strong></div>
+    <div class="detail-row"><span>Status</span><strong style="color:${f.status==='pago'?'#86efac':'#fcd34d'}">${f.status==='pago'?'✓ Pago':'⏳ Pendente'}</strong></div>
+    ${f.obs?`<div class="detail-row"><span>Observação</span><strong>${f.obs}</strong></div>`:''}
+
+    <div class="fiado-itens-lista">
+      <h4>Itens da Compra</h4>
+      ${f.itens.map(it=>`
+        <div class="fiado-item-row">
+          <span><strong>${it.cod}</strong> ${it.nome} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
+          <strong>${fmt(it.subtotal)}</strong>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="summary-footer ${f.status==='pago'?'green':''}">
+      <span class="label">TOTAL ${f.status==='pago'?'PAGO':'PENDENTE'}</span>
+      <span class="amount">${fmt(f.total)}</span>
+    </div>
+
+    <div style="display:flex;gap:.5rem;margin-top:1rem">
+      <button class="btn-print-bobina" onclick="imprimirFiadoBobina(${f.id})" style="flex:1">
+        <i class="fas fa-print"></i> Imprimir Bobina
+      </button>
+      ${f.status==='pendente'?`<button class="btn-primary" onclick="marcarFiadoPago(${f.id});closeModal('modalFiado');" style="flex:1">
+        <i class="fas fa-check"></i> Marcar Pago
+      </button>`:''}
+    </div>
+  `;
+  openModal('modalFiado');
+}
+
+// Marcar fiado como pago
+async function marcarFiadoPago(id){
+  const f=fiados.find(x=>x.id===id);
+  if(f?.firebaseId){
+    await fbUpd(dbRefs.fiados,f.firebaseId,{status:'pago',dataPagamento:new Date().toISOString()});
+    toast('success','Fiado marcado como pago!');soundSuccess();
+    pushNotif('success','Fiado Quitado',f.cliente+' — '+fmt(f.total));
+  }
+}
+
+// Remover fiado
+async function removerFiado(id){
+  if(!confirm('Remover esta conta de fiado?'))return;
+  const f=fiados.find(x=>x.id===id);
+  if(f?.firebaseId){await fbDel(dbRefs.fiados,f.firebaseId);toast('info','Fiado removido');}
+}
+
+// ======== IMPRESSÃO BOBINA 79MM ========
+
+// Gerar HTML da bobina no formato da nota fiscal da foto
+function gerarBobinaHTML(dados){
+  const d=new Date(dados.data);
+  const dataStr=d.toLocaleDateString('pt-BR');
+  const horaStr=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const notaNum=String(dados.id).slice(-4);
+
+  let itensHTML=dados.itens.map(it=>`
+    <div class="item-row">
+      <span class="desc">${it.cod!=='—'?it.cod+' ':''}${it.nome}</span>
+      <span class="qtd">${it.qtd}</span>
+      <span class="val">${fmt(it.valor).replace('R$ ','')}</span>
+      <span class="tot">${fmt(it.subtotal).replace('R$ ','')}</span>
+    </div>
+  `).join('');
+
+  return `
+    <div class="bobina-print" id="bobinaPrint">
+      <div class="center bold">AÇAÍ REI</div>
+      <div class="center">Sistema de Controle de Caixa</div>
+      <div class="linha"></div>
+      <div class="center bold">*************NOTA No. ${notaNum}*************</div>
+      <div class="linha"></div>
+      <div>Cliente...: ${dados.cliente}</div>
+      ${dados.telefone?`<div>Telefone..: ${dados.telefone}</div>`:''}
+      <div>Emitido em:${dataStr}</div>
+      <div>Hora......:${horaStr}</div>
+      <div>Vendedor..:${dados.vendedor||'LOJA'}</div>
+      ${dados.entregador?`<div>ENTREGADOR: ${dados.entregador}</div>`:''}
+      <div class="linha"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9pt;font-weight:bold">
+        <span style="width:30px">COD</span>
+        <span style="flex:1">PRODUTO</span>
+        <span style="width:30px;text-align:center">QTD</span>
+        <span style="width:55px;text-align:right">VALOR</span>
+        <span style="width:55px;text-align:right">TOTAL</span>
+      </div>
+      <div class="linha"></div>
+      ${itensHTML}
+      <div class="linha"></div>
+      <div class="right">SubTotal..: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="right">Total: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="right">Troco.......: 0,00</div>
+      <div class="linha"></div>
+      <div class="center bold">***********Forma de pagamento***********</div>
+      <div>FIADO (PAGAR DEPOIS)..........: ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="linha"></div>
+      <div>Declaro ter recebido a mercadoria,</div>
+      <div>Assinatura:</div>
+      <div class="assinatura-line"></div>
+      <div class="linha-esp"></div>
+      <div class="center bold">DOCUMENTO NAO FISCAL</div>
+      <div class="center bold">**Obrigado Pela Preferencia**</div>
+      <div class="linha"></div>
+    </div>
+  `;
+}
+
+// Abrir modal com prévia da bobina
+function abrirModalBobina(dados){
+  fiadoAtualPrint=dados;
+  const html=gerarBobinaHTML(dados);
+  document.getElementById('modalBobinaBody').innerHTML=`<div class="bobina-preview">${html}</div>`;
+  openModal('modalBobina');
+}
+
+// Imprimir fiado na bobina
+function imprimirFiadoBobina(id){
+  const f=fiados.find(x=>x.id===id);
+  if(!f){toast('error','Fiado não encontrado');return;}
+  abrirModalBobina(f);
+}
+
+// Função de impressão real
+function imprimirBobina(){
+  if(!fiadoAtualPrint){toast('error','Nenhum fiado selecionado');return;}
+  window.print();
+  toast('success','Enviado para impressão!');
+}
+
 // ── RELATÓRIO ──
 function abrirRelatorio(){
   const totalV=calcTotal(),qtdV=produtosVenda.length,totalD=comprasDispensa.reduce((s,c)=>s+c.total,0),saldo=totalV-totalD;
@@ -1500,6 +2010,10 @@ function abrirRelatorio(){
   const pres=produtosVenda.filter(p=>p.tipo==='Presencial'),deliv=produtosVenda.filter(p=>p.tipo==='Delivery');
   const presTotal=pres.reduce((s,p)=>s+p.valor,0),delivTotal=deliv.reduce((s,p)=>s+p.valor,0);
   const pendentes=produtosVenda.filter(p=>p.status==='pendente');
+  // NOVO: Fiados no relatório
+  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
+  const totalFiado=fiadosPendentes.reduce((s,f)=>s+f.total,0);
+
   document.getElementById('modalRelatorioBody').innerHTML=`
     <div style="text-align:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gbr)">
       <div style="font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Gerado em</div>
@@ -1512,6 +2026,7 @@ function abrirRelatorio(){
       <div class="stat-card s-rose"><div class="stat-label">Saldo</div><div class="stat-value" style="color:${saldo>=0?'#5eead4':'#fb7185'}">${fmt(Math.abs(saldo))}</div><div class="stat-sub">${saldo>=0?'Positivo':'Negativo'}</div></div>
     </div>
     ${pendentes.length?`<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#fcd34d"><i class="fas fa-triangle-exclamation"></i> ${pendentes.length} pedido(s) presencial ainda <strong>pendente(s)</strong> — Total: ${fmt(pendentes.reduce((s,p)=>s+p.valor,0))}</div>`:''}
+    ${fiadosPendentes.length?`<div style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#a78bfa"><i class="fas fa-hand-holding-dollar"></i> ${fiadosPendentes.length} conta(s) de <strong>fiado pendente(s)</strong> — Total: ${fmt(totalFiado)}</div>`:''}
     <div class="report-section"><h4>Por Forma de Pagamento</h4>
       ${Object.keys(pays).length?Object.entries(pays).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>`
         <div class="report-pay-row"><span>${k} <span style="color:var(--tm);font-size:.78rem">(${v.count}x)</span></span><strong>${fmt(v.total)} · ${totalV?Math.round(v.total/totalV*100):0}%</strong></div>
@@ -1531,21 +2046,58 @@ function abrirRelatorio(){
 function exportarRelatorio(){
   const totalV=calcTotal(),totalD=comprasDispensa.reduce((s,c)=>s+c.total,0);
   const pays={};produtosVenda.forEach(p=>{if(!pays[p.pagamento])pays[p.pagamento]={total:0,count:0};pays[p.pagamento].total+=p.valor;pays[p.pagamento].count++});
-  let txt=`============================\n   RELATÓRIO — AÇAÍ REI\n============================\nGerado: ${new Date().toLocaleString('pt-BR')}\n\n`;
-  txt+=`RECEITA TOTAL : ${fmt(totalV)}\nDESPESAS      : ${fmt(totalD)}\nSALDO LÍQUIDO : ${fmt(totalV-totalD)}\nTICKET MÉDIO  : ${fmt(produtosVenda.length?totalV/produtosVenda.length:0)}\n\n`;
-  txt+=`PAGAMENTOS:\n`;Object.entries(pays).forEach(([k,v])=>{txt+=`  ${k}: ${fmt(v.total)} (${v.count}x)\n`});
-  txt+=`\nVENDAS:\n${'─'.repeat(45)}\n`;
-  produtosVenda.forEach(p=>{const h=p.hora?new Date(p.hora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';txt+=`${h} | ${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}${p.obs?' | '+p.obs:''}\n`});
+  let txt=`============================
+   RELATÓRIO — AÇAÍ REI
+============================
+Gerado: ${new Date().toLocaleString('pt-BR')}
+
+`;
+  txt+=`RECEITA TOTAL : ${fmt(totalV)}
+DESPESAS      : ${fmt(totalD)}
+SALDO LÍQUIDO : ${fmt(totalV-totalD)}
+TICKET MÉDIO  : ${fmt(produtosVenda.length?totalV/produtosVenda.length:0)}
+
+`;
+  txt+=`PAGAMENTOS:
+`;Object.entries(pays).forEach(([k,v])=>{txt+=`  ${k}: ${fmt(v.total)} (${v.count}x)
+`});
+  txt+=`
+VENDAS:
+${'─'.repeat(45)}
+`;
+  produtosVenda.forEach(p=>{const h=p.hora?new Date(p.hora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';txt+=`${h} | ${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}${p.obs?' | '+p.obs:''}
+`});
+  // NOVO: Fiados no relatório
+  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
+  if(fiadosPendentes.length){
+    txt+=`
+FIADOS PENDENTES:
+${'─'.repeat(45)}
+`;
+    fiadosPendentes.forEach(f=>{txt+=`${f.cliente} | ${fmt(f.total)} | ${f.itens.length} itens | ${new Date(f.data).toLocaleDateString('pt-BR')}
+`;f.itens.forEach(it=>{txt+=`  ${it.cod} ${it.nome} | ${it.qtd}x | ${fmt(it.valor)} | ${fmt(it.subtotal)}
+`;});});
+  }
   baixarTxt(txt,`relatorio-acairei-${new Date().toISOString().split('T')[0]}.txt`);toast('success','Relatório exportado!');
 }
 
 function exportarFatura(id){
   const f=faturas.find(x=>x.id===id);if(!f)return;
-  let txt=`============================\n   FATURA — AÇAÍ REI\n============================\nAberta: ${formatDT(new Date(f.dataAbertura))}\n`;
-  if(f.dataFechamento)txt+=`Fechada: ${formatDT(new Date(f.dataFechamento))}\n`;
-  txt+=`\n${'─'.repeat(45)}\n`;
-  (f.produtos||[]).forEach(p=>{txt+=`${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}\n`});
-  txt+=`${'─'.repeat(45)}\nTOTAL: ${fmt(f.total||0)}\n`;
+  let txt=`============================
+   FATURA — AÇAÍ REI
+============================
+Aberta: ${formatDT(new Date(f.dataAbertura))}
+`;
+  if(f.dataFechamento)txt+=`Fechada: ${formatDT(new Date(f.dataFechamento))}
+`;
+  txt+=`
+${'─'.repeat(45)}
+`;
+  (f.produtos||[]).forEach(p=>{txt+=`${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}
+`});
+  txt+=`${'─'.repeat(45)}
+TOTAL: ${fmt(f.total||0)}
+`;
   baixarTxt(txt,`fatura-acairei.txt`);toast('success','Fatura exportada!');
 }
 function baixarTxt(txt,nome){const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=nome;a.click();URL.revokeObjectURL(url)}
@@ -1582,7 +2134,7 @@ function toast(type,msg){
 
 // ── BACKUP ──
 function sincronizarDados(){
-  const dados={faturas,dispensas,comprasDispensa,favoritos,lastSync:new Date().toISOString()};
+  const dados={faturas,dispensas,comprasDispensa,favoritos,fiados,lastSync:new Date().toISOString()};
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');
   a.href=url;a.download=`acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
