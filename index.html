@@ -7,8 +7,10 @@
 <meta name="theme-color" content="#0f0a1e">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com wss://*.firebasedatabase.app; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Açaí Rei — Sistema de Caixa Seguro</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --vd:#1e0533;--vm:#3d0f6b;--vb:#7c3aed;--vs:#a78bfa;--vg:#c4b5fd;
@@ -30,15 +32,23 @@ body::before{content:'';position:fixed;inset:0;background:
   radial-gradient(ellipse 60% 40% at 80% 80%,rgba(20,184,166,.1) 0%,transparent 50%),
   radial-gradient(ellipse 40% 30% at 50% 50%,rgba(245,158,11,.05) 0%,transparent 70%);
   pointer-events:none;z-index:0}
-
-/* LOGIN */
+:focus-visible{outline:2px solid var(--vs);outline-offset:2px;border-radius:6px}
+::selection{background:rgba(124,58,237,.4);color:#fff}
 .login-screen{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-.login-card{background:var(--gb);border:1px solid var(--gbr);backdrop-filter:blur(24px);padding:3rem 2.5rem;border-radius:28px;width:100%;max-width:400px;box-shadow:var(--sv),inset 0 1px 0 rgba(255,255,255,.08);animation:riseIn .7s cubic-bezier(.16,1,.3,1) both}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;pointer-events:none;animation:blobFloat 14s ease-in-out infinite}
+.blob.b1{width:420px;height:420px;background:#7c3aed;top:-8%;left:-6%}
+.blob.b2{width:360px;height:360px;background:#14b8a6;bottom:-10%;right:-8%;animation-delay:-5s}
+.blob.b3{width:300px;height:300px;background:#f59e0b;bottom:20%;left:30%;opacity:.22;animation-delay:-9s}
+@keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-40px) scale(1.08)}66%{transform:translate(-25px,25px) scale(.95)}}
+.login-card{position:relative;background:var(--gb);border:1px solid var(--gbr);backdrop-filter:blur(24px);padding:3rem 2.5rem;border-radius:28px;width:100%;max-width:410px;box-shadow:var(--sv),inset 0 1px 0 rgba(255,255,255,.08);animation:riseIn .7s cubic-bezier(.16,1,.3,1) both;overflow:hidden}
+.login-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--vb),var(--gold),transparent)}
 @keyframes riseIn{from{opacity:0;transform:translateY(40px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .login-logo{text-align:center;margin-bottom:1.6rem}
-.logo-ring{width:88px;height:88px;border-radius:50%;margin:0 auto 1.2rem;padding:3px;background:linear-gradient(135deg,var(--vb),var(--gold));box-shadow:0 0 30px rgba(124,58,237,.4)}
-.logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
-.login-logo h1{font-family:'Playfair Display',serif;font-size:2rem;color:var(--tp)}
+.logo-ring{width:92px;height:92px;border-radius:50%;margin:0 auto 1.2rem;padding:3px;background:conic-gradient(from 0deg,var(--vb),var(--gold),var(--teal),var(--vb));box-shadow:0 0 34px rgba(124,58,237,.45);animation:ringSpin 8s linear infinite}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+.logo-ring img,.logo-ring .logo-fallback{width:100%;height:100%;border-radius:50%;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:2.4rem;background:var(--s1);animation:ringSpinRev 8s linear infinite}
+@keyframes ringSpinRev{to{transform:rotate(-360deg)}}
+.login-logo h1{font-family:'Playfair Display',serif;font-size:2.1rem;background:linear-gradient(135deg,var(--vg) 0%,var(--gold) 120%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .login-logo p{color:var(--tm);font-size:.85rem;margin-top:.3rem}
 .sec-chips{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
 .sec-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .65rem;border-radius:999px;font-size:.66rem;font-weight:600;letter-spacing:.4px;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.25);color:#5eead4}
@@ -51,15 +61,21 @@ body::before{content:'';position:fixed;inset:0;background:
 .field-wrap input::placeholder{color:var(--tm)}
 .field-wrap input:focus{outline:none;border-color:var(--vs);background:rgba(255,255,255,.08);box-shadow:0 0 0 4px rgba(167,139,250,.1)}
 .field-wrap:focus-within i.icon{color:var(--vs)}
-.toggle-pass{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--tm);cursor:pointer;transition:color .3s}
+.toggle-pass{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--tm);cursor:pointer;transition:color .3s;background:none;border:none;font-size:.9rem}
 .toggle-pass:hover{color:var(--vs)}
 .strength-meter{height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.6rem}
 .strength-fill{height:100%;width:0;border-radius:999px;transition:all .4s ease}
 .strength-label{font-size:.7rem;color:var(--tm);margin-top:.35rem;display:flex;justify-content:space-between}
 .error-box{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.3);border-radius:10px;padding:.75rem 1rem;color:#fca5a5;font-size:.85rem;display:none;align-items:center;gap:.6rem;margin-bottom:1.2rem}
+.error-box.show{display:flex;animation:shakeX .45s}
 .lockout-box{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);border-radius:10px;padding:.75rem 1rem;color:#fca5a5;font-size:.85rem;display:none;align-items:center;gap:.6rem;margin-bottom:1.2rem}
+.lockout-box.show{display:flex}
 .setup-note{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.75rem 1rem;color:var(--vs);font-size:.82rem;display:none;align-items:flex-start;gap:.6rem;margin-bottom:1.2rem;line-height:1.45}
-.btn-login{width:100%;padding:1rem;background:linear-gradient(135deg,var(--vb),#5b21b6);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(124,58,237,.4)}
+.setup-note.show{display:flex}
+.btn-login{width:100%;padding:1rem;background:linear-gradient(135deg,var(--vb),#5b21b6);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(124,58,237,.4);position:relative;overflow:hidden}
+.btn-login::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%)}
+.btn-login:hover:not(:disabled)::before{animation:shine .8s}
+@keyframes shine{to{transform:translateX(100%)}}
 .btn-login:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.5)}
 .btn-login:disabled{opacity:.6;cursor:not-allowed}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spinning .8s linear infinite}
@@ -67,71 +83,66 @@ body::before{content:'';position:fixed;inset:0;background:
 .shake{animation:shakeX .45s cubic-bezier(.36,.07,.19,.97)}
 @keyframes shakeX{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
 
-/* APP */
 .app-screen{display:none;position:relative;z-index:1;min-height:100vh}
-.topbar{background:rgba(26,16,48,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--gbr);padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.app-screen.visible{display:block}
+.topbar{background:rgba(26,16,48,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--gbr);padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:.5rem}
 [data-theme="light"] .topbar{background:rgba(224,210,255,.85)}
 .topbar-brand{display:flex;align-items:center;gap:.75rem}
-.crown-box{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff}
-.brand-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--tp)}
-.topbar-right{display:flex;align-items:center;gap:.7rem}
-.sec-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;cursor:pointer;transition:all .3s}
+.crown-box{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;box-shadow:0 4px 14px rgba(245,158,11,.35)}
+.brand-name{font-family:'Playfair Display',serif;font-size:1.2rem;background:linear-gradient(135deg,var(--vg),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{display:flex;align-items:center;gap:.55rem;flex-wrap:nowrap}
+.sec-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;cursor:pointer;transition:all .3s;font-family:'DM Sans',sans-serif}
 .sec-pill:hover{background:rgba(20,184,166,.2)}
-.sync-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;transition:all .3s}
+.sync-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;transition:all .3s;white-space:nowrap}
 .sync-pill.offline{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.25);color:#fcd34d}
 .sync-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
 .sync-pill.synced .dot{animation:pdot 2s infinite}
 @keyframes pdot{0%,100%{opacity:1}50%{opacity:.3}}
-.btn-topbar{padding:.4rem .8rem;background:var(--gb);border:1px solid var(--gbr);border-radius:8px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.4rem}
-.btn-topbar:hover{background:rgba(255,255,255,.08);color:var(--tp)}
+.btn-topbar{padding:.4rem .8rem;background:var(--gb);border:1px solid var(--gbr);border-radius:8px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.btn-topbar:hover{background:rgba(255,255,255,.08);color:var(--tp);border-color:var(--vs)}
 .btn-logout{padding:.4rem .8rem;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2);border-radius:8px;color:#fb7185;font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .3s}
 .btn-logout:hover{background:rgba(244,63,94,.2)}
-.user-chip{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--ts)}
-.notif-bell{position:relative;cursor:pointer;color:var(--ts);font-size:1.1rem;padding:.4rem;transition:color .3s}
+.user-chip{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--ts);white-space:nowrap}
+.notif-bell{position:relative;cursor:pointer;color:var(--ts);font-size:1.1rem;padding:.4rem;transition:color .3s;background:none;border:none}
 .notif-bell:hover{color:var(--tp)}
 .notif-badge{position:absolute;top:0;right:0;width:8px;height:8px;background:var(--rose);border-radius:50%;display:none;animation:pulseBadge 1.5s infinite}
 @keyframes pulseBadge{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
 .notif-badge.show{display:block}
 .theme-btn{background:none;border:none;color:var(--ts);font-size:1rem;cursor:pointer;padding:.4rem;border-radius:8px;transition:all .3s}
 .theme-btn:hover{color:var(--tp);background:var(--gb)}
-
-/* TOAST */
 .toast-container{position:fixed;top:76px;right:1.2rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{background:var(--s2);border:1px solid var(--gbr);border-radius:14px;padding:.8rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.84rem;color:var(--tp);box-shadow:0 8px 30px rgba(0,0,0,.4);pointer-events:all;animation:toastIn .4s cubic-bezier(.16,1,.3,1) both;max-width:300px}
+.toast{background:var(--s2);border:1px solid var(--gbr);border-radius:14px;padding:.8rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.84rem;color:var(--tp);box-shadow:0 8px 30px rgba(0,0,0,.4);pointer-events:all;animation:toastIn .4s cubic-bezier(.16,1,.3,1) both;max-width:320px}
 @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 .toast.out{animation:toastOut .3s ease forwards}
 @keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
 .toast i{font-size:.95rem;flex-shrink:0}
-.toast.success i{color:var(--green)}.toast.warning i{color:var(--gold)}.toast.error i{color:var(--rose)}.toast.info i{color:var(--vs)}
-
-/* CAIXA ALERT */
+.toast.success{border-color:rgba(34,197,94,.3)}.toast.success i{color:var(--green)}
+.toast.warning{border-color:rgba(245,158,11,.3)}.toast.warning i{color:var(--gold)}
+.toast.error{border-color:rgba(244,63,94,.3)}.toast.error i{color:var(--rose)}
+.toast.info i{color:var(--vs)}
 .caixa-alert{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:.8rem 1.2rem;display:none;align-items:center;gap:.7rem;font-size:.85rem;color:#fcd34d;margin-top:1rem}
 .caixa-alert.show{display:flex}
-
-/* LAYOUT */
 .main-layout{display:flex;max-width:1440px;margin:0 auto;padding:2rem 1.5rem;gap:1.5rem}
 .sidebar{width:220px;flex-shrink:0}
 .sidebar-nav{display:flex;flex-direction:column;gap:.4rem;position:sticky;top:80px}
-.nav-item{display:flex;align-items:center;gap:.8rem;padding:.85rem 1.2rem;border-radius:14px;border:none;background:transparent;color:var(--tm);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .25s;text-align:left;width:100%}
+.nav-item{display:flex;align-items:center;gap:.8rem;padding:.85rem 1.2rem;border-radius:14px;border:none;background:transparent;color:var(--tm);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .25s;text-align:left;width:100%;position:relative}
 .nav-item i{width:20px;text-align:center;font-size:.95rem}
-.nav-item:hover{background:var(--gb);color:var(--ts)}
+.nav-item:hover{background:var(--gb);color:var(--ts);transform:translateX(3px)}
 .nav-item.active{background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.3);color:var(--vg)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;background:linear-gradient(to bottom,var(--vb),var(--gold))}
 .nav-item.active i{color:var(--vs)}
 .content-area{flex:1;min-width:0}
 .tab-pane{display:none;animation:fadeSlide .4s ease both}
 .tab-pane.active{display:block}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* CARDS */
-.glass-card{background:var(--gb);border:1px solid var(--gbr);border-radius:20px;padding:2rem;backdrop-filter:blur(12px);box-shadow:0 4px 30px rgba(0,0,0,.2);margin-bottom:1.5rem}
+.glass-card{background:var(--gb);border:1px solid var(--gbr);border-radius:20px;padding:2rem;backdrop-filter:blur(12px);box-shadow:0 4px 30px rgba(0,0,0,.2);margin-bottom:1.5rem;transition:border-color .3s,transform .25s}
+.glass-card:hover{border-color:rgba(167,139,250,.3)}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
 .card-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--tp);display:flex;align-items:center;gap:.6rem}
 .card-title i{color:var(--vs);font-size:1rem}
-
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:1rem;margin-bottom:1.5rem}
-.stat-card{background:var(--gb);border:1px solid var(--gbr);border-radius:18px;padding:1.4rem 1.5rem;position:relative;overflow:hidden;transition:transform .25s;backdrop-filter:blur(8px)}
-.stat-card:hover{transform:translateY(-3px)}
+.stat-card{background:var(--gb);border:1px solid var(--gbr);border-radius:18px;padding:1.4rem 1.5rem;position:relative;overflow:hidden;transition:transform .25s,border-color .25s;backdrop-filter:blur(8px)}
+.stat-card:hover{transform:translateY(-4px);border-color:rgba(167,139,250,.35)}
 .stat-card::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.12}
 .stat-card.s-violet::before{background:var(--vb)}.stat-card.s-teal::before{background:var(--teal)}
 .stat-card.s-gold::before{background:var(--gold)}.stat-card.s-rose::before{background:var(--rose)}
@@ -146,57 +157,48 @@ body::before{content:'';position:fixed;inset:0;background:
 .stat-value{font-family:'Playfair Display',serif;font-size:1.55rem;color:var(--tp)}
 .stat-sub{font-size:.78rem;color:var(--tm);margin-top:.3rem}
 
-/* META / GOAL */
 .meta-bar-wrap{margin-top:.8rem}
 .meta-bar-track{background:rgba(255,255,255,.08);border-radius:999px;height:7px;overflow:hidden}
-.meta-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--vb));transition:width .8s ease}
+.meta-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--vb));transition:width .8s ease;box-shadow:0 0 10px rgba(20,184,166,.4)}
 .meta-pct{font-size:.72rem;color:var(--tm);margin-top:.3rem}
-
-/* PAY BREAKDOWN */
 .pay-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.8rem;margin-top:1rem}
-.pay-row{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;padding:.9rem 1rem}
+.pay-row{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;padding:.9rem 1rem;transition:all .25s}
+.pay-row:hover{background:rgba(255,255,255,.07);transform:translateY(-2px)}
 .pay-row-label{font-size:.72rem;color:var(--tm);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.3rem}
 .pay-row-val{font-size:1.05rem;font-weight:600;color:var(--tp)}
 .pay-row-count{font-size:.75rem;color:var(--tm);margin-bottom:.5rem}
 .progress-bar{background:rgba(255,255,255,.06);border-radius:999px;height:5px;overflow:hidden}
 .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--vb),var(--vs));transition:width .8s ease}
-
-/* BALANCE */
 .balance-bar{background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:1.4rem 1.8rem;display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:1.5rem;margin-top:1.2rem}
 .balance-item{text-align:center}
 .balance-label{font-size:.72rem;color:var(--tm);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.4rem}
 .balance-value{font-family:'Playfair Display',serif;font-size:1.5rem}
 .bal-pos{color:#5eead4}.bal-neg{color:#fb7185}.bal-neu{color:var(--vs)}
 .balance-div{font-size:1.5rem;color:var(--tm)}
-
-/* COMPARE */
 .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
-.compare-card{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem}
+.compare-card{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem;transition:all .25s}
+.compare-card:hover{border-color:rgba(167,139,250,.35)}
 .compare-label{font-size:.72rem;color:var(--tm);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.5rem}
 .compare-val{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--tp)}
 .compare-sub{font-size:.78rem;color:var(--tm);margin-top:.2rem}
-
-/* RANKING */
 .rank-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.8rem}
-.rank-item{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px}
+.rank-item{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;transition:all .25s}
+.rank-item:hover{background:rgba(255,255,255,.07);transform:translateX(3px)}
 .rank-pos{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
-.rank-pos.p1{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.rank-pos.p1{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 0 12px rgba(245,158,11,.5)}
 .rank-pos.p2{background:linear-gradient(135deg,#94a3b8,#64748b);color:#fff}
 .rank-pos.p3{background:linear-gradient(135deg,#b45309,#92400e);color:#fff}
 .rank-pos.pn{background:rgba(255,255,255,.08);color:var(--tm)}
-.rank-name{flex:1;font-size:.88rem;color:var(--tp)}
+.rank-name{flex:1;font-size:.88rem;color:var(--tp);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank-count{font-size:.78rem;color:var(--tm)}
 .rank-val{font-size:.9rem;font-weight:600;color:var(--vs)}
-
-/* PICO HOURS */
 .pico-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(55px,1fr));gap:.4rem;margin-top:.8rem}
 .pico-item{text-align:center}
 .pico-bar-wrap{height:60px;display:flex;align-items:flex-end;justify-content:center}
 .pico-bar{width:20px;border-radius:4px 4px 0 0;background:linear-gradient(to top,var(--vb),var(--vs));min-height:4px;transition:height .6s ease}
+.pico-item:hover .pico-bar{background:linear-gradient(to top,var(--gold),#fcd34d)}
 .pico-hour{font-size:.68rem;color:var(--tm);margin-top:.3rem}
 .pico-count{font-size:.65rem;color:var(--ts);font-weight:600}
-
-/* CAIXA */
 .caixa-hero{text-align:center;padding:2.5rem 1rem}
 .caixa-orb{width:120px;height:120px;border-radius:50%;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2.8rem;transition:all .5s}
 .caixa-orb.fechado{background:radial-gradient(circle,#2d1048,#1a0533);border:2px solid rgba(244,63,94,.3);color:#fb7185;box-shadow:0 0 40px rgba(244,63,94,.15),inset 0 0 20px rgba(0,0,0,.5)}
@@ -210,22 +212,19 @@ body::before{content:'';position:fixed;inset:0;background:
 .meta-row i{color:var(--vs);width:14px}
 .meta-row strong{color:var(--tp)}
 .live-timer-wrap{font-size:.82rem;color:var(--tm);margin-bottom:1.5rem;display:none}
-#liveTimer{color:var(--vs);font-weight:600;font-size:1rem}
+#liveTimer{color:var(--vs);font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums}
 .btn-caixa-action{padding:.95rem 2.5rem;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.6rem}
 .btn-abrir{background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;box-shadow:0 4px 20px rgba(20,184,166,.35)}
 .btn-abrir:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(20,184,166,.5)}
 .btn-fechar{background:linear-gradient(135deg,#f43f5e,#be123c);color:#fff;box-shadow:0 4px 20px rgba(244,63,94,.35)}
 .btn-fechar:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(244,63,94,.5)}
 .btn-caixa-action:disabled{opacity:.5;cursor:not-allowed}
-
-/* STATUS BADGE */
 .status-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:600}
 .badge-open{background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.3);color:#5eead4}
 .badge-closed{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.25);color:#fb7185}
 .badge-pago{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;font-size:.7rem;padding:.2rem .5rem}
 .badge-pendente{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fcd34d;font-size:.7rem;padding:.2rem .5rem}
 
-/* META WIDGET */
 .meta-widget{background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:1.2rem 1.5rem;margin-top:1.2rem}
 .meta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
 .meta-header span{font-size:.82rem;color:var(--ts)}
@@ -236,8 +235,6 @@ body::before{content:'';position:fixed;inset:0;background:
 .meta-input::placeholder{color:var(--tm)}
 .btn-meta{padding:.6rem 1rem;background:var(--vb);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .3s}
 .btn-meta:hover{background:#6d28d9}
-
-/* FORMS */
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.2rem}
 .fg{display:flex;flex-direction:column;gap:.4rem}
 .fg label{font-size:.75rem;font-weight:600;color:var(--tm);letter-spacing:.6px;text-transform:uppercase}
@@ -246,8 +243,6 @@ body::before{content:'';position:fixed;inset:0;background:
 .fg select option{background:#1a1030}
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--vs);background:rgba(255,255,255,.08);box-shadow:0 0 0 3px rgba(167,139,250,.1)}
 .fg textarea{resize:vertical;min-height:60px}
-
-/* TROCO */
 .troco-box{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.25);border-radius:14px;padding:1rem 1.2rem;margin-top:.8rem;display:none}
 .troco-box.show{display:block}
 .troco-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;font-size:.9rem}
@@ -255,8 +250,6 @@ body::before{content:'';position:fixed;inset:0;background:
 .troco-row strong{color:var(--tp)}
 .troco-resultado{font-family:'Playfair Display',serif;font-size:1.4rem;color:#5eead4;text-align:center;margin-top:.6rem}
 .troco-negativo{color:#fb7185}
-
-/* FAVORITOS */
 .fav-section{margin-top:1.5rem}
 .fav-section h4{font-size:.78rem;color:var(--tm);letter-spacing:.7px;text-transform:uppercase;margin-bottom:.8rem}
 .fav-chips{display:flex;flex-wrap:wrap;gap:.5rem}
@@ -266,14 +259,10 @@ body::before{content:'';position:fixed;inset:0;background:
 .fav-chip .fav-del:hover{color:var(--rose)}
 .btn-add-fav{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;background:var(--gb);border:1px dashed var(--gbr);border-radius:999px;cursor:pointer;font-size:.78rem;color:var(--tm);transition:all .25s;font-family:'DM Sans',sans-serif}
 .btn-add-fav:hover{border-color:var(--vs);color:var(--vs)}
-
-/* STATUS PAGO/PENDENTE */
 .pagamento-status{display:flex;gap:.6rem;margin-top:.3rem}
 .status-opt{flex:1;padding:.6rem;border-radius:10px;border:2px solid var(--gbr);cursor:pointer;text-align:center;font-size:.8rem;font-weight:600;transition:all .25s;color:var(--tm);background:transparent;font-family:'DM Sans',sans-serif}
 .status-opt.sel-pago{border-color:#22c55e;background:rgba(34,197,94,.12);color:#86efac}
 .status-opt.sel-pendente{border-color:#f59e0b;background:rgba(245,158,11,.12);color:#fcd34d}
-
-/* FILTER BAR */
 .filter-bar{display:flex;gap:.8rem;margin-bottom:1rem;flex-wrap:wrap}
 .search-box{flex:1;min-width:160px;position:relative}
 .search-box i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--tm);font-size:.85rem}
@@ -284,40 +273,35 @@ body::before{content:'';position:fixed;inset:0;background:
 .filter-select:focus{outline:none;border-color:var(--vs)}
 .filter-select option{background:#1a1030}
 .result-count{font-size:.78rem;color:var(--tm);margin-bottom:.5rem}
-.cliente-hist-btn{font-size:.72rem;color:var(--vs);cursor:pointer;text-decoration:underline;margin-top:.2rem;display:inline-block}
+.cliente-hist-btn{font-size:.72rem;color:var(--vs);cursor:pointer;text-decoration:underline;margin-top:.2rem;display:inline-block;background:none;border:none;padding:0;font-family:'DM Sans',sans-serif}
 .cliente-hist-btn:hover{color:var(--vg)}
-
-/* TABLE */
-.table-wrap{overflow-x:auto;margin-top:1rem}
+.table-wrap{overflow-x:auto;margin-top:1rem;border:1px solid var(--gbr);border-radius:14px}
 table{width:100%;border-collapse:collapse;font-size:.87rem}
-thead th{padding:.75rem 1rem;text-align:left;font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--tm);border-bottom:1px solid var(--gbr)}
-tbody td{padding:.85rem 1rem;color:var(--ts);border-bottom:1px solid rgba(255,255,255,.04)}
+thead th{padding:.75rem 1rem;text-align:left;font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--tm);border-bottom:1px solid var(--gbr);background:rgba(255,255,255,.02);white-space:nowrap}
+tbody td{padding:.85rem 1rem;color:var(--ts);border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}
 tbody tr:hover td{background:rgba(255,255,255,.03);color:var(--tp)}
 tbody tr:last-child td{border-bottom:none}
 .tag-pill{display:inline-block;padding:.22rem .6rem;border-radius:999px;font-size:.7rem;font-weight:600}
 .tag-presencial{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
 .tag-delivery{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fcd34d}
-.pay-chip{display:inline-block;padding:.22rem .6rem;background:rgba(255,255,255,.06);border:1px solid var(--gbr);border-radius:6px;font-size:.76rem;color:var(--ts)}
+.pay-chip{display:inline-block;padding:.22rem .6rem;background:rgba(255,255,255,.06);border:1px solid var(--gbr);border-radius:6px;font-size:.76rem;color:var(--ts);white-space:nowrap}
 .btn-act{background:none;border:none;padding:.4rem .5rem;border-radius:7px;cursor:pointer;transition:all .2s;font-size:.83rem}
 .btn-act.edit{color:#60a5fa}.btn-act.edit:hover{background:rgba(96,165,250,.12)}
 .btn-act.del{color:#f87171}.btn-act.del:hover{background:rgba(248,113,113,.12)}
 .btn-act.pago{color:#86efac}.btn-act.pago:hover{background:rgba(34,197,94,.12)}
-
-/* TOTAL BAR */
-.total-bar{background:linear-gradient(135deg,var(--vm),var(--vb));border:1px solid rgba(167,139,250,.2);border-radius:16px;padding:1.2rem 1.8rem;display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem}
+.total-bar{background:linear-gradient(135deg,var(--vm),var(--vb));border:1px solid rgba(167,139,250,.2);border-radius:16px;padding:1.2rem 1.8rem;display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;box-shadow:0 8px 30px rgba(124,58,237,.3)}
 .total-bar span{color:rgba(255,255,255,.7);font-size:.9rem}
 .total-bar strong{font-size:1.7rem;font-family:'Playfair Display',serif;color:#fff}
 
-/* DISPENSAS */
 .dispensas-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
 .product-chip{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;margin-bottom:.6rem;transition:all .25s}
 .product-chip:hover{background:rgba(255,255,255,.07)}
 .product-chip strong{color:var(--tp);font-size:.9rem}
-.pval{color:#5eead4;font-size:.85rem;font-weight:600}
+.pval{color:#5eead4;font-size:.85rem;font-weight:600;white-space:nowrap}
 .punit{font-size:.72rem;color:var(--tm);margin-top:.15rem}
 .selectable-chip{cursor:pointer}
 .selectable-chip:hover{border-color:var(--vs)}
-.selectable-chip.selected{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.4)}
+.selectable-chip.selected{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.4);box-shadow:0 0 14px rgba(20,184,166,.15)}
 .chip-label{font-size:.75rem;color:var(--tm);margin-top:.2rem}
 .qty-row{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
 .qty-input{width:72px;padding:.3rem .5rem;background:rgba(255,255,255,.08);border:1px solid var(--gbr);border-radius:7px;color:var(--tp);font-size:.82rem;font-family:'DM Sans',sans-serif;text-align:center}
@@ -327,16 +311,12 @@ tbody tr:last-child td{border-bottom:none}
 .cart-summary{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-top:1px solid var(--gbr);margin-top:1rem}
 .cart-count{color:var(--tm);font-size:.85rem}
 .cart-total{font-family:'Playfair Display',serif;font-size:1.3rem;color:#5eead4}
-
-/* FATURAS */
 .fatura-item{background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:16px;padding:1.2rem 1.5rem;cursor:pointer;transition:all .3s;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.fatura-item:hover{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.3);transform:translateX(4px)}
+.fatura-item:hover{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.3);transform:translateX(4px);box-shadow:0 4px 20px rgba(124,58,237,.15)}
 .fatura-num{font-family:'Playfair Display',serif;font-size:1rem;color:var(--tp);margin-bottom:.3rem}
 .fatura-meta{display:flex;gap:1.2rem;font-size:.8rem;color:var(--tm);flex-wrap:wrap}
 .fatura-meta i{color:var(--vs);margin-right:.3rem}
 .fatura-amt{font-family:'Playfair Display',serif;font-size:1.15rem;color:#a78bfa}
-
-/* MODAL */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:1rem}
 .modal.open{display:flex}
 .modal-box{background:var(--s1);border:1px solid var(--gbr);border-radius:24px;padding:2rem;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:riseIn .35s cubic-bezier(.16,1,.3,1)}
@@ -344,36 +324,29 @@ tbody tr:last-child td{border-bottom:none}
 .modal-head h3{font-family:'Playfair Display',serif;color:var(--tp);font-size:1.2rem}
 .btn-close{background:rgba(255,255,255,.06);border:1px solid var(--gbr);color:var(--tm);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1.1rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .btn-close:hover{background:rgba(255,255,255,.1);color:var(--tp)}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;color:var(--ts)}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;color:var(--ts);gap:1rem}
 .detail-row:last-child{border-bottom:none}
-.detail-row strong{color:var(--tp)}
+.detail-row strong{color:var(--tp);text-align:right}
 .summary-footer{background:linear-gradient(135deg,var(--vm),var(--vb));border-radius:14px;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;color:#fff}
 .summary-footer.green{background:linear-gradient(135deg,#166534,#15803d)}
 .summary-footer .label{font-size:.85rem;opacity:.75}
 .summary-footer .amount{font-family:'Playfair Display',serif;font-size:1.5rem}
-
-/* REPORT */
 .report-section{margin:1.2rem 0}
 .report-section h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.8rem}
 .report-pay-row{display:flex;justify-content:space-between;padding:.55rem 0;font-size:.88rem;color:var(--ts)}
 .report-pay-row strong{color:var(--tp)}
 .btn-export{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.3);border-radius:10px;color:#5eead4;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
-.btn-export:hover{background:rgba(20,184,166,.25)}
-
-/* EMPTY */
+.btn-export:hover{background:rgba(20,184,166,.25);transform:translateY(-1px)}
 .empty{text-align:center;padding:2.5rem;color:var(--tm)}
 .empty i{font-size:2.5rem;margin-bottom:.8rem;opacity:.2;display:block}
 .empty p{font-size:.88rem}
-
-/* MOBILE TABS */
 .tabs-mobile{display:none}
 .btn-primary{width:100%;padding:.9rem;background:linear-gradient(135deg,var(--vb),#5b21b6);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-shadow:0 4px 15px rgba(124,58,237,.3)}
 .btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 25px rgba(124,58,237,.45)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 .btn-secondary{padding:.7rem 1.2rem;background:var(--gb);border:1px solid var(--gbr);border-radius:10px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.4rem}
-.btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--tp)}
+.btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--tp);border-color:var(--vs)}
 
-/* FIADO */
 .fiado-lista{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
 .fiado-item{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;transition:all .25s}
 .fiado-item:hover{background:rgba(255,255,255,.07)}
@@ -387,20 +360,18 @@ tbody tr:last-child td{border-bottom:none}
 .fiado-acoes{display:flex;gap:.4rem}
 .fiado-itens-lista{background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:1rem;margin-top:1rem}
 .fiado-itens-lista h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.8rem}
-.fiado-item-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
+.fiado-item-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;gap:1rem}
 .fiado-item-row:last-child{border-bottom:none}
 .fiado-item-row strong{color:var(--tp)}
 .fiado-form-produto{display:flex;gap:.5rem;align-items:flex-end;margin-bottom:.8rem}
 .fiado-form-produto .fg{flex:1}
-.fiado-form-produto .btn-add-prod{padding:.8rem 1rem;background:var(--vb);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:.9rem;transition:all .3s}
-.fiado-form-produto .btn-add-prod:hover{background:#6d28d9}
+.btn-add-prod{padding:.8rem 1rem;background:var(--vb);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:.9rem;transition:all .3s;flex-shrink:0}
+.btn-add-prod:hover{background:#6d28d9}
 .fiado-itens-temp{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:12px;padding:1rem;margin-top:.5rem;margin-bottom:1rem}
 .fiado-itens-temp h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.6rem}
-.fiado-temp-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
+.fiado-temp-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;gap:.8rem}
 .fiado-temp-row:last-child{border-bottom:none}
-.fiado-temp-row .del{color:var(--rose);cursor:pointer;font-size:.8rem;margin-left:.5rem}
-
-/* IMPRESSÃO BOBINA 79MM */
+.fiado-temp-row .del{color:var(--rose);cursor:pointer;font-size:.8rem;margin-left:.5rem;background:none;border:none}
 @media print{
   @page{size:79mm auto;margin:0}
   body *{visibility:hidden !important}
@@ -409,50 +380,55 @@ tbody tr:last-child td{border-bottom:none}
 }
 .bobina-preview{background:#fff;color:#000;font-family:'Courier New','Consolas',monospace;font-size:11pt;font-weight:bold;line-height:1.35;width:79mm;max-width:79mm;margin:0 auto;padding:4mm 2mm;border:1px dashed #999;box-sizing:border-box}
 .bobina-preview .center{text-align:center}
-.bobina-preview .right{text-align:right}
 .bobina-preview .linha{border-top:1px dashed #000;margin:3px 0}
 .bobina-preview .linha-esp{margin:6px 0}
-.bobina-preview .bold{font-weight:bold}
-.bobina-preview .item-row{display:flex;justify-content:space-between;font-size:10pt;font-weight:bold;margin-bottom:1px}
+.bobina-preview .item-row{display:flex;justify-content:space-between;font-size:10pt;margin-bottom:1px}
 .bobina-preview .item-row .desc{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bobina-preview .item-row .qtd{width:32px;text-align:center;flex-shrink:0}
 .bobina-preview .item-row .val{width:58px;text-align:right;flex-shrink:0}
 .bobina-preview .item-row .tot{width:58px;text-align:right;flex-shrink:0}
-.bobina-preview .assinatura{margin-top:16px;border-top:1px dashed #000;padding-top:6px}
 .bobina-preview .assinatura-line{border-bottom:1.5px solid #000;width:70%;margin:16px auto 4px;height:18px}
-.bobina-preview .cabecalho{font-size:14pt;font-weight:bold;text-align:center;margin-bottom:2px}
+.bobina-preview .cabecalho{font-size:14pt;text-align:center;margin-bottom:2px}
 .bobina-preview .sub-cabecalho{font-size:9pt;text-align:center;margin-bottom:4px}
-.bobina-preview .nota-num{font-size:11pt;font-weight:bold;text-align:center;margin:3px 0}
+.bobina-preview .nota-num{font-size:11pt;text-align:center;margin:3px 0}
 .bobina-preview .info-row{font-size:10pt;margin-bottom:1px}
 .bobina-preview .info-label{display:inline-block;width:85px}
-.bobina-preview .total-row{font-size:12pt;font-weight:bold;text-align:right;margin:2px 0}
+.bobina-preview .total-row{font-size:12pt;text-align:right;margin:2px 0}
 .bobina-preview .forma-pag{font-size:10pt;margin:2px 0}
 .btn-print-bobina{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fcd34d;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
 .btn-print-bobina:hover{background:rgba(245,158,11,.25)}
-
-/* SECURITY MODAL */
 .sec-list{display:flex;flex-direction:column;gap:.6rem}
-.sec-row{display:flex;gap:.8rem;align-items:flex-start;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px}
+.sec-row{display:flex;gap:.8rem;align-items:flex-start;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;transition:all .25s}
+.sec-row:hover{border-color:rgba(20,184,166,.35)}
 .sec-row i.si{margin-top:.15rem;flex-shrink:0;font-size:.95rem;color:#5eead4}
 .sec-row .t{font-size:.85rem;color:var(--tp);font-weight:600}
 .sec-row .d{font-size:.78rem;color:var(--tm);margin-top:.15rem;line-height:1.4}
-
 @media(max-width:1024px){
   .sidebar{display:none}
   .tabs-mobile{display:flex;gap:.4rem;margin-bottom:1.5rem;background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:.4rem;overflow-x:auto}
   .tabs-mobile .nav-item{flex:1;justify-content:center;border-radius:10px;padding:.7rem .4rem;font-size:.72rem;min-width:58px}
+  .dash-two-col{grid-template-columns:1fr !important}
 }
 @media(max-width:768px){
   .dispensas-layout{grid-template-columns:1fr}.compare-grid{grid-template-columns:1fr}
-  .topbar{padding:0 1rem}.main-layout{padding:1rem}
-  .topbar-right .user-chip{display:none}
+  .topbar{padding:0 .8rem;height:56px}
+  .topbar-right{gap:.35rem}
+  .main-layout{padding:1rem}
+  .user-chip{display:none}
   .stats-grid{grid-template-columns:1fr 1fr}
   .btn-topbar span{display:none}
+  .sec-pill{padding:.35rem .6rem}
+  .glass-card{padding:1.2rem}
 }
 @media(max-width:480px){
-  .form-grid{grid-template-columns:1fr}.glass-card{padding:1.2rem}
+  .form-grid{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr}
   .fiado-form-produto{flex-direction:column;align-items:stretch}
+  .login-card{padding:2rem 1.5rem}
+  .sync-pill span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -465,11 +441,11 @@ tbody tr:last-child td{border-bottom:none}
 
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <div class="login-card">
     <div class="login-logo">
       <div class="logo-ring">
-        <img src="https://i.ibb.co/sr0dSjh/logo-acai.png" alt="Açaí Rei"
-             onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:#fff\'>👑</div>'">
+        <img src="https://i.ibb.co/sr0dSjh/logo-acai.png" alt="Açaí Rei" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>👑</div>'">
       </div>
       <h1>Açaí Rei</h1>
       <p>Sistema de Controle de Caixa</p>
@@ -484,15 +460,21 @@ tbody tr:last-child td{border-bottom:none}
     <div class="lockout-box" id="lockoutBox"><i class="fas fa-user-lock"></i><span id="lockoutText"></span></div>
     <form id="loginForm" autocomplete="off">
       <div class="field"><label>Usuário</label>
-        <div class="field-wrap"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Digite seu usuário" autocomplete="off" required></div>
+        <div class="field-wrap"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Digite seu usuário" autocomplete="off" maxlength="40" required></div>
       </div>
       <div class="field"><label>Senha (mín. 12 dígitos)</label>
         <div class="field-wrap">
           <i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Mínimo 12 caracteres" autocomplete="new-password" minlength="12" required>
-          <i class="fas fa-eye toggle-pass" id="togglePass"></i>
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar senha"><i class="fas fa-eye"></i></button>
         </div>
         <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
         <div class="strength-label"><span id="strengthText">Força da senha</span><span id="strengthPct"></span></div>
+      </div>
+      <div class="field" id="confirmField" style="display:none"><label>Confirmar Senha</label>
+        <div class="field-wrap">
+          <i class="fas fa-lock icon"></i><input type="password" id="passwordConfirm" placeholder="Repita a senha" autocomplete="new-password" minlength="12" required>
+        </div>
+        <div class="error-box" id="confirmErrorBox" style="margin-top:.5rem"><i class="fas fa-circle-exclamation"></i><span id="confirmErrorText"></span></div>
       </div>
       <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema</button>
     </form>
@@ -507,15 +489,15 @@ tbody tr:last-child td{border-bottom:none}
       <span class="brand-name">Açaí Rei</span>
     </div>
     <div class="topbar-right">
-      <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema" id="themeBtn"><i class="fas fa-moon"></i></button>
-      <button class="theme-btn" onclick="toggleSound()" title="Som" id="soundBtn"><i class="fas fa-volume-high"></i></button>
+      <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema" id="themeBtn" aria-label="Alternar tema"><i class="fas fa-moon"></i></button>
+      <button class="theme-btn" onclick="toggleSound()" title="Som" id="soundBtn" aria-label="Som"><i class="fas fa-volume-high"></i></button>
       <button class="sec-pill" onclick="verSeguranca()" title="Status de segurança"><i class="fas fa-shield-halved"></i> Seguro</button>
-      <div class="notif-bell" onclick="verNotificacoes()"><i class="fas fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
+      <button class="notif-bell" onclick="verNotificacoes()" aria-label="Notificações"><i class="fas fa-bell"></i><div class="notif-badge" id="notifBadge"></div></button>
       <button class="btn-topbar" onclick="abrirRelatorio()"><i class="fas fa-chart-bar"></i> <span>Relatório</span></button>
       <button class="btn-topbar" onclick="sincronizarDados()"><i class="fas fa-rotate"></i> <span>Backup</span></button>
       <div class="sync-pill synced" id="syncPill"><div class="dot"></div><span id="syncText">Online</span></div>
       <div class="user-chip"><i class="fas fa-user-circle" style="color:var(--vs)"></i><span id="currentUser"></span></div>
-      <button class="btn-logout" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Sair</button>
+      <button class="btn-logout" onclick="logout()" aria-label="Sair"><i class="fas fa-right-from-bracket"></i></button>
     </div>
   </header>
 
@@ -599,7 +581,7 @@ tbody tr:last-child td{border-bottom:none}
           <div class="meta-set-row">
             <input class="meta-input" type="number" id="metaInput" placeholder="Definir meta (R$)" min="0" step="10">
             <button class="btn-meta" onclick="definirMeta()"><i class="fas fa-check"></i> Salvar</button>
-            <button class="btn-meta" style="background:rgba(255,255,255,.1)" onclick="limparMeta()"><i class="fas fa-times"></i></button>
+            <button class="btn-meta" style="background:rgba(255,255,255,.1)" onclick="limparMeta()" aria-label="Limpar meta"><i class="fas fa-times"></i></button>
           </div>
         </div>
 
@@ -621,7 +603,7 @@ tbody tr:last-child td{border-bottom:none}
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" class="dash-two-col">
           <div class="glass-card" style="margin-bottom:0">
             <div class="card-head"><h3 class="card-title"><i class="fas fa-trophy"></i> Produtos Mais Vendidos</h3></div>
             <div class="rank-list" id="rankList"><div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div></div>
@@ -682,16 +664,14 @@ tbody tr:last-child td{border-bottom:none}
 
           <div class="fav-section">
             <h4><i class="fas fa-star" style="color:var(--gold);margin-right:.4rem"></i> Atalhos Rápidos</h4>
-            <div class="fav-chips" id="favChips">
-              <button class="btn-add-fav" onclick="salvarFavorito()"><i class="fas fa-plus"></i> Salvar atual como favorito</button>
-            </div>
+            <div class="fav-chips" id="favChips"></div>
           </div>
 
           <form id="vendaForm" onsubmit="addProduto(event)" style="margin-top:1.5rem">
             <div class="form-grid">
-              <div class="fg"><label>Cliente</label><input type="text" id="nomeCliente" placeholder="Nome do cliente" required></div>
-              <div class="fg"><label>Produto</label><input type="text" id="nomeProduto" placeholder="Nome do produto" required></div>
-              <div class="fg"><label>Valor (R$)</label><input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" required oninput="calcTroco()"></div>
+              <div class="fg"><label>Cliente</label><input type="text" id="nomeCliente" placeholder="Nome do cliente" maxlength="80" required></div>
+              <div class="fg"><label>Produto</label><input type="text" id="nomeProduto" placeholder="Nome do produto" maxlength="60" required></div>
+              <div class="fg"><label>Valor (R$)</label><input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" max="999999.99" required oninput="calcTroco()"></div>
               <div class="fg">
                 <label>Pagamento</label>
                 <select id="formaPagamento" required onchange="onPagamentoChange()">
@@ -712,7 +692,7 @@ tbody tr:last-child td{border-bottom:none}
             <div class="troco-box" id="trocoBox">
               <div class="fg" style="margin-bottom:.8rem">
                 <label>Valor Recebido (R$)</label>
-                <input type="number" id="valorRecebido" placeholder="0,00" step="0.01" min="0" oninput="calcTroco()">
+                <input type="number" id="valorRecebido" placeholder="0,00" step="0.01" min="0" max="999999.99" oninput="calcTroco()">
               </div>
               <div class="detail-row"><span>Valor da venda</span><strong id="trocoVenda">R$ 0,00</strong></div>
               <div class="detail-row"><span>Valor recebido</span><strong id="trocoRecebido">R$ 0,00</strong></div>
@@ -733,7 +713,7 @@ tbody tr:last-child td{border-bottom:none}
           </form>
 
           <div class="filter-bar" style="margin-top:1.5rem">
-            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchVenda" placeholder="Buscar cliente ou produto…" oninput="renderTabela()"></div>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchVenda" placeholder="Buscar cliente ou produto…" maxlength="60" oninput="renderTabela()"></div>
             <select class="filter-select" id="filtPagamento" onchange="renderTabela()">
               <option value="">Todos pagamentos</option>
               <option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option>
@@ -780,7 +760,7 @@ tbody tr:last-child td{border-bottom:none}
                 </div>
                 <div class="fg">
                   <label>Preço por <span id="unidLabel">unidade</span></label>
-                  <input type="number" id="valorDispensa" placeholder="0,00" step="0.01" min="0" required>
+                  <input type="number" id="valorDispensa" placeholder="0,00" step="0.01" min="0" max="999999.99" required>
                 </div>
               </div>
               <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Cadastrar Produto</button>
@@ -816,7 +796,7 @@ tbody tr:last-child td{border-bottom:none}
         <div class="glass-card">
           <div class="card-head"><h3 class="card-title"><i class="fas fa-clock-rotate-left"></i> Histórico de Faturas</h3></div>
           <div class="filter-bar">
-            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchFatura" placeholder="Buscar por data ou número…" oninput="renderFaturas()"></div>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchFatura" placeholder="Buscar por data ou número…" maxlength="40" oninput="renderFaturas()"></div>
           </div>
           <div id="listaFaturas"><div class="empty"><i class="fas fa-receipt"></i><p>Nenhuma fatura</p></div></div>
         </div>
@@ -845,23 +825,23 @@ tbody tr:last-child td{border-bottom:none}
                 <i class="fas fa-list" style="margin-right:.4rem"></i> Itens da Compra
               </h4>
               <div class="fiado-form-produto">
-                <div class="fg">
+                <div class="fg" style="max-width:90px">
                   <label>Código</label>
-                  <input type="text" id="fiadoCodProd" placeholder="Cód" style="width:80px" maxlength="12">
+                  <input type="text" id="fiadoCodProd" placeholder="Cód" style="width:100%" maxlength="12">
                 </div>
                 <div class="fg" style="flex:2">
                   <label>Produto</label>
                   <input type="text" id="fiadoNomeProd" placeholder="Nome do produto" maxlength="60">
                 </div>
-                <div class="fg" style="width:100px">
+                <div class="fg" style="max-width:100px">
                   <label>Qtd</label>
-                  <input type="number" id="fiadoQtdProd" placeholder="1" step="0.01" min="0.01" value="1">
+                  <input type="number" id="fiadoQtdProd" placeholder="1" step="0.01" min="0.01" max="100000" value="1">
                 </div>
-                <div class="fg" style="width:120px">
+                <div class="fg" style="max-width:130px">
                   <label>Valor Unit. (R$)</label>
-                  <input type="number" id="fiadoValorProd" placeholder="0,00" step="0.01" min="0">
+                  <input type="number" id="fiadoValorProd" placeholder="0,00" step="0.01" min="0" max="999999.99">
                 </div>
-                <button type="button" class="btn-add-prod" onclick="addProdutoFiado()" style="margin-bottom:.2rem">
+                <button type="button" class="btn-add-prod" onclick="addProdutoFiado()">
                   <i class="fas fa-plus"></i> Add
                 </button>
               </div>
@@ -900,7 +880,7 @@ tbody tr:last-child td{border-bottom:none}
           <div class="card-head">
             <h3 class="card-title"><i class="fas fa-list-check"></i> Contas em Aberto</h3>
             <div class="filter-bar" style="margin:0">
-              <div class="search-box" style="min-width:200px"><i class="fas fa-search"></i><input type="text" id="searchFiado" placeholder="Buscar cliente…" oninput="renderFiados()"></div>
+              <div class="search-box" style="min-width:200px"><i class="fas fa-search"></i><input type="text" id="searchFiado" placeholder="Buscar cliente…" maxlength="60" oninput="renderFiados()"></div>
               <select class="filter-select" id="filtStatusFiado" onchange="renderFiados()">
                 <option value="">Todos</option><option value="pendente">Pendentes</option><option value="pago">Pagos</option>
               </select>
@@ -926,7 +906,7 @@ tbody tr:last-child td{border-bottom:none}
       <div class="form-grid">
         <div class="fg"><label>Cliente</label><input type="text" id="editCliente" maxlength="80" required></div>
         <div class="fg"><label>Produto</label><input type="text" id="editProduto" maxlength="60" required></div>
-        <div class="fg"><label>Valor (R$)</label><input type="number" id="editValor" step="0.01" min="0" required></div>
+        <div class="fg"><label>Valor (R$)</label><input type="number" id="editValor" step="0.01" min="0" max="999999.99" required></div>
         <div class="fg"><label>Pagamento</label>
           <select id="editPagamento" required>
             <option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option>
@@ -1046,29 +1026,29 @@ tbody tr:last-child td{border-bottom:none}
 <!-- FIREBASE (chaves públicas de config, não são secretas; proteja o banco com Security Rules) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getDatabase,ref,set,push,onValue,remove,update,get,child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+import { getDatabase,ref,set,push,onValue,remove,update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 const cfg={apiKey:"AIzaSyDi3S2ujrwKE19a5FGRZafWKIXw-8tbJ9A",authDomain:"acairei-b4bca.firebaseapp.com",databaseURL:"https://acairei-b4bca-default-rtdb.firebaseio.com",projectId:"acairei-b4bca",storageBucket:"acairei-b4bca.firebasestorage.app",messagingSenderId:"591817620965",appId:"1:591817620965:web:f634d2ac90dd033872430c"};
 const app=initializeApp(cfg);const database=getDatabase(app);
 window.firebaseDB=database;window.dbRef=ref;window.dbSet=set;window.dbPush=push;
-window.dbOnValue=onValue;window.dbRemove=remove;window.dbUpdate=update;window.dbGet=get;window.dbChild=child;
+window.dbOnValue=onValue;window.dbRemove=remove;window.dbUpdate=update;
 </script>
 
 <script>
 /* ================================================================
    NÚCLEO DE SEGURANÇA (Web Crypto API — AES-256-GCM + PBKDF2)
-   - Senha nunca sai do dispositivo: só um hash PBKDF2 é armazenado.
-   - Dados de fiado/cliente são cifrados com chave derivada da senha
-     antes de irem ao Firebase (criptografia de ponta a ponta).
+   Senha nunca sai do dispositivo: só um hash PBKDF2 é armazenado.
+   Dados de fiado/cliente são cifrados com chave derivada da senha
+   antes de irem ao Firebase (criptografia de ponta a ponta).
    ================================================================ */
 const SEC = {
-  PBKDF2_ITER: 210000,     // alinhado às recomendações OWASP 2023+ (SHA-256)
+  PBKDF2_ITER: 210000,
   KEY_LEN: 256,
   SALT_LEN: 16,
   IV_LEN: 12,
-  AUTH_TAG_LEN: 16,
-  SESSION_TIMEOUT: 30 * 60 * 1000,          // 30 min
+  SESSION_TIMEOUT: 30 * 60 * 1000,
   LOCKOUT_MAX_ATTEMPTS: 5,
-  LOCKOUT_MS: 15 * 60 * 1000,                // 15 min
+  LOCKOUT_MS: 15 * 60 * 1000,
+  MAX_INPUT_LEN: 1e9,
   APP_NS: 'acaiReiSec_v1'
 };
 const b64 = {
@@ -1077,9 +1057,21 @@ const b64 = {
 };
 const te = new TextEncoder(), td = new TextDecoder();
 
-/* Deriva chave AES a partir da senha + salt (PBKDF2-HMAC-SHA256) */
-async function deriveKey(password, salt, usage) {
-  const base = await crypto.subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey']);
+function assertCrypto() {
+  if (!window.crypto || !crypto.subtle || !crypto.getRandomValues) {
+    throw new Error('WebCrypto indisponível. Abra o sistema por HTTPS ou localhost.');
+  }
+}
+
+/* Importa a senha como chave-base PBKDF2 (não extraível) */
+async function importPBKDF2Base(password) {
+  assertCrypto();
+  return crypto.subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey', 'deriveBits']);
+}
+
+/* Deriva chave AES-256-GCM a partir da senha + salt (PBKDF2-HMAC-SHA256) */
+async function deriveAESKey(password, salt, usage) {
+  const base = await importPBKDF2Base(password);
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' },
     base,
@@ -1092,14 +1084,17 @@ async function deriveKey(password, salt, usage) {
 /* Hash PBKDF2 da senha (para autenticação local) */
 async function hashPassword(password, saltB64) {
   const salt = saltB64 ? b64.dec(saltB64) : crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
-  const key = await deriveKey(password, salt, ['deriveBits']);
+  const base = await importPBKDF2Base(password);
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' }, key, 256);
+    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' },
+    base,
+    256
+  );
   return { hash: b64.enc(bits), salt: b64.enc(salt) };
 }
+
 async function verifyPassword(password, rec) {
   const { hash } = await hashPassword(password, rec.salt);
-  // comparação em tempo constante (mitiga timing attack)
   const a = te.encode(hash), b = te.encode(rec.hash);
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -1110,19 +1105,19 @@ async function verifyPassword(password, rec) {
 /* Cifra/decifra payloads (AES-256-GCM, IV aleatório por operação) */
 async function encryptJSON(obj, password) {
   const salt = crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
-  const key = await deriveKey(password, salt, ['encrypt']);
+  const key = await deriveAESKey(password, salt, ['encrypt']);
   const iv = crypto.getRandomValues(new Uint8Array(SEC.IV_LEN));
   const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, te.encode(JSON.stringify(obj)));
   return { v: 1, s: b64.enc(salt), i: b64.enc(iv), c: b64.enc(ct) };
 }
 async function decryptJSON(pkg, password) {
   if (!pkg || pkg.v !== 1) return null;
-  const key = await deriveKey(password, b64.dec(pkg.s), ['decrypt']);
+  const key = await deriveAESKey(password, b64.dec(pkg.s), ['decrypt']);
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64.dec(pkg.i) }, key, b64.dec(pkg.c));
   return JSON.parse(td.decode(pt));
 }
 
-/* Anti-clickjacking: recusa execução dentro de iframe */
+/* Anti-clickjacking */
 try { if (window.top !== window.self) { document.body.innerHTML = ''; throw new Error('clickjacking'); } } catch(e) { window.location.href = 'about:blank'; }
 
 /* Utilitários anti-abuso / sanitização */
@@ -1130,9 +1125,9 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function clampStr(s, n) { return String(s ?? '').slice(0, n); }
-function isSafeNumber(v) { const n = Number(v); return isFinite(n) && n >= 0 && n < 1e9; }
+function isSafeNumber(v) { const n = Number(v); return isFinite(n) && n >= 0 && n < SEC.MAX_INPUT_LEN; }
 
-/* Rate limiting de login por dispositivo (brute force) */
+/* Rate limiting de login por dispositivo */
 const lockStore = {
   get() { try { return JSON.parse(sessionStorage.getItem(SEC.APP_NS + '_lock')) || { tries: 0, until: 0 }; } catch { return { tries: 0, until: 0 }; } },
   set(o) { sessionStorage.setItem(SEC.APP_NS + '_lock', JSON.stringify(o)); }
@@ -1146,7 +1141,7 @@ function registerFail() {
 }
 function zerarTentativas() { lockStore.set({ tries: 0, until: 0 }); toast('success', 'Bloqueio resetado.'); closeModal('modalSeguranca'); }
 
-/* Medidor de força de senha (0-100) */
+/* Medidor de força de senha */
 function scorePassword(p) {
   let s = 0;
   if (p.length >= 12) s += 40;
@@ -1163,7 +1158,14 @@ document.getElementById('password').addEventListener('input', function () {
   if (s < 40) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f43f5e,#fb7185)'; t.textContent = 'Fraca'; }
   else if (s < 70) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f59e0b,#fcd34d)'; t.textContent = 'Média'; }
   else { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#14b8a6,#5eead4)'; t.textContent = 'Forte'; }
+  updateConfirmVisibility();
 });
+function updateConfirmVisibility() {
+  const cred = localStorage.getItem(SEC.APP_NS + '_cred');
+  const cf = document.getElementById('confirmField');
+  const show = !cred && scorePassword(document.getElementById('password').value) >= 40;
+  cf.style.display = show ? 'block' : 'none';
+}
 
 /* ================ ESTADO DA APLICAÇÃO ================ */
 let caixaAberto = false, horaAbertura = null, faturaAtual = null;
@@ -1189,7 +1191,6 @@ function playSound(freq = 880, dur = .15, type = 'sine') {
 function soundSuccess() { playSound(880, .1); setTimeout(() => playSound(1100, .15), 120); }
 function soundError() { playSound(220, .3, 'sawtooth'); }
 
-/* Boot */
 window.addEventListener('load', () => {
   loadLocalPrefs();
   setupFirstRun();
@@ -1197,20 +1198,19 @@ window.addEventListener('load', () => {
 });
 
 function loadLocalPrefs() {
-  favoritos = JSON.parse(localStorage.getItem('acaiRei_favoritos') || '[]');
-  metaDia = parseFloat(localStorage.getItem('acaiRei_meta') || '0');
+  try { favoritos = JSON.parse(localStorage.getItem('acaiRei_favoritos') || '[]'); } catch { favoritos = []; }
+  metaDia = parseFloat(localStorage.getItem('acaiRei_meta') || '0') || 0;
   soundEnabled = localStorage.getItem('acaiRei_sound') !== 'false';
   const theme = localStorage.getItem('acaiRei_theme') || 'dark';
   if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
   updateSoundBtn(); updateThemeBtn(); renderFavoritos();
 }
 
-/* Primeiro acesso: cadastra credenciais com hash PBKDF2 (nunca a senha em claro) */
 function setupFirstRun() {
   const rec = localStorage.getItem(SEC.APP_NS + '_cred');
   if (!rec) {
     const note = document.getElementById('setupNote');
-    note.style.display = 'flex';
+    note.classList.add('show');
     note.querySelector('span').innerHTML =
       '<strong>Primeiro acesso:</strong> defina um usuário e uma senha de <strong>mínimo 12 caracteres</strong> ' +
       '(letras maiúsculas, minúsculas, números e símbolos). Ela será usada como chave mestra para ' +
@@ -1240,34 +1240,38 @@ function setupListeners() {
     updateCaixaUI(); updateBadge(); startTimer();
   });
   window.dbOnValue(dbRefs.vendas, snap => {
-    produtosVenda = snap.val() ? Object.values(snap.val()) : [];
+    const raw = snap.val();
+    produtosVenda = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && typeof v === 'object' && v.id) : [];
     renderTabela(); updateDashboard();
   });
   window.dbOnValue(dbRefs.faturas, snap => {
-    faturas = snap.val() ? Object.values(snap.val()).reverse() : [];
+    const raw = snap.val();
+    faturas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).sort((a, b) => b.id - a.id) : [];
     renderFaturas();
   });
   window.dbOnValue(dbRefs.dispensas, snap => {
-    dispensas = snap.val() ? Object.values(snap.val()) : [];
+    const raw = snap.val();
+    dispensas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
     renderDispensas();
   });
   window.dbOnValue(dbRefs.compras, snap => {
-    comprasDispensa = snap.val() ? Object.values(snap.val()).reverse() : [];
+    const raw = snap.val();
+    comprasDispensa = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).sort((a, b) => b.id - a.id) : [];
     renderHistoricoDispensas(); updateDashboard();
   });
   window.dbOnValue(dbRefs.fiados, snap => {
-    // Fiados chegam cifrados (E2E). Decifra em memória com a chave mestra.
-    const raw = snap.val() ? Object.values(snap.val()) : [];
+    const raw = snap.val();
+    const list = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
     fiados = [];
-    if (!masterPass) { fiados = []; renderFiados(); updateDashboard(); return; }
-    Promise.all(raw.map(async r => {
+    if (!masterPass) { renderFiados(); updateDashboard(); return; }
+    Promise.all(list.map(async r => {
       try {
-        const base = r && r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
-        if (!base) return null;
+        const base = r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
+        if (!base || typeof base !== 'object' || !Array.isArray(base.itens)) return null;
         return { ...base, firebaseId: r.firebaseId };
       } catch { return null; }
-    })).then(list => {
-      fiados = list.filter(Boolean).reverse();
+    })).then(l => {
+      fiados = l.filter(Boolean).sort((a, b) => b.id - a.id);
       renderFiados(); updateDashboard();
     });
   });
@@ -1283,24 +1287,18 @@ function setupListeners() {
 function checkAuth() {
   const s = localStorage.getItem(SEC.APP_NS + '_sess');
   if (s) {
-    const sess = JSON.parse(s);
-    if (Date.now() - sess.at < SEC.SESSION_TIMEOUT) {
-      currentUser = sess.user;
-      showApp(); scheduleSessionExpiry();
-      return;
-    }
+    try {
+      const sess = JSON.parse(s);
+      if (Date.now() - sess.at < SEC.SESSION_TIMEOUT && typeof sess.user === 'string') {
+        currentUser = sess.user.slice(0, 40);
+        showLogin();
+        toast('info', 'Sessão ativa. Digite sua senha para descriptografar os dados.');
+        return;
+      }
+    } catch { }
     localStorage.removeItem(SEC.APP_NS + '_sess');
   }
   showLogin();
-}
-function scheduleSessionExpiry() {
-  clearTimeout(sessionTimer);
-  sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
-  ['click', 'keydown', 'touchstart'].forEach(ev =>
-    document.addEventListener(ev, () => {
-      clearTimeout(sessionTimer);
-      sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
-    }, { passive: true }));
 }
 
 /* ── LOGIN ── */
@@ -1308,56 +1306,70 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   if (isLocked()) { showLockout(); return; }
   const btn = document.getElementById('loginBtn');
+  const btnHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
   btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Verificando...';
-  const u = clampStr(document.getElementById('username').value.trim(), 40);
-  const p = document.getElementById('password').value;
+  try {
+    const u = clampStr(document.getElementById('username').value.trim(), 40);
+    const p = document.getElementById('password').value;
 
-  if (p.length < 12) {
-    showErr('A senha deve ter no mínimo 12 caracteres.');
-    btn.disabled = false; btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
-    return;
-  }
+    if (!window.crypto || !crypto.subtle) { showErr('Criptografia indisponível. Abra o sistema por HTTPS ou localhost.'); return; }
+    if (p.length < 12) { showErr('A senha deve ter no mínimo 12 caracteres.'); return; }
 
-  await new Promise(r => setTimeout(r, 350)); // custo natural do PBKDF2
+    const credRaw = localStorage.getItem(SEC.APP_NS + '_cred');
+    let credOK = false;
 
-  let cred = localStorage.getItem(SEC.APP_NS + '_cred');
-  if (!cred) {
-    // PRIMEIRO ACESSO → cria credenciais (hash PBKDF2 da senha)
-    const { hash, salt } = await hashPassword(p);
-    localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
-    cred = localStorage.getItem(SEC.APP_NS + '_cred');
-    toast('info', 'Credenciais criadas com criptografia forte!');
-  }
+    if (!credRaw) {
+      /* PRIMEIRO ACESSO → exige confirmação de senha */
+      const conf = document.getElementById('passwordConfirm').value;
+      const confErr = document.getElementById('confirmErrorBox');
+      if (scorePassword(p) < 70) { showErr('Senha fraca! Use 12+ caracteres com letras maiúsculas, minúsculas, números e símbolos.'); return; }
+      if (p !== conf) { confErr.classList.add('show'); document.getElementById('confirmErrorText').textContent = 'As senhas não conferem.'; return; }
+      confErr.classList.remove('show');
+      const { hash, salt } = await hashPassword(p);
+      localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
+      credOK = true;
+      toast('info', 'Credenciais criadas com criptografia forte!');
+    } else {
+      const rec = JSON.parse(credRaw);
+      credOK = rec.user === u && await verifyPassword(p, rec);
+    }
 
-  const rec = JSON.parse(cred);
-  if (rec.user === u && await verifyPassword(p, rec)) {
-    masterPass = p;                       // chave E2E em memória apenas
-    currentUser = u;
-    localStorage.setItem(SEC.APP_NS + '_sess', JSON.stringify({ user: u, at: Date.now() }));
-    document.getElementById('setupNote').style.display = 'none';
-    zerarTentativas();
-    showApp(); scheduleSessionExpiry(); soundSuccess();
-  } else {
-    registerFail();
-    document.querySelector('.login-card').classList.add('shake');
-    setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
-    if (isLocked()) showLockout();
-    else showErr('Usuário ou senha incorretos! (' + (SEC.LOCKOUT_MAX_ATTEMPTS - lockStore.get().tries) + ' tentativa(s) restante(s))');
+    if (credOK) {
+      masterPass = p;
+      currentUser = u;
+      localStorage.setItem(SEC.APP_NS + '_sess', JSON.stringify({ user: u, at: Date.now() }));
+      document.getElementById('setupNote').classList.remove('show');
+      zerarTentativasQuiet();
+      showApp(); scheduleSessionExpiry(); soundSuccess();
+    } else {
+      registerFail();
+      document.querySelector('.login-card').classList.add('shake');
+      setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
+      if (isLocked()) showLockout();
+      else showErr('Usuário ou senha incorretos! (' + (SEC.LOCKOUT_MAX_ATTEMPTS - lockStore.get().tries) + ' tentativa(s) restante(s))');
+      soundError();
+    }
+  } catch (err) {
+    console.error('Falha no processo de login:', err);
+    showErr('Erro interno de criptografia (' + (err && err.name ? err.name : 'desconhecido') + '). Verifique o console.');
     soundError();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = btnHTML;
   }
-  btn.disabled = false; btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
 });
+function zerarTentativasQuiet() { lockStore.set({ tries: 0, until: 0 }); }
 
-function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.style.display = 'flex'; setTimeout(() => b.style.display = 'none', 4000); }
+function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 4500); }
 function showLockout() {
   const b = document.getElementById('lockoutBox');
   document.getElementById('lockoutText').textContent = 'Muitas tentativas! Aguarde ' + Math.ceil(lockoutRemaining() / 60) + ' minuto(s) para tentar novamente.';
-  b.style.display = 'flex';
+  b.classList.add('show');
 }
 function showLogin() { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appScreen').style.display = 'none'; }
 function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('appScreen').classList.add('visible');
   document.getElementById('currentUser').textContent = currentUser;
   toast('success', 'Bem-vindo, ' + esc(currentUser) + '!');
 }
@@ -1371,19 +1383,23 @@ async function trocarSenhaUI() {
   const nova = prompt('Nova senha (mínimo 12 caracteres, com maiúsculas, minúsculas, números e símbolos):');
   if (nova === null) return;
   if (nova.length < 12 || scorePassword(nova) < 70) { toast('error', 'Senha fraca! Use 12+ caracteres com letras, números e símbolos.'); return; }
-  const { hash, salt } = await hashPassword(nova);
-  localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: currentUser, hash, salt, created: new Date().toISOString() }));
-  const antiga = masterPass; masterPass = nova;
-  // Re-cifra fiados com a nova chave
-  for (const f of fiados) {
-    if (f.firebaseId) {
-      const e2e = await encryptJSON(f, nova);
-      await window.dbUpdate(window.dbChild(dbRefs.fiados, f.firebaseId), { e2e, updated: new Date().toISOString() });
+  try {
+    const { hash, salt } = await hashPassword(nova);
+    localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: currentUser, hash, salt, created: new Date().toISOString() }));
+    masterPass = nova;
+    for (const f of fiados) {
+      if (f.firebaseId) {
+        const e2e = await encryptJSON(f, nova);
+        await window.dbUpdate(window.dbRef(db, 'fiados/' + f.firebaseId), { e2e, updated: new Date().toISOString() });
+      }
     }
+    toast('success', 'Senha trocada e dados re-cifrados com sucesso!');
+    pushNotif('success', 'Senha Alterada', 'Todos os dados sensíveis foram re-cifrados.');
+    closeModal('modalSeguranca');
+  } catch (err) {
+    console.error('Erro ao trocar senha:', err);
+    toast('error', 'Falha ao re-cifrar dados. Tente novamente.');
   }
-  toast('success', 'Senha trocada e dados re-cifrados com sucesso!');
-  pushNotif('success', 'Senha Alterada', 'Todos os dados sensíveis foram re-cifrados.');
-  closeModal('modalSeguranca');
 }
 
 /* ── TEMA / SOM ── */
@@ -1399,41 +1415,47 @@ function updateSoundBtn() { document.getElementById('soundBtn').innerHTML = soun
 
 /* ── TABS ── */
 function switchTab(name, btn) {
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active'); });
+  document.querySelectorAll('.nav-item').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active'); else b.classList.remove('active'); });
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'dashboard') updateDashboard();
 }
 
 /* ── FIREBASE HELPERS ── */
-async function salvarCaixa() {
-  await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura ? horaAbertura.toISOString() : null, faturaAtual, lastUpdate: new Date().toISOString() });
+async function fbAdd(ref, data) {
+  const r = window.dbPush(ref);
+  await window.dbSet(r, data);
+  return r.key;
 }
-async function fbAdd(ref, data) { const r = window.dbPush(ref); await window.dbSet(r, { ...data, firebaseId: r.key }); }
-async function fbDel(ref, fid) { await window.dbRemove(window.dbChild(ref, fid)); }
-async function fbUpd(ref, fid, data) { await window.dbUpdate(window.dbChild(ref, fid), data); }
+async function fbDel(ref, fid) { await window.dbRemove(window.dbRef(ref, fid)); }
+async function fbUpd(ref, fid, data) { await window.dbUpdate(window.dbRef(ref, fid), data); }
 
 /* ── CAIXA ── */
 function toggleCaixa() { if (!caixaAberto) abrirCaixa(); else if (confirm('Deseja realmente fechar o caixa?')) fecharCaixa(); }
 async function abrirCaixa() {
-  caixaAberto = true; horaAbertura = new Date();
-  faturaAtual = { id: Date.now(), dataAbertura: horaAbertura.toISOString(), dataFechamento: null, produtos: [], total: 0 };
-  await salvarCaixa(); toast('success', 'Caixa aberto!'); soundSuccess();
-  pushNotif('success', 'Caixa Aberto', 'Expediente iniciado às ' + formatHora(horaAbertura));
+  try {
+    caixaAberto = true; horaAbertura = new Date();
+    faturaAtual = { id: Date.now(), dataAbertura: horaAbertura.toISOString(), dataFechamento: null, produtos: [], total: 0 };
+    await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura.toISOString(), faturaAtual, lastUpdate: new Date().toISOString() });
+    toast('success', 'Caixa aberto!'); soundSuccess();
+    pushNotif('success', 'Caixa Aberto', 'Expediente iniciado às ' + formatHora(horaAbertura));
+  } catch (e) { console.error(e); toast('error', 'Falha ao abrir caixa (conexão?).'); }
 }
 async function fecharCaixa() {
-  const hf = new Date();
-  faturaAtual.dataFechamento = hf.toISOString();
-  faturaAtual.produtos = [...produtosVenda];
-  faturaAtual.total = calcTotal();
-  await fbAdd(dbRefs.faturas, { ...faturaAtual });
-  await window.dbSet(dbRefs.vendas, null);
-  const tot = faturaAtual.total;
-  caixaAberto = false; horaAbertura = null; faturaAtual = null;
-  await salvarCaixa(); stopTimer();
-  toast('info', 'Caixa fechado! Total: ' + fmt(tot));
-  pushNotif('info', 'Caixa Fechado', 'Total: ' + fmt(tot));
+  try {
+    const hf = new Date();
+    faturaAtual.dataFechamento = hf.toISOString();
+    faturaAtual.produtos = [...produtosVenda];
+    faturaAtual.total = calcTotal();
+    await fbAdd(dbRefs.faturas, faturaAtual);
+    await window.dbSet(dbRefs.vendas, null);
+    const tot = faturaAtual.total;
+    caixaAberto = false; horaAbertura = null; faturaAtual = null;
+    await window.dbSet(dbRefs.caixa, { aberto: false, horaAbertura: null, faturaAtual: null, lastUpdate: new Date().toISOString() });
+    stopTimer();
+    toast('info', 'Caixa fechado! Total: ' + fmt(tot));
+    pushNotif('info', 'Caixa Fechado', 'Total: ' + fmt(tot));
+  } catch (e) { console.error(e); toast('error', 'Falha ao fechar caixa (conexão?).'); }
 }
 function updateCaixaUI() {
   const orb = document.getElementById('caixaOrb'), icon = document.getElementById('caixaOrbIcon');
@@ -1553,17 +1575,17 @@ function updateDashboard() {
   if (!Object.keys(prod).length) { rl.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div>'; }
   else {
     const sorted = Object.entries(prod).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
-    rl.innerHTML = '<div class="rank-list">' + sorted.map(([k, v], i) => `
+    rl.innerHTML = sorted.map(([k, v], i) => `
       <div class="rank-item">
         <div class="rank-pos ${i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'pn'}">${i + 1}</div>
         <div class="rank-name">${esc(k)}</div>
         <div class="rank-count">${v.count}x</div>
         <div class="rank-val">${fmt(v.total)}</div>
-      </div>`).join('') + '</div>';
+      </div>`).join('');
   }
 
   const hours = {};
-  produtosVenda.forEach(p => { if (p.hora) { const h = new Date(p.hora).getHours(); hours[h] = (hours[h] || 0) + 1; } });
+  produtosVenda.forEach(p => { if (p.hora) { const h = new Date(p.hora).getHours(); if (!isNaN(h)) hours[h] = (hours[h] || 0) + 1; } });
   const pg = document.getElementById('picoGrid');
   if (!Object.keys(hours).length) { pg.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-chart-bar"></i><p>Sem dados</p></div>'; }
   else {
@@ -1588,6 +1610,7 @@ function limparMeta() { metaDia = 0; localStorage.removeItem('acaiRei_meta'); up
 /* ── FAVORITOS ── */
 function renderFavoritos() {
   const c = document.getElementById('favChips');
+  if (!c) return;
   const chips = favoritos.map((f, i) => `
     <span class="fav-chip" onclick="aplicarFavorito(${i})">
       <i class="fas fa-star"></i> ${esc(f.nome)} · ${fmt(f.valor)}
@@ -1646,7 +1669,7 @@ function setStatusPag(s) {
   document.getElementById('optPendente').className = 'status-opt' + (s === 'pendente' ? ' sel-pendente' : '');
 }
 
-/* ── VENDAS (validação de entrada em todos os campos) ── */
+/* ── VENDAS ── */
 async function addProduto(e) {
   e.preventDefault();
   if (!caixaAberto) { toast('error', 'Abra o caixa primeiro!'); soundError(); return; }
@@ -1654,23 +1677,25 @@ async function addProduto(e) {
   if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); soundError(); return; }
   const tipo = document.getElementById('tipoEntrega').value;
   const status = tipo === 'Presencial' ? statusPagAtual : 'pago';
-  await fbAdd(dbRefs.vendas, {
-    id: Date.now(),
-    cliente: clampStr(document.getElementById('nomeCliente').value.trim(), 80),
-    nome: clampStr(document.getElementById('nomeProduto').value.trim(), 60),
-    valor,
-    pagamento: document.getElementById('formaPagamento').value,
-    tipo, status,
-    obs: clampStr(document.getElementById('obsVenda').value, 120),
-    hora: new Date().toISOString()
-  });
-  document.getElementById('vendaForm').reset();
-  document.getElementById('trocoBox').className = 'troco-box';
-  document.getElementById('statusPagWrap').style.display = 'none';
-  document.getElementById('trocoResultado').textContent = '—';
-  statusPagAtual = 'pago';
-  setStatusPag('pago');
-  toast('success', 'Venda registrada!'); soundSuccess();
+  try {
+    await fbAdd(dbRefs.vendas, {
+      id: Date.now(),
+      cliente: clampStr(document.getElementById('nomeCliente').value.trim(), 80),
+      nome: clampStr(document.getElementById('nomeProduto').value.trim(), 60),
+      valor,
+      pagamento: document.getElementById('formaPagamento').value,
+      tipo, status,
+      obs: clampStr(document.getElementById('obsVenda').value, 120),
+      hora: new Date().toISOString()
+    });
+    document.getElementById('vendaForm').reset();
+    document.getElementById('trocoBox').className = 'troco-box';
+    document.getElementById('statusPagWrap').style.display = 'none';
+    document.getElementById('trocoResultado').textContent = '—';
+    statusPagAtual = 'pago';
+    setStatusPag('pago');
+    toast('success', 'Venda registrada!'); soundSuccess();
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar venda (conexão?).'); }
 }
 
 async function removerProduto(id) {
@@ -1747,7 +1772,8 @@ function renderTabela() {
     return `<tr style="${isPendente ? 'background:rgba(245,158,11,.04)' : ''}">
       <td>
         <strong style="color:var(--tp)">${cliSafe}</strong>
-        <div class="cliente-hist-btn" onclick="verHistoricoCliente(this.dataset.n)" data-n="${cliSafe}">${p.obs ? '<span style="color:var(--tm);font-size:.72rem">📝 ' + esc(p.obs) + '</span><br>' : ''}ver histórico</div>
+        ${p.obs ? '<div style="color:var(--tm);font-size:.72rem">📝 ' + esc(p.obs) + '</div>' : ''}
+        <div class="cliente-hist-btn" onclick="verHistoricoCliente(this.dataset.n)" data-n="${cliSafe}">ver histórico</div>
       </td>
       <td>${esc(p.nome)}</td>
       <td style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</td>
@@ -1757,8 +1783,8 @@ function renderTabela() {
       <td style="color:var(--tm);font-size:.8rem">${h}</td>
       <td style="white-space:nowrap">
         ${isPendente ? `<button class="btn-act pago" onclick="marcarPago(${p.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
-        <button class="btn-act edit" onclick="editarProduto(${p.id})"><i class="fas fa-pen"></i></button>
-        <button class="btn-act del" onclick="removerProduto(${p.id})"><i class="fas fa-trash"></i></button>
+        <button class="btn-act edit" onclick="editarProduto(${p.id})" title="Editar"><i class="fas fa-pen"></i></button>
+        <button class="btn-act del" onclick="removerProduto(${p.id})" title="Remover"><i class="fas fa-trash"></i></button>
       </td></tr>`;
   }).join('');
   document.getElementById('totalVendas').textContent = fmt(filtered.reduce((s, p) => s + p.valor, 0));
@@ -1793,26 +1819,28 @@ async function addDispensa(e) {
   e.preventDefault();
   const valor = parseFloat(document.getElementById('valorDispensa').value);
   if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); return; }
-  await fbAdd(dbRefs.dispensas, {
-    id: Date.now(),
-    nome: clampStr(document.getElementById('nomeDispensa').value.trim(), 60),
-    unidade: document.getElementById('unidadeDispensa').value,
-    valor, data: new Date().toISOString()
-  });
-  document.getElementById('dispensaForm').reset(); document.getElementById('unidLabel').textContent = 'unidade';
-  toast('success', 'Produto cadastrado!');
+  try {
+    await fbAdd(dbRefs.dispensas, {
+      id: Date.now(),
+      nome: clampStr(document.getElementById('nomeDispensa').value.trim(), 60),
+      unidade: document.getElementById('unidadeDispensa').value,
+      valor, data: new Date().toISOString()
+    });
+    document.getElementById('dispensaForm').reset(); document.getElementById('unidLabel').textContent = 'unidade';
+    toast('success', 'Produto cadastrado!');
+  } catch (err) { console.error(err); toast('error', 'Falha ao cadastrar (conexão?).'); }
 }
 function renderDispensas() {
   const cad = document.getElementById('listaCadastrados');
   cad.innerHTML = dispensas.length ? dispensas.map(d => `
     <div class="product-chip">
       <div><strong>${esc(d.nome)}</strong><div class="punit">${fmt(d.valor)} / ${esc(d.unidade || 'un')}</div></div>
-      <button class="btn-act del" onclick="removerDispensa(${d.id},'${esc(d.firebaseId)}')"><i class="fas fa-trash"></i></button>
+      <button class="btn-act del" onclick="removerDispensa(${d.id})"><i class="fas fa-trash"></i></button>
     </div>`).join('') : '<div class="empty"><i class="fas fa-box-open"></i><p>Nenhum produto</p></div>';
   const cmp = document.getElementById('listaCompra');
   cmp.innerHTML = dispensas.length ? dispensas.map(d => {
     const sel = itensSelecionados.has(d.id); const qty = itensSelecionados.get(d.id) || 1;
-    const dec = d.unidade === 'kg' || d.unidade === 'g' || d.unidade === 'L' || d.unidade === 'ml';
+    const dec = ['kg', 'g', 'L', 'ml'].includes(d.unidade);
     return `<div class="product-chip selectable-chip ${sel ? 'selected' : ''}" id="chip-${d.id}">
       <div style="flex:1">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
@@ -1828,7 +1856,13 @@ function renderDispensas() {
   }).join('') : '<div class="empty"><i class="fas fa-layer-group"></i><p>Cadastre produtos primeiro</p></div>';
   renderTotalDispensa();
 }
-async function removerDispensa(id, fid) { if (!confirm('Remover produto?')) return; itensSelecionados.delete(id); await fbDel(dbRefs.dispensas, fid); toast('info', 'Produto removido'); }
+async function removerDispensa(id) {
+  if (!confirm('Remover produto?')) return;
+  itensSelecionados.delete(id);
+  const d = dispensas.find(x => x.id === id);
+  if (d?.firebaseId) await fbDel(dbRefs.dispensas, d.firebaseId);
+  toast('info', 'Produto removido');
+}
 function toggleItem(id) { itensSelecionados.has(id) ? itensSelecionados.delete(id) : itensSelecionados.set(id, 1); renderDispensas(); }
 function updateQty(id, val) {
   const q = parseFloat(val) || 0;
@@ -1846,11 +1880,13 @@ function renderTotalDispensa() {
 async function finalizarCompraDispensa() {
   if (!itensSelecionados.size) return;
   const itens = []; let tot = 0;
-  itensSelecionados.forEach((qty, id) => { const it = dispensas.find(d => d.id === id); if (it) { itens.push({ ...it, qtd: qty, subtotal: it.valor * qty }); tot += it.valor * qty; } });
-  await fbAdd(dbRefs.compras, { id: Date.now(), data: new Date().toISOString(), itens, total: tot });
-  itensSelecionados.clear(); renderDispensas();
-  toast('success', 'Compra registrada! ' + fmt(tot)); soundSuccess();
-  pushNotif('warning', 'Nova Despesa', 'Compra de ' + itens.length + ' item(s): ' + fmt(tot));
+  itensSelecionados.forEach((qty, id) => { const it = dispensas.find(d => d.id === id); if (it) { itens.push({ nome: it.nome, unidade: it.unidade, valor: it.valor, qtd: qty, subtotal: it.valor * qty }); tot += it.valor * qty; } });
+  try {
+    await fbAdd(dbRefs.compras, { id: Date.now(), data: new Date().toISOString(), itens, total: tot });
+    itensSelecionados.clear(); renderDispensas();
+    toast('success', 'Compra registrada! ' + fmt(tot)); soundSuccess();
+    pushNotif('warning', 'Nova Despesa', 'Compra de ' + itens.length + ' item(s): ' + fmt(tot));
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar compra (conexão?).'); }
 }
 function renderHistoricoDispensas() {
   const c = document.getElementById('historicoDispensas');
@@ -1895,7 +1931,7 @@ function renderFaturas() {
         <div class="fatura-meta">
           <span><i class="fas fa-calendar"></i>${ab.toLocaleDateString('pt-BR')}</span>
           <span><i class="fas fa-clock"></i>${ab.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-          <span><i class="fas fa-basket-shopping"></i>${f.produtos?.length || 0} venda(s)</span>
+          <span><i class="fas fa-basket-shopping"></i>${(f.produtos || []).length} venda(s)</span>
         </div></div>
       <div style="text-align:right">
         <div class="fatura-amt">${fmt(f.total || 0)}</div>
@@ -1980,7 +2016,7 @@ function renderFiadoItensTemp() {
       <span><strong>${esc(it.cod)}</strong> ${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
       <div>
         <strong style="color:#a78bfa">${fmt(it.subtotal)}</strong>
-        <span class="del" onclick="removerProdutoFiadoTemp(${i})"><i class="fas fa-times"></i></span>
+        <button type="button" class="del" onclick="removerProdutoFiadoTemp(${i})"><i class="fas fa-times"></i></button>
       </div>
     </div>
   `).join('');
@@ -2013,23 +2049,24 @@ async function registrarFiado(e) {
     dataPagamento: null
   };
 
-  // CRIPTOGRAFIA PONTA A PONTA: o payload (cliente, telefone, endereço, itens)
-  // é cifrado com AES-256-GCM antes de tocar o banco. O servidor só vê bytes cifrados.
-  const e2e = await encryptJSON(fiadoData, masterPass);
-  await fbAdd(dbRefs.fiados, { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e, firebaseId: undefined });
+  try {
+    /* CRIPTOGRAFIA PONTA A PONTA: payload cifrado com AES-256-GCM antes do banco */
+    const e2e = await encryptJSON(fiadoData, masterPass);
+    await fbAdd(dbRefs.fiados, { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e });
 
-  document.getElementById('fiadoForm').reset();
-  fiadoItensTemp = [];
-  renderFiadoItensTemp();
-  statusFiadoAtual = 'pendente';
-  setStatusFiado('pendente');
+    document.getElementById('fiadoForm').reset();
+    fiadoItensTemp = [];
+    renderFiadoItensTemp();
+    statusFiadoAtual = 'pendente';
+    setStatusFiado('pendente');
 
-  toast('success', 'Fiado registrado (criptografado)! Total: ' + fmt(total));
-  soundSuccess();
-  pushNotif('warning', 'Novo Fiado', 'Registro cifrado de ' + fmt(total) + ' salvo no banco.');
+    toast('success', 'Fiado registrado (criptografado)! Total: ' + fmt(total));
+    soundSuccess();
+    pushNotif('warning', 'Novo Fiado', 'Registro cifrado de ' + fmt(total) + ' salvo no banco.');
 
-  fiadoAtualPrint = fiadoData;
-  abrirModalBobina(fiadoData);
+    fiadoAtualPrint = fiadoData;
+    abrirModalBobina(fiadoData);
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar fiado (conexão?).'); }
 }
 
 function renderFiados() {
@@ -2056,7 +2093,7 @@ function renderFiados() {
           <div class="fiado-meta">
             <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
             <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-            <span><i class="fas fa-cubes"></i>${f.itens.length} item(s)</span>
+            <span><i class="fas fa-cubes"></i>${(f.itens || []).length} item(s)</span>
             ${f.telefone ? `<span><i class="fas fa-phone"></i>${esc(f.telefone)}</span>` : ''}
             ${f.vendedor ? `<span><i class="fas fa-user"></i>${esc(f.vendedor)}</span>` : ''}
           </div>
@@ -2089,7 +2126,7 @@ function verDetalhesFiado(id) {
     ${f.obs ? `<div class="detail-row"><span>Observação</span><strong>${esc(f.obs)}</strong></div>` : ''}
     <div class="fiado-itens-lista">
       <h4>Itens da Compra</h4>
-      ${f.itens.map(it => `
+      ${(f.itens || []).map(it => `
         <div class="fiado-item-row">
           <span><strong>${esc(it.cod)}</strong> ${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
           <strong>${fmt(it.subtotal)}</strong>
@@ -2114,12 +2151,14 @@ function verDetalhesFiado(id) {
 
 async function marcarFiadoPago(id) {
   const f = fiados.find(x => x.id === id);
-  if (f?.firebaseId) {
-    f.status = 'pago'; f.dataPagamento = new Date().toISOString();
-    const e2e = masterPass ? await encryptJSON(f, masterPass) : f.e2e;
-    await fbUpd(dbRefs.fiados, f.firebaseId, { status: 'pago', dataPagamento: f.dataPagamento, e2e });
-    toast('success', 'Fiado marcado como pago!'); soundSuccess();
-    pushNotif('success', 'Fiado Quitado', fmt(f.total) + ' recebido.');
+  if (f?.firebaseId && masterPass) {
+    try {
+      f.status = 'pago'; f.dataPagamento = new Date().toISOString();
+      const e2e = await encryptJSON(f, masterPass);
+      await fbUpd(dbRefs.fiados, f.firebaseId, { status: 'pago', dataPagamento: f.dataPagamento, e2e });
+      toast('success', 'Fiado marcado como pago!'); soundSuccess();
+      pushNotif('success', 'Fiado Quitado', fmt(f.total) + ' recebido.');
+    } catch (err) { console.error(err); toast('error', 'Falha ao atualizar fiado.'); }
   }
 }
 
@@ -2136,7 +2175,7 @@ function gerarBobinaHTML(dados) {
   const horaStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const notaNum = String(dados.id).slice(-4);
 
-  const itensHTML = dados.itens.map(it => `
+  const itensHTML = (dados.itens || []).map(it => `
     <div class="item-row">
       <span class="desc">${esc(it.cod) !== '—' ? esc(it.cod) + ' ' : ''}${esc(it.nome)}</span>
       <span class="qtd">${it.qtd}</span>
@@ -2147,10 +2186,10 @@ function gerarBobinaHTML(dados) {
 
   return `
     <div class="bobina-print" id="bobinaPrint">
-      <div class="cabecalho">AÇAÍ REI</div>
-      <div class="sub-cabecalho">Sistema de Controle de Caixa</div>
+      <div class="cabecalho center">AÇAÍ REI</div>
+      <div class="sub-cabecalho center">Sistema de Controle de Caixa</div>
       <div class="linha"></div>
-      <div class="nota-num">*** NOTA No. ${esc(notaNum)} ***</div>
+      <div class="nota-num center">*** NOTA No. ${esc(notaNum)} ***</div>
       <div class="linha"></div>
       <div class="info-row"><span class="info-label">Cliente:</span>${esc(dados.cliente)}</div>
       ${dados.telefone ? `<div class="info-row"><span class="info-label">Telefone:</span>${esc(dados.telefone)}</div>` : ''}
@@ -2170,15 +2209,15 @@ function gerarBobinaHTML(dados) {
       <div class="total-row">SubTotal: ${fmt(dados.total).replace('R$ ', '')}</div>
       <div class="total-row">Total: ${fmt(dados.total).replace('R$ ', '')}</div>
       <div class="linha"></div>
-      <div class="center bold" style="font-size:10pt">FORMA DE PAGAMENTO</div>
+      <div class="center" style="font-size:10pt;font-weight:bold">FORMA DE PAGAMENTO</div>
       <div class="forma-pag">FIADO (PAGAR DEPOIS): ${fmt(dados.total).replace('R$ ', '')}</div>
       <div class="linha"></div>
       <div style="font-size:9pt;margin-top:4px">Declaro ter recebido a mercadoria.</div>
       <div style="font-size:9pt">Assinatura:</div>
       <div class="assinatura-line"></div>
       <div class="linha-esp"></div>
-      <div class="center bold" style="font-size:10pt">DOCUMENTO NAO FISCAL</div>
-      <div class="center bold" style="font-size:10pt">** Obrigado Pela Preferencia **</div>
+      <div class="center" style="font-size:10pt;font-weight:bold">DOCUMENTO NAO FISCAL</div>
+      <div class="center" style="font-size:10pt;font-weight:bold">** Obrigado Pela Preferencia **</div>
       <div class="linha"></div>
     </div>
   `;
@@ -2218,9 +2257,9 @@ function imprimirBobina() {
     @page{size:79mm auto;margin:0}
     *{margin:0;padding:0;box-sizing:border-box}
     body{width:79mm;max-width:79mm;min-width:79mm;margin:0;padding:4mm 2mm;background:#fff;color:#000;font-family:'Courier New','Consolas',monospace;font-size:11pt;font-weight:bold;line-height:1.35}
-    .center{text-align:center}.right{text-align:right}
+    .center{text-align:center}
     .linha{border-top:1px dashed #000;margin:3px 0}
-    .linha-esp{margin:6px 0}.bold{font-weight:bold}
+    .linha-esp{margin:6px 0}
     .item-row{display:flex;justify-content:space-between;font-size:10pt;font-weight:bold;margin-bottom:1px}
     .item-row .desc{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .item-row .qtd{width:32px;text-align:center;flex-shrink:0}
@@ -2305,8 +2344,8 @@ function exportarRelatorio() {
   if (fiadosPendentes.length) {
     txt += `\nFIADOS PENDENTES:\n${'─'.repeat(45)}\n`;
     fiadosPendentes.forEach(f => {
-      txt += `${f.cliente} | ${fmt(f.total)} | ${f.itens.length} itens | ${new Date(f.data).toLocaleDateString('pt-BR')}\n`;
-      f.itens.forEach(it => { txt += `  ${it.cod} ${it.nome} | ${it.qtd}x | ${fmt(it.valor)} | ${fmt(it.subtotal)}\n`; });
+      txt += `${f.cliente} | ${fmt(f.total)} | ${(f.itens || []).length} itens | ${new Date(f.data).toLocaleDateString('pt-BR')}\n`;
+      (f.itens || []).forEach(it => { txt += `  ${it.cod} ${it.nome} | ${it.qtd}x | ${fmt(it.valor)} | ${fmt(it.subtotal)}\n`; });
     });
   }
   baixarTxt(txt, `relatorio-acairei-${new Date().toISOString().split('T')[0]}.txt`); toast('success', 'Relatório exportado!');
@@ -2353,33 +2392,49 @@ function toast(type, msg) {
   c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3500);
 }
 
-/* ── CENTRAL DE SEGURANÇA (novo painel) ── */
+/* ── CENTRAL DE SEGURANÇA ── */
 function verSeguranca() {
   document.getElementById('secListBody').innerHTML = `
     <div class="sec-row"><i class="fas fa-shield-halved si"></i><div><div class="t">Criptografia de ponta a ponta (AES-256-GCM)</div><div class="d">Fiados (cliente, telefone, endereço, itens) são cifrados no dispositivo antes de irem ao Firebase. O banco só guarda bytes ilegíveis.</div></div></div>
     <div class="sec-row"><i class="fas fa-key si"></i><div><div class="t">Senha protegida com PBKDF2 (210.000 iterações)</div><div class="d">A senha nunca é armazenada nem transmitida. Só um hash resistente a força bruta é salvo, com salt aleatório de 128 bits.</div></div></div>
     <div class="sec-row"><i class="fas fa-user-lock si"></i><div><div class="t">Bloqueio anti força bruta</div><div class="d">5 tentativas erradas bloqueiam o login por 15 minutos neste dispositivo.</div></div></div>
     <div class="sec-row"><i class="fas fa-clock si"></i><div><div class="t">Sessão expira em 30 min</div><div class="d">Inatividade encerra a sessão e apaga a chave de criptografia da memória.</div></div></div>
-    <div class="sec-row"><i class="fas fa-code si"></i><div><div class="t">Proteção contra XSS</div><div class="d">Todos os dados sensíveis exibidos passam por escape de HTML; inputs têm limite de tamanho e validação numérica.</div></div></div>
+    <div class="sec-row"><i class="fas fa-code si"></i><div><div class="t">Proteção contra XSS</div><div class="d">Todos os dados exibidos passam por escape de HTML; inputs têm limite de tamanho e validação numérica.</div></div></div>
     <div class="sec-row"><i class="fas fa-window-maximize si"></i><div><div class="t">Anti-clickjacking + CSP</div><div class="d">A página recusa execução dentro de iframes e aplica Content Security Policy restritiva.</div></div></div>
     <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">No console do Firebase → Realtime Database → Rules, ative autenticação (regra abaixo) para bloquear leitura/escrita anônima da internet.</div></div></div>
     <pre style="background:rgba(0,0,0,.35);border:1px solid var(--gbr);border-radius:10px;padding:1rem;font-family:monospace;font-size:.72rem;color:#5eead4;margin-top:.6rem;overflow-x:auto">{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</pre>`;
   openModal('modalSeguranca');
 }
 
-/* ── BACKUP (fiados exportados cifrados + aviso) ── */
+/* ── BACKUP ── */
 function sincronizarDados() {
-  const dados = { faturas, dispensas, comprasDispensa, favoritos, fiados: fiados.map(f => ({ id: f.id, status: f.status, total: f.total, data: f.data, itensCount: f.itens.length })), lastSync: new Date().toISOString(), nota: 'Fiados exportados sem dados pessoais (permanecem criptografados no banco).' };
+  const dados = {
+    faturas, dispensas, comprasDispensa, favoritos,
+    fiados: fiados.map(f => ({ id: f.id, status: f.status, total: f.total, data: f.data, itensCount: (f.itens || []).length })),
+    lastSync: new Date().toISOString(),
+    nota: 'Fiados exportados sem dados pessoais (permanecem criptografados no banco).'
+  };
   const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob); const a = document.createElement('a');
   a.href = url; a.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
   a.click(); URL.revokeObjectURL(url); toast('success', 'Backup baixado!');
 }
 
+/* ── SESSÃO ── */
+function scheduleSessionExpiry() {
+  clearTimeout(sessionTimer);
+  sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
+  ['click', 'keydown', 'touchstart'].forEach(ev =>
+    document.addEventListener(ev, () => {
+      clearTimeout(sessionTimer);
+      sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
+    }, { passive: true }));
+}
+
 /* ── UTILS ── */
 function fmt(n) {
   if (n == null || isNaN(n)) return 'R$ 0,00';
-  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 function formatHora(d) { if (!d) return '—'; return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
 function formatDT(d) { if (!d) return '—'; return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
@@ -2391,7 +2446,7 @@ function calcDur(a, b) {
 function logout(expired) {
   localStorage.removeItem(SEC.APP_NS + '_sess');
   currentUser = null;
-  masterPass = null;   // chave de criptografia apagada da memória no logout
+  masterPass = null;
   fiados = [];
   clearTimeout(sessionTimer);
   showLogin();
@@ -2399,6 +2454,10 @@ function logout(expired) {
 }
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* Esc fecha modais */
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); });
 </script>
 </body>
 </html>
+https://www.instagram.com/reel/De18i5OABYN/?exln=MWVud2Fna2FobGg2MQ==
