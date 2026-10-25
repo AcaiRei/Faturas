@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0f0a1e">
-<link rel="manifest" href="data:application/json,{}">
-<title>Açaí Rei — Sistema de Caixa</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com wss://*.firebasedatabase.app; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Açaí Rei — Sistema de Caixa Seguro</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -34,11 +35,14 @@ body::before{content:'';position:fixed;inset:0;background:
 .login-screen{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
 .login-card{background:var(--gb);border:1px solid var(--gbr);backdrop-filter:blur(24px);padding:3rem 2.5rem;border-radius:28px;width:100%;max-width:400px;box-shadow:var(--sv),inset 0 1px 0 rgba(255,255,255,.08);animation:riseIn .7s cubic-bezier(.16,1,.3,1) both}
 @keyframes riseIn{from{opacity:0;transform:translateY(40px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.login-logo{text-align:center;margin-bottom:2.5rem}
-.logo-ring{width:88px;height:88px;border-radius:50%;margin:0 auto 1.2rem;padding:3px;background:linear-gradient(135deg,var(--vb),var(--gold))}
+.login-logo{text-align:center;margin-bottom:1.6rem}
+.logo-ring{width:88px;height:88px;border-radius:50%;margin:0 auto 1.2rem;padding:3px;background:linear-gradient(135deg,var(--vb),var(--gold));box-shadow:0 0 30px rgba(124,58,237,.4)}
 .logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 .login-logo h1{font-family:'Playfair Display',serif;font-size:2rem;color:var(--tp)}
 .login-logo p{color:var(--tm);font-size:.85rem;margin-top:.3rem}
+.sec-chips{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
+.sec-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .65rem;border-radius:999px;font-size:.66rem;font-weight:600;letter-spacing:.4px;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.25);color:#5eead4}
+.sec-chip.v{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.3);color:var(--vs)}
 .field{margin-bottom:1.2rem}
 .field label{display:block;font-size:.78rem;font-weight:600;color:var(--ts);letter-spacing:.8px;text-transform:uppercase;margin-bottom:.5rem}
 .field-wrap{position:relative}
@@ -49,12 +53,19 @@ body::before{content:'';position:fixed;inset:0;background:
 .field-wrap:focus-within i.icon{color:var(--vs)}
 .toggle-pass{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--tm);cursor:pointer;transition:color .3s}
 .toggle-pass:hover{color:var(--vs)}
+.strength-meter{height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.6rem}
+.strength-fill{height:100%;width:0;border-radius:999px;transition:all .4s ease}
+.strength-label{font-size:.7rem;color:var(--tm);margin-top:.35rem;display:flex;justify-content:space-between}
 .error-box{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.3);border-radius:10px;padding:.75rem 1rem;color:#fca5a5;font-size:.85rem;display:none;align-items:center;gap:.6rem;margin-bottom:1.2rem}
+.lockout-box{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);border-radius:10px;padding:.75rem 1rem;color:#fca5a5;font-size:.85rem;display:none;align-items:center;gap:.6rem;margin-bottom:1.2rem}
+.setup-note{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.75rem 1rem;color:var(--vs);font-size:.82rem;display:none;align-items:flex-start;gap:.6rem;margin-bottom:1.2rem;line-height:1.45}
 .btn-login{width:100%;padding:1rem;background:linear-gradient(135deg,var(--vb),#5b21b6);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(124,58,237,.4)}
 .btn-login:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.5)}
 .btn-login:disabled{opacity:.6;cursor:not-allowed}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spinning .8s linear infinite}
 @keyframes spinning{to{transform:rotate(360deg)}}
+.shake{animation:shakeX .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shakeX{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
 
 /* APP */
 .app-screen{display:none;position:relative;z-index:1;min-height:100vh}
@@ -64,6 +75,8 @@ body::before{content:'';position:fixed;inset:0;background:
 .crown-box{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff}
 .brand-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--tp)}
 .topbar-right{display:flex;align-items:center;gap:.7rem}
+.sec-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;cursor:pointer;transition:all .3s}
+.sec-pill:hover{background:rgba(20,184,166,.2)}
 .sync-pill{display:flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4;transition:all .3s}
 .sync-pill.offline{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.25);color:#fcd34d}
 .sync-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
@@ -156,14 +169,12 @@ body::before{content:'';position:fixed;inset:0;background:
 .bal-pos{color:#5eead4}.bal-neg{color:#fb7185}.bal-neu{color:var(--vs)}
 .balance-div{font-size:1.5rem;color:var(--tm)}
 
-/* COMPARE SECTION */
+/* COMPARE */
 .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
 .compare-card{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem}
 .compare-label{font-size:.72rem;color:var(--tm);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.5rem}
 .compare-val{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--tp)}
 .compare-sub{font-size:.78rem;color:var(--tm);margin-top:.2rem}
-.compare-diff{display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600;margin-top:.4rem;padding:.2rem .6rem;border-radius:999px}
-.diff-up{background:rgba(34,197,94,.15);color:#86efac}.diff-down{background:rgba(244,63,94,.15);color:#fca5a5}.diff-eq{background:rgba(167,139,250,.15);color:var(--vs)}
 
 /* RANKING */
 .rank-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.8rem}
@@ -236,7 +247,7 @@ body::before{content:'';position:fixed;inset:0;background:
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--vs);background:rgba(255,255,255,.08);box-shadow:0 0 0 3px rgba(167,139,250,.1)}
 .fg textarea{resize:vertical;min-height:60px}
 
-/* TROCO WIDGET */
+/* TROCO */
 .troco-box{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.25);border-radius:14px;padding:1rem 1.2rem;margin-top:.8rem;display:none}
 .troco-box.show{display:block}
 .troco-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;font-size:.9rem}
@@ -256,7 +267,7 @@ body::before{content:'';position:fixed;inset:0;background:
 .btn-add-fav{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;background:var(--gb);border:1px dashed var(--gbr);border-radius:999px;cursor:pointer;font-size:.78rem;color:var(--tm);transition:all .25s;font-family:'DM Sans',sans-serif}
 .btn-add-fav:hover{border-color:var(--vs);color:var(--vs)}
 
-/* STATUS PAGO / PENDENTE */
+/* STATUS PAGO/PENDENTE */
 .pagamento-status{display:flex;gap:.6rem;margin-top:.3rem}
 .status-opt{flex:1;padding:.6rem;border-radius:10px;border:2px solid var(--gbr);cursor:pointer;text-align:center;font-size:.8rem;font-weight:600;transition:all .25s;color:var(--tm);background:transparent;font-family:'DM Sans',sans-serif}
 .status-opt.sel-pago{border-color:#22c55e;background:rgba(34,197,94,.12);color:#86efac}
@@ -273,8 +284,6 @@ body::before{content:'';position:fixed;inset:0;background:
 .filter-select:focus{outline:none;border-color:var(--vs)}
 .filter-select option{background:#1a1030}
 .result-count{font-size:.78rem;color:var(--tm);margin-bottom:.5rem}
-
-/* CLIENTE HISTORY */
 .cliente-hist-btn{font-size:.72rem;color:var(--vs);cursor:pointer;text-decoration:underline;margin-top:.2rem;display:inline-block}
 .cliente-hist-btn:hover{color:var(--vg)}
 
@@ -351,9 +360,6 @@ tbody tr:last-child td{border-bottom:none}
 .btn-export{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.3);border-radius:10px;color:#5eead4;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
 .btn-export:hover{background:rgba(20,184,166,.25)}
 
-/* SOUND TOGGLE */
-.sound-indicator{font-size:.75rem;color:var(--tm);display:flex;align-items:center;gap:.4rem}
-
 /* EMPTY */
 .empty{text-align:center;padding:2.5rem;color:var(--tm)}
 .empty i{font-size:2.5rem;margin-bottom:.8rem;opacity:.2;display:block}
@@ -367,7 +373,7 @@ tbody tr:last-child td{border-bottom:none}
 .btn-secondary{padding:.7rem 1.2rem;background:var(--gb);border:1px solid var(--gbr);border-radius:10px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.4rem}
 .btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--tp)}
 
-/* ======== FIADO / CREDIÁRIO ======== */
+/* FIADO */
 .fiado-lista{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
 .fiado-item{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;transition:all .25s}
 .fiado-item:hover{background:rgba(255,255,255,.07)}
@@ -379,130 +385,11 @@ tbody tr:last-child td{border-bottom:none}
 .fiado-valor{font-family:'Playfair Display',serif;font-size:1.2rem;color:#a78bfa}
 .fiado-valor.pago{color:#86efac}
 .fiado-acoes{display:flex;gap:.4rem}
-
 .fiado-itens-lista{background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:1rem;margin-top:1rem}
 .fiado-itens-lista h4{font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.8rem}
 .fiado-item-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
 .fiado-item-row:last-child{border-bottom:none}
 .fiado-item-row strong{color:var(--tp)}
-
-/* ======== IMPRESSÃO BOBINA 79MM ======== */
-@media print{
-  @page {
-    size: 79mm auto;
-    margin: 0;
-  }
-  body *{visibility:hidden !important}
-  .bobina-print,.bobina-print *{visibility:visible !important}
-  .bobina-print{
-    position:fixed !important;
-    left:0 !important;
-    top:0 !important;
-    width:79mm !important;
-    max-width:79mm !important;
-    min-width:79mm !important;
-    margin:0 !important;
-    padding:4mm 2mm !important;
-    background:#fff !important;
-    color:#000 !important;
-    font-family:'Courier New','Consolas',monospace !important;
-    font-size:11pt !important;
-    font-weight:bold !important;
-    line-height:1.35 !important;
-    box-sizing:border-box !important;
-    overflow:visible !important;
-  }
-}
-
-.bobina-preview{
-  background:#fff;
-  color:#000;
-  font-family:'Courier New','Consolas',monospace;
-  font-size:11pt;
-  font-weight:bold;
-  line-height:1.35;
-  width:79mm;
-  max-width:79mm;
-  margin:0 auto;
-  padding:4mm 2mm;
-  border:1px dashed #999;
-  box-sizing:border-box;
-}
-.bobina-preview .center{text-align:center}
-.bobina-preview .right{text-align:right}
-.bobina-preview .linha{border-top:1px dashed #000;margin:3px 0}
-.bobina-preview .linha-esp{margin:6px 0}
-.bobina-preview .bold{font-weight:bold}
-.bobina-preview .item-row{
-  display:flex;
-  justify-content:space-between;
-  font-size:10pt;
-  font-weight:bold;
-  margin-bottom:1px;
-}
-.bobina-preview .item-row .desc{
-  flex:1;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.bobina-preview .item-row .qtd{
-  width:32px;
-  text-align:center;
-  flex-shrink:0;
-}
-.bobina-preview .item-row .val{
-  width:58px;
-  text-align:right;
-  flex-shrink:0;
-}
-.bobina-preview .item-row .tot{
-  width:58px;
-  text-align:right;
-  flex-shrink:0;
-}
-.bobina-preview .assinatura{margin-top:16px;border-top:1px dashed #000;padding-top:6px}
-.bobina-preview .assinatura-line{border-bottom:1.5px solid #000;width:70%;margin:16px auto 4px;height:18px}
-.bobina-preview .cabecalho{
-  font-size:14pt;
-  font-weight:bold;
-  text-align:center;
-  margin-bottom:2px;
-}
-.bobina-preview .sub-cabecalho{
-  font-size:9pt;
-  text-align:center;
-  margin-bottom:4px;
-}
-.bobina-preview .nota-num{
-  font-size:11pt;
-  font-weight:bold;
-  text-align:center;
-  margin:3px 0;
-}
-.bobina-preview .info-row{
-  font-size:10pt;
-  margin-bottom:1px;
-}
-.bobina-preview .info-label{
-  display:inline-block;
-  width:85px;
-}
-.bobina-preview .total-row{
-  font-size:12pt;
-  font-weight:bold;
-  text-align:right;
-  margin:2px 0;
-}
-.bobina-preview .forma-pag{
-  font-size:10pt;
-  margin:2px 0;
-}
-
-.btn-print-bobina{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fcd34d;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
-.btn-print-bobina:hover{background:rgba(245,158,11,.25)}
-
-/* ======== FIADO FORM ======== */
 .fiado-form-produto{display:flex;gap:.5rem;align-items:flex-end;margin-bottom:.8rem}
 .fiado-form-produto .fg{flex:1}
 .fiado-form-produto .btn-add-prod{padding:.8rem 1rem;background:var(--vb);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:.9rem;transition:all .3s}
@@ -512,6 +399,43 @@ tbody tr:last-child td{border-bottom:none}
 .fiado-temp-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem}
 .fiado-temp-row:last-child{border-bottom:none}
 .fiado-temp-row .del{color:var(--rose);cursor:pointer;font-size:.8rem;margin-left:.5rem}
+
+/* IMPRESSÃO BOBINA 79MM */
+@media print{
+  @page{size:79mm auto;margin:0}
+  body *{visibility:hidden !important}
+  .bobina-print,.bobina-print *{visibility:visible !important}
+  .bobina-print{position:fixed !important;left:0 !important;top:0 !important;width:79mm !important;max-width:79mm !important;min-width:79mm !important;margin:0 !important;padding:4mm 2mm !important;background:#fff !important;color:#000 !important;font-family:'Courier New','Consolas',monospace !important;font-size:11pt !important;font-weight:bold !important;line-height:1.35 !important;box-sizing:border-box !important;overflow:visible !important}
+}
+.bobina-preview{background:#fff;color:#000;font-family:'Courier New','Consolas',monospace;font-size:11pt;font-weight:bold;line-height:1.35;width:79mm;max-width:79mm;margin:0 auto;padding:4mm 2mm;border:1px dashed #999;box-sizing:border-box}
+.bobina-preview .center{text-align:center}
+.bobina-preview .right{text-align:right}
+.bobina-preview .linha{border-top:1px dashed #000;margin:3px 0}
+.bobina-preview .linha-esp{margin:6px 0}
+.bobina-preview .bold{font-weight:bold}
+.bobina-preview .item-row{display:flex;justify-content:space-between;font-size:10pt;font-weight:bold;margin-bottom:1px}
+.bobina-preview .item-row .desc{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bobina-preview .item-row .qtd{width:32px;text-align:center;flex-shrink:0}
+.bobina-preview .item-row .val{width:58px;text-align:right;flex-shrink:0}
+.bobina-preview .item-row .tot{width:58px;text-align:right;flex-shrink:0}
+.bobina-preview .assinatura{margin-top:16px;border-top:1px dashed #000;padding-top:6px}
+.bobina-preview .assinatura-line{border-bottom:1.5px solid #000;width:70%;margin:16px auto 4px;height:18px}
+.bobina-preview .cabecalho{font-size:14pt;font-weight:bold;text-align:center;margin-bottom:2px}
+.bobina-preview .sub-cabecalho{font-size:9pt;text-align:center;margin-bottom:4px}
+.bobina-preview .nota-num{font-size:11pt;font-weight:bold;text-align:center;margin:3px 0}
+.bobina-preview .info-row{font-size:10pt;margin-bottom:1px}
+.bobina-preview .info-label{display:inline-block;width:85px}
+.bobina-preview .total-row{font-size:12pt;font-weight:bold;text-align:right;margin:2px 0}
+.bobina-preview .forma-pag{font-size:10pt;margin:2px 0}
+.btn-print-bobina{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fcd34d;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;margin-top:1rem}
+.btn-print-bobina:hover{background:rgba(245,158,11,.25)}
+
+/* SECURITY MODAL */
+.sec-list{display:flex;flex-direction:column;gap:.6rem}
+.sec-row{display:flex;gap:.8rem;align-items:flex-start;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px}
+.sec-row i.si{margin-top:.15rem;flex-shrink:0;font-size:.95rem;color:#5eead4}
+.sec-row .t{font-size:.85rem;color:var(--tp);font-weight:600}
+.sec-row .d{font-size:.78rem;color:var(--tm);margin-top:.15rem;line-height:1.4}
 
 @media(max-width:1024px){
   .sidebar{display:none}
@@ -535,9 +459,6 @@ tbody tr:last-child td{border-bottom:none}
 ::-webkit-scrollbar-thumb{background:rgba(167,139,250,.2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(167,139,250,.4)}
 </style>
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <div class="toast-container" id="toastContainer"></div>
@@ -548,21 +469,30 @@ tbody tr:last-child td{border-bottom:none}
     <div class="login-logo">
       <div class="logo-ring">
         <img src="https://i.ibb.co/sr0dSjh/logo-acai.png" alt="Açaí Rei"
-             onerror="this.parentElement.style.background='linear-gradient(135deg,#7c3aed,#f59e0b)';this.style.display='none'">
+             onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:#fff\'>👑</div>'">
       </div>
       <h1>Açaí Rei</h1>
       <p>Sistema de Controle de Caixa</p>
     </div>
+    <div class="sec-chips">
+      <span class="sec-chip"><i class="fas fa-shield-halved"></i> AES-256-GCM</span>
+      <span class="sec-chip"><i class="fas fa-key"></i> PBKDF2 210k</span>
+      <span class="sec-chip v"><i class="fas fa-lock"></i> Dados criptografados</span>
+    </div>
+    <div class="setup-note" id="setupNote"><i class="fas fa-circle-info" style="margin-top:.15rem"></i><span></span></div>
     <div class="error-box" id="errorBox"><i class="fas fa-circle-exclamation"></i><span id="errorText"></span></div>
-    <form id="loginForm">
+    <div class="lockout-box" id="lockoutBox"><i class="fas fa-user-lock"></i><span id="lockoutText"></span></div>
+    <form id="loginForm" autocomplete="off">
       <div class="field"><label>Usuário</label>
-        <div class="field-wrap"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Digite seu usuário" required></div>
+        <div class="field-wrap"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Digite seu usuário" autocomplete="off" required></div>
       </div>
-      <div class="field"><label>Senha</label>
+      <div class="field"><label>Senha (mín. 12 dígitos)</label>
         <div class="field-wrap">
-          <i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Digite sua senha" required>
+          <i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Mínimo 12 caracteres" autocomplete="new-password" minlength="12" required>
           <i class="fas fa-eye toggle-pass" id="togglePass"></i>
         </div>
+        <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
+        <div class="strength-label"><span id="strengthText">Força da senha</span><span id="strengthPct"></span></div>
       </div>
       <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema</button>
     </form>
@@ -579,6 +509,7 @@ tbody tr:last-child td{border-bottom:none}
     <div class="topbar-right">
       <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema" id="themeBtn"><i class="fas fa-moon"></i></button>
       <button class="theme-btn" onclick="toggleSound()" title="Som" id="soundBtn"><i class="fas fa-volume-high"></i></button>
+      <button class="sec-pill" onclick="verSeguranca()" title="Status de segurança"><i class="fas fa-shield-halved"></i> Seguro</button>
       <div class="notif-bell" onclick="verNotificacoes()"><i class="fas fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
       <button class="btn-topbar" onclick="abrirRelatorio()"><i class="fas fa-chart-bar"></i> <span>Relatório</span></button>
       <button class="btn-topbar" onclick="sincronizarDados()"><i class="fas fa-rotate"></i> <span>Backup</span></button>
@@ -655,7 +586,6 @@ tbody tr:last-child td{border-bottom:none}
           </div>
         </div>
 
-        <!-- Meta -->
         <div class="glass-card">
           <div class="card-head"><h3 class="card-title"><i class="fas fa-bullseye"></i> Meta do Dia</h3></div>
           <div id="metaDisplay" style="margin-bottom:1rem">
@@ -673,7 +603,6 @@ tbody tr:last-child td{border-bottom:none}
           </div>
         </div>
 
-        <!-- Pagamentos + Balanço -->
         <div class="glass-card">
           <div class="card-head"><h3 class="card-title"><i class="fas fa-credit-card"></i> Por Forma de Pagamento</h3></div>
           <div class="pay-breakdown" id="payBreakdown">
@@ -692,7 +621,6 @@ tbody tr:last-child td{border-bottom:none}
           </div>
         </div>
 
-        <!-- Ranking produtos + Pico horário -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
           <div class="glass-card" style="margin-bottom:0">
             <div class="card-head"><h3 class="card-title"><i class="fas fa-trophy"></i> Produtos Mais Vendidos</h3></div>
@@ -704,7 +632,6 @@ tbody tr:last-child td{border-bottom:none}
           </div>
         </div>
 
-        <!-- Comparativo Presencial x Delivery -->
         <div class="glass-card" style="margin-top:1.5rem">
           <div class="card-head"><h3 class="card-title"><i class="fas fa-arrows-left-right"></i> Ticket por Tipo</h3></div>
           <div class="compare-grid">
@@ -753,7 +680,6 @@ tbody tr:last-child td{border-bottom:none}
             <span class="status-badge badge-closed" id="caixaBadge"><i class="fas fa-lock"></i> Caixa Fechado</span>
           </div>
 
-          <!-- Favoritos -->
           <div class="fav-section">
             <h4><i class="fas fa-star" style="color:var(--gold);margin-right:.4rem"></i> Atalhos Rápidos</h4>
             <div class="fav-chips" id="favChips">
@@ -780,10 +706,9 @@ tbody tr:last-child td{border-bottom:none}
                   <option value="">Selecione</option><option>Presencial</option><option>Delivery</option>
                 </select>
               </div>
-              <div class="fg"><label>Observação</label><input type="text" id="obsVenda" placeholder="Ex: sem granola, ap 12…"></div>
+              <div class="fg"><label>Observação</label><input type="text" id="obsVenda" placeholder="Ex: sem granola, ap 12…" maxlength="120"></div>
             </div>
 
-            <!-- Troco (aparece só quando Dinheiro) -->
             <div class="troco-box" id="trocoBox">
               <div class="fg" style="margin-bottom:.8rem">
                 <label>Valor Recebido (R$)</label>
@@ -794,7 +719,6 @@ tbody tr:last-child td{border-bottom:none}
               <div class="troco-resultado" id="trocoResultado">—</div>
             </div>
 
-            <!-- Status pagamento (aparece só quando Presencial) -->
             <div id="statusPagWrap" style="display:none;margin-top:.8rem">
               <div class="fg">
                 <label>Status do Pedido</label>
@@ -842,7 +766,7 @@ tbody tr:last-child td{border-bottom:none}
             <form id="dispensaForm" onsubmit="addDispensa(event)">
               <div class="fg" style="margin-bottom:1rem">
                 <label>Nome do Produto</label>
-                <input type="text" id="nomeDispensa" placeholder="Ex: Açaí, Copo 500ml, Polpa…" required>
+                <input type="text" id="nomeDispensa" placeholder="Ex: Açaí, Copo 500ml, Polpa…" maxlength="60" required>
               </div>
               <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1rem">
                 <div class="fg">
@@ -898,7 +822,7 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
 
-      <!-- ======== NOVA ABA: FIADO / CREDIÁRIO ======== -->
+      <!-- FIADO -->
       <div class="tab-pane" id="tab-fiado">
         <div class="glass-card">
           <div class="card-head">
@@ -906,18 +830,16 @@ tbody tr:last-child td{border-bottom:none}
             <span class="status-badge badge-closed" id="fiadoBadge"><i class="fas fa-lock"></i> Caixa Fechado</span>
           </div>
 
-          <!-- Formulário de Fiado -->
           <form id="fiadoForm" onsubmit="registrarFiado(event)">
             <div class="form-grid">
-              <div class="fg"><label>Cliente *</label><input type="text" id="fiadoCliente" placeholder="Nome completo do cliente" required></div>
-              <div class="fg"><label>Telefone</label><input type="tel" id="fiadoTelefone" placeholder="(27) 99999-9999"></div>
-              <div class="fg"><label>Endereço</label><input type="text" id="fiadoEndereco" placeholder="Rua, número, bairro…"></div>
-              <div class="fg"><label>Vendedor *</label><input type="text" id="fiadoVendedor" placeholder="Nome do vendedor" required></div>
-              <div class="fg"><label>Entregador</label><input type="text" id="fiadoEntregador" placeholder="Nome do entregador"></div>
-              <div class="fg"><label>Observação</label><input type="text" id="fiadoObs" placeholder="Ex: pagar dia 05, sem juros…"></div>
+              <div class="fg"><label>Cliente *</label><input type="text" id="fiadoCliente" placeholder="Nome completo do cliente" maxlength="80" required></div>
+              <div class="fg"><label>Telefone</label><input type="tel" id="fiadoTelefone" placeholder="(27) 99999-9999" maxlength="20" pattern="[0-9()\s\-\+]{0,20}"></div>
+              <div class="fg"><label>Endereço</label><input type="text" id="fiadoEndereco" placeholder="Rua, número, bairro…" maxlength="120"></div>
+              <div class="fg"><label>Vendedor *</label><input type="text" id="fiadoVendedor" placeholder="Nome do vendedor" maxlength="60" required></div>
+              <div class="fg"><label>Entregador</label><input type="text" id="fiadoEntregador" placeholder="Nome do entregador" maxlength="60"></div>
+              <div class="fg"><label>Observação</label><input type="text" id="fiadoObs" placeholder="Ex: pagar dia 05, sem juros…" maxlength="120"></div>
             </div>
 
-            <!-- Adicionar Produtos ao Fiado -->
             <div style="margin-top:1.5rem">
               <h4 style="font-size:.78rem;color:var(--ts);letter-spacing:.8px;text-transform:uppercase;margin-bottom:1rem">
                 <i class="fas fa-list" style="margin-right:.4rem"></i> Itens da Compra
@@ -925,11 +847,11 @@ tbody tr:last-child td{border-bottom:none}
               <div class="fiado-form-produto">
                 <div class="fg">
                   <label>Código</label>
-                  <input type="text" id="fiadoCodProd" placeholder="Cód" style="width:80px">
+                  <input type="text" id="fiadoCodProd" placeholder="Cód" style="width:80px" maxlength="12">
                 </div>
                 <div class="fg" style="flex:2">
                   <label>Produto</label>
-                  <input type="text" id="fiadoNomeProd" placeholder="Nome do produto">
+                  <input type="text" id="fiadoNomeProd" placeholder="Nome do produto" maxlength="60">
                 </div>
                 <div class="fg" style="width:100px">
                   <label>Qtd</label>
@@ -944,7 +866,6 @@ tbody tr:last-child td{border-bottom:none}
                 </button>
               </div>
 
-              <!-- Lista temporária de itens -->
               <div class="fiado-itens-temp" id="fiadoItensTemp" style="display:none">
                 <h4>Itens Adicionados</h4>
                 <div id="fiadoItensTempList"></div>
@@ -955,7 +876,6 @@ tbody tr:last-child td{border-bottom:none}
               </div>
             </div>
 
-            <!-- Status do Fiado -->
             <div style="margin-top:1rem">
               <div class="fg">
                 <label>Status do Fiado</label>
@@ -976,7 +896,6 @@ tbody tr:last-child td{border-bottom:none}
           </form>
         </div>
 
-        <!-- Lista de Fiados -->
         <div class="glass-card">
           <div class="card-head">
             <h3 class="card-title"><i class="fas fa-list-check"></i> Contas em Aberto</h3>
@@ -1005,8 +924,8 @@ tbody tr:last-child td{border-bottom:none}
     <form id="formEditar" onsubmit="salvarEdicao(event)">
       <input type="hidden" id="editId">
       <div class="form-grid">
-        <div class="fg"><label>Cliente</label><input type="text" id="editCliente" required></div>
-        <div class="fg"><label>Produto</label><input type="text" id="editProduto" required></div>
+        <div class="fg"><label>Cliente</label><input type="text" id="editCliente" maxlength="80" required></div>
+        <div class="fg"><label>Produto</label><input type="text" id="editProduto" maxlength="60" required></div>
         <div class="fg"><label>Valor (R$)</label><input type="number" id="editValor" step="0.01" min="0" required></div>
         <div class="fg"><label>Pagamento</label>
           <select id="editPagamento" required>
@@ -1017,7 +936,7 @@ tbody tr:last-child td{border-bottom:none}
         <div class="fg"><label>Tipo</label>
           <select id="editTipo" required><option>Presencial</option><option>Delivery</option></select>
         </div>
-        <div class="fg"><label>Observação</label><input type="text" id="editObs" placeholder="Opcional"></div>
+        <div class="fg"><label>Observação</label><input type="text" id="editObs" placeholder="Opcional" maxlength="120"></div>
       </div>
       <div class="fg" style="margin-top:.5rem"><label>Status</label>
         <select id="editStatus">
@@ -1079,7 +998,6 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- NOVO: Modal Detalhes do Fiado -->
 <div class="modal" id="modalFiado" onclick="if(event.target===this)closeModal('modalFiado')">
   <div class="modal-box" style="max-width:600px">
     <div class="modal-head">
@@ -1090,7 +1008,6 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- NOVO: Modal Impressão Bobina 79mm -->
 <div class="modal" id="modalBobina" onclick="if(event.target===this)closeModal('modalBobina')">
   <div class="modal-box" style="max-width:400px">
     <div class="modal-head">
@@ -1112,7 +1029,21 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- FIREBASE -->
+<div class="modal" id="modalSeguranca" onclick="if(event.target===this)closeModal('modalSeguranca')">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-head">
+      <h3><i class="fas fa-shield-halved" style="color:#5eead4;margin-right:.5rem"></i> Central de Segurança</h3>
+      <button class="btn-close" onclick="closeModal('modalSeguranca')">&times;</button>
+    </div>
+    <div class="sec-list" id="secListBody"></div>
+    <div style="display:flex;gap:.5rem;margin-top:1.2rem;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="trocarSenhaUI()" style="flex:1"><i class="fas fa-key"></i> Trocar senha</button>
+      <button class="btn-secondary" onclick="zerarTentativas()" style="flex:1"><i class="fas fa-unlock"></i> Resetar bloqueio</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE (chaves públicas de config, não são secretas; proteja o banco com Security Rules) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase,ref,set,push,onValue,remove,update,get,child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -1123,912 +1054,1094 @@ window.dbOnValue=onValue;window.dbRemove=remove;window.dbUpdate=update;window.db
 </script>
 
 <script>
-const CREDS={username:'Açai Rei001',password:'170920'};
-let caixaAberto=false,horaAbertura=null,faturaAtual=null;
-let produtosVenda=[],faturas=[],dispensas=[],comprasDispensa=[];
-let itensSelecionados=new Map();
-let db=null,dbRefs={},currentUser=null;
-let timerInterval=null,notificacoes=[],favoritos=[],metaDia=0;
-let statusPagAtual='pago',soundEnabled=true;
+/* ================================================================
+   NÚCLEO DE SEGURANÇA (Web Crypto API — AES-256-GCM + PBKDF2)
+   - Senha nunca sai do dispositivo: só um hash PBKDF2 é armazenado.
+   - Dados de fiado/cliente são cifrados com chave derivada da senha
+     antes de irem ao Firebase (criptografia de ponta a ponta).
+   ================================================================ */
+const SEC = {
+  PBKDF2_ITER: 210000,     // alinhado às recomendações OWASP 2023+ (SHA-256)
+  KEY_LEN: 256,
+  SALT_LEN: 16,
+  IV_LEN: 12,
+  AUTH_TAG_LEN: 16,
+  SESSION_TIMEOUT: 30 * 60 * 1000,          // 30 min
+  LOCKOUT_MAX_ATTEMPTS: 5,
+  LOCKOUT_MS: 15 * 60 * 1000,                // 15 min
+  APP_NS: 'acaiReiSec_v1'
+};
+const b64 = {
+  enc: buf => btoa(String.fromCharCode(...new Uint8Array(buf))),
+  dec: str => Uint8Array.from(atob(str), c => c.charCodeAt(0))
+};
+const te = new TextEncoder(), td = new TextDecoder();
 
-// ======== NOVAS VARIÁVEIS FIADO ========
-let fiados=[];
-let fiadoItensTemp=[];
-let statusFiadoAtual='pendente';
-let fiadoAtualPrint=null;
-
-// Audio context for sounds
-let audioCtx=null;
-function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
-function playSound(freq=880,dur=.15,type='sine'){
-  if(!soundEnabled)return;
-  try{const a=getAudio();const o=a.createOscillator();const g=a.createGain();
-  o.connect(g);g.connect(a.destination);o.type=type;o.frequency.value=freq;
-  g.gain.setValueAtTime(.3,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);
-  o.start();o.stop(a.currentTime+dur);}catch(e){}
+/* Deriva chave AES a partir da senha + salt (PBKDF2-HMAC-SHA256) */
+async function deriveKey(password, salt, usage) {
+  const base = await crypto.subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' },
+    base,
+    { name: 'AES-GCM', length: SEC.KEY_LEN },
+    false,
+    usage
+  );
 }
-function soundSuccess(){playSound(880,.1);setTimeout(()=>playSound(1100,.15),120)}
-function soundError(){playSound(220,.3,'sawtooth')}
 
-window.addEventListener('load',()=>{
-  loadLocalPrefs();
-  setTimeout(initFirebase,300);
+/* Hash PBKDF2 da senha (para autenticação local) */
+async function hashPassword(password, saltB64) {
+  const salt = saltB64 ? b64.dec(saltB64) : crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
+  const key = await deriveKey(password, salt, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' }, key, 256);
+  return { hash: b64.enc(bits), salt: b64.enc(salt) };
+}
+async function verifyPassword(password, rec) {
+  const { hash } = await hashPassword(password, rec.salt);
+  // comparação em tempo constante (mitiga timing attack)
+  const a = te.encode(hash), b = te.encode(rec.hash);
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
+}
+
+/* Cifra/decifra payloads (AES-256-GCM, IV aleatório por operação) */
+async function encryptJSON(obj, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
+  const key = await deriveKey(password, salt, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(SEC.IV_LEN));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, te.encode(JSON.stringify(obj)));
+  return { v: 1, s: b64.enc(salt), i: b64.enc(iv), c: b64.enc(ct) };
+}
+async function decryptJSON(pkg, password) {
+  if (!pkg || pkg.v !== 1) return null;
+  const key = await deriveKey(password, b64.dec(pkg.s), ['decrypt']);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64.dec(pkg.i) }, key, b64.dec(pkg.c));
+  return JSON.parse(td.decode(pt));
+}
+
+/* Anti-clickjacking: recusa execução dentro de iframe */
+try { if (window.top !== window.self) { document.body.innerHTML = ''; throw new Error('clickjacking'); } } catch(e) { window.location.href = 'about:blank'; }
+
+/* Utilitários anti-abuso / sanitização */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function clampStr(s, n) { return String(s ?? '').slice(0, n); }
+function isSafeNumber(v) { const n = Number(v); return isFinite(n) && n >= 0 && n < 1e9; }
+
+/* Rate limiting de login por dispositivo (brute force) */
+const lockStore = {
+  get() { try { return JSON.parse(sessionStorage.getItem(SEC.APP_NS + '_lock')) || { tries: 0, until: 0 }; } catch { return { tries: 0, until: 0 }; } },
+  set(o) { sessionStorage.setItem(SEC.APP_NS + '_lock', JSON.stringify(o)); }
+};
+function isLocked() { const l = lockStore.get(); return Date.now() < l.until; }
+function lockoutRemaining() { return Math.max(0, Math.ceil((lockStore.get().until - Date.now()) / 1000)); }
+function registerFail() {
+  const l = lockStore.get(); l.tries++;
+  if (l.tries >= SEC.LOCKOUT_MAX_ATTEMPTS) { l.until = Date.now() + SEC.LOCKOUT_MS; l.tries = 0; }
+  lockStore.set(l);
+}
+function zerarTentativas() { lockStore.set({ tries: 0, until: 0 }); toast('success', 'Bloqueio resetado.'); closeModal('modalSeguranca'); }
+
+/* Medidor de força de senha (0-100) */
+function scorePassword(p) {
+  let s = 0;
+  if (p.length >= 12) s += 40;
+  if (p.length >= 16) s += 15;
+  if (/[a-z]/.test(p) && /[A-Z]/.test(p)) s += 15;
+  if (/\d/.test(p)) s += 15;
+  if (/[^A-Za-z0-9]/.test(p)) s += 15;
+  return Math.min(100, s);
+}
+document.getElementById('password').addEventListener('input', function () {
+  const s = scorePassword(this.value);
+  const f = document.getElementById('strengthFill'), t = document.getElementById('strengthText'), pct = document.getElementById('strengthPct');
+  pct.textContent = s + '%';
+  if (s < 40) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f43f5e,#fb7185)'; t.textContent = 'Fraca'; }
+  else if (s < 70) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f59e0b,#fcd34d)'; t.textContent = 'Média'; }
+  else { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#14b8a6,#5eead4)'; t.textContent = 'Forte'; }
 });
 
-function loadLocalPrefs(){
-  favoritos=JSON.parse(localStorage.getItem('acaiRei_favoritos')||'[]');
-  metaDia=parseFloat(localStorage.getItem('acaiRei_meta')||'0');
-  soundEnabled=localStorage.getItem('acaiRei_sound')!=='false';
-  const theme=localStorage.getItem('acaiRei_theme')||'dark';
-  if(theme==='light')document.documentElement.setAttribute('data-theme','light');
-  updateSoundBtn();renderFavoritos();
+/* ================ ESTADO DA APLICAÇÃO ================ */
+let caixaAberto = false, horaAbertura = null, faturaAtual = null;
+let produtosVenda = [], faturas = [], dispensas = [], comprasDispensa = [];
+let itensSelecionados = new Map();
+let db = null, dbRefs = {}, currentUser = null, masterPass = null;
+let timerInterval = null, notificacoes = [], favoritos = [], metaDia = 0;
+let statusPagAtual = 'pago', soundEnabled = true;
+let fiados = [], fiadoItensTemp = [], statusFiadoAtual = 'pendente', fiadoAtualPrint = null;
+let sessionTimer = null;
+let audioCtx = null;
+
+function getAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playSound(freq = 880, dur = .15, type = 'sine') {
+  if (!soundEnabled) return;
+  try {
+    const a = getAudio(), o = a.createOscillator(), g = a.createGain();
+    o.connect(g); g.connect(a.destination); o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(.3, a.currentTime); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.start(); o.stop(a.currentTime + dur);
+  } catch (e) { }
+}
+function soundSuccess() { playSound(880, .1); setTimeout(() => playSound(1100, .15), 120); }
+function soundError() { playSound(220, .3, 'sawtooth'); }
+
+/* Boot */
+window.addEventListener('load', () => {
+  loadLocalPrefs();
+  setupFirstRun();
+  setTimeout(initFirebase, 300);
+});
+
+function loadLocalPrefs() {
+  favoritos = JSON.parse(localStorage.getItem('acaiRei_favoritos') || '[]');
+  metaDia = parseFloat(localStorage.getItem('acaiRei_meta') || '0');
+  soundEnabled = localStorage.getItem('acaiRei_sound') !== 'false';
+  const theme = localStorage.getItem('acaiRei_theme') || 'dark';
+  if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  updateSoundBtn(); updateThemeBtn(); renderFavoritos();
 }
 
-function initFirebase(){
-  if(!window.firebaseDB){setTimeout(initFirebase,400);return}
-  db=window.firebaseDB;
-  dbRefs={
-    caixa:window.dbRef(db,'caixa'),vendas:window.dbRef(db,'vendas'),
-    faturas:window.dbRef(db,'faturas'),dispensas:window.dbRef(db,'dispensas'),
-    compras:window.dbRef(db,'compras'),conn:window.dbRef(db,'.info/connected'),
-    fiados:window.dbRef(db,'fiados')
+/* Primeiro acesso: cadastra credenciais com hash PBKDF2 (nunca a senha em claro) */
+function setupFirstRun() {
+  const rec = localStorage.getItem(SEC.APP_NS + '_cred');
+  if (!rec) {
+    const note = document.getElementById('setupNote');
+    note.style.display = 'flex';
+    note.querySelector('span').innerHTML =
+      '<strong>Primeiro acesso:</strong> defina um usuário e uma senha de <strong>mínimo 12 caracteres</strong> ' +
+      '(letras maiúsculas, minúsculas, números e símbolos). Ela será usada como chave mestra para ' +
+      'criptografar todos os dados no banco — e nunca é enviada nem armazenada em texto puro.';
+  }
+  checkAuth();
+}
+
+function initFirebase() {
+  if (!window.firebaseDB) { setTimeout(initFirebase, 400); return; }
+  db = window.firebaseDB;
+  dbRefs = {
+    caixa: window.dbRef(db, 'caixa'), vendas: window.dbRef(db, 'vendas'),
+    faturas: window.dbRef(db, 'faturas'), dispensas: window.dbRef(db, 'dispensas'),
+    compras: window.dbRef(db, 'compras'), conn: window.dbRef(db, '.info/connected'),
+    fiados: window.dbRef(db, 'fiados')
   };
-  setupListeners();checkAuth();
+  setupListeners();
 }
 
-function setupListeners(){
-  window.dbOnValue(dbRefs.caixa,snap=>{
-    const d=snap.val()||{};
-    caixaAberto=d.aberto||false;
-    horaAbertura=d.horaAbertura?new Date(d.horaAbertura):null;
-    faturaAtual=d.faturaAtual||null;
-    updateCaixaUI();updateBadge();startTimer();
+function setupListeners() {
+  window.dbOnValue(dbRefs.caixa, snap => {
+    const d = snap.val() || {};
+    caixaAberto = d.aberto || false;
+    horaAbertura = d.horaAbertura ? new Date(d.horaAbertura) : null;
+    faturaAtual = d.faturaAtual || null;
+    updateCaixaUI(); updateBadge(); startTimer();
   });
-  window.dbOnValue(dbRefs.vendas,snap=>{
-    produtosVenda=snap.val()?Object.values(snap.val()):[];
-    renderTabela();updateDashboard();
+  window.dbOnValue(dbRefs.vendas, snap => {
+    produtosVenda = snap.val() ? Object.values(snap.val()) : [];
+    renderTabela(); updateDashboard();
   });
-  window.dbOnValue(dbRefs.faturas,snap=>{
-    faturas=snap.val()?Object.values(snap.val()).reverse():[];
+  window.dbOnValue(dbRefs.faturas, snap => {
+    faturas = snap.val() ? Object.values(snap.val()).reverse() : [];
     renderFaturas();
   });
-  window.dbOnValue(dbRefs.dispensas,snap=>{
-    dispensas=snap.val()?Object.values(snap.val()):[];
+  window.dbOnValue(dbRefs.dispensas, snap => {
+    dispensas = snap.val() ? Object.values(snap.val()) : [];
     renderDispensas();
   });
-  window.dbOnValue(dbRefs.compras,snap=>{
-    comprasDispensa=snap.val()?Object.values(snap.val()).reverse():[];
-    renderHistoricoDispensas();updateDashboard();
+  window.dbOnValue(dbRefs.compras, snap => {
+    comprasDispensa = snap.val() ? Object.values(snap.val()).reverse() : [];
+    renderHistoricoDispensas(); updateDashboard();
   });
-  // NOVO: Listener de fiados
-  window.dbOnValue(dbRefs.fiados,snap=>{
-    fiados=snap.val()?Object.values(snap.val()).reverse():[];
-    renderFiados();updateDashboard();
+  window.dbOnValue(dbRefs.fiados, snap => {
+    // Fiados chegam cifrados (E2E). Decifra em memória com a chave mestra.
+    const raw = snap.val() ? Object.values(snap.val()) : [];
+    fiados = [];
+    if (!masterPass) { fiados = []; renderFiados(); updateDashboard(); return; }
+    Promise.all(raw.map(async r => {
+      try {
+        const base = r && r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
+        if (!base) return null;
+        return { ...base, firebaseId: r.firebaseId };
+      } catch { return null; }
+    })).then(list => {
+      fiados = list.filter(Boolean).reverse();
+      renderFiados(); updateDashboard();
+    });
   });
-  window.dbOnValue(dbRefs.conn,snap=>{
-    const on=snap.val()===true;
-    const pill=document.getElementById('syncPill');
-    pill.className='sync-pill '+(on?'synced':'offline');
-    document.getElementById('syncText').textContent=on?'Online':'Offline';
-    if(!on)pushNotif('warning','Conexão perdida','Você está offline.');
+  window.dbOnValue(dbRefs.conn, snap => {
+    const on = snap.val() === true;
+    const pill = document.getElementById('syncPill');
+    pill.className = 'sync-pill ' + (on ? 'synced' : 'offline');
+    document.getElementById('syncText').textContent = on ? 'Online' : 'Offline';
+    if (!on) pushNotif('warning', 'Conexão perdida', 'Você está offline.');
   });
 }
 
-function checkAuth(){
-  const s=localStorage.getItem('acaiRei_session');
-  if(s){currentUser=JSON.parse(s).user;showApp();}else showLogin();
+function checkAuth() {
+  const s = localStorage.getItem(SEC.APP_NS + '_sess');
+  if (s) {
+    const sess = JSON.parse(s);
+    if (Date.now() - sess.at < SEC.SESSION_TIMEOUT) {
+      currentUser = sess.user;
+      showApp(); scheduleSessionExpiry();
+      return;
+    }
+    localStorage.removeItem(SEC.APP_NS + '_sess');
+  }
+  showLogin();
+}
+function scheduleSessionExpiry() {
+  clearTimeout(sessionTimer);
+  sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
+  ['click', 'keydown', 'touchstart'].forEach(ev =>
+    document.addEventListener(ev, () => {
+      clearTimeout(sessionTimer);
+      sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
+    }, { passive: true }));
 }
 
-// ── LOGIN ──
-document.getElementById('loginForm').addEventListener('submit',async e=>{
+/* ── LOGIN ── */
+document.getElementById('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const btn=document.getElementById('loginBtn');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Entrando...';
-  const u=document.getElementById('username').value.trim();
-  const p=document.getElementById('password').value.trim();
-  await new Promise(r=>setTimeout(r,500));
-  if(u===CREDS.username&&p===CREDS.password){
-    localStorage.setItem('acaiRei_session',JSON.stringify({user:u}));
-    currentUser=u;showApp();soundSuccess();
-  }else{
-    showErr('Usuário ou senha incorretos!');soundError();
-    btn.disabled=false;btn.innerHTML='<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
+  if (isLocked()) { showLockout(); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Verificando...';
+  const u = clampStr(document.getElementById('username').value.trim(), 40);
+  const p = document.getElementById('password').value;
+
+  if (p.length < 12) {
+    showErr('A senha deve ter no mínimo 12 caracteres.');
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
+    return;
   }
+
+  await new Promise(r => setTimeout(r, 350)); // custo natural do PBKDF2
+
+  let cred = localStorage.getItem(SEC.APP_NS + '_cred');
+  if (!cred) {
+    // PRIMEIRO ACESSO → cria credenciais (hash PBKDF2 da senha)
+    const { hash, salt } = await hashPassword(p);
+    localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
+    cred = localStorage.getItem(SEC.APP_NS + '_cred');
+    toast('info', 'Credenciais criadas com criptografia forte!');
+  }
+
+  const rec = JSON.parse(cred);
+  if (rec.user === u && await verifyPassword(p, rec)) {
+    masterPass = p;                       // chave E2E em memória apenas
+    currentUser = u;
+    localStorage.setItem(SEC.APP_NS + '_sess', JSON.stringify({ user: u, at: Date.now() }));
+    document.getElementById('setupNote').style.display = 'none';
+    zerarTentativas();
+    showApp(); scheduleSessionExpiry(); soundSuccess();
+  } else {
+    registerFail();
+    document.querySelector('.login-card').classList.add('shake');
+    setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
+    if (isLocked()) showLockout();
+    else showErr('Usuário ou senha incorretos! (' + (SEC.LOCKOUT_MAX_ATTEMPTS - lockStore.get().tries) + ' tentativa(s) restante(s))');
+    soundError();
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
 });
-function showErr(m){const b=document.getElementById('errorBox');document.getElementById('errorText').textContent=m;b.style.display='flex';setTimeout(()=>b.style.display='none',3500)}
-function showLogin(){document.getElementById('loginScreen').style.display='flex';document.getElementById('appScreen').style.display='none'}
-function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('appScreen').style.display='block';document.getElementById('currentUser').textContent=currentUser;toast('success','Bem-vindo, '+currentUser+'!')}
-document.getElementById('togglePass').addEventListener('click',function(){
-  const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';
-  this.classList.toggle('fa-eye');this.classList.toggle('fa-eye-slash');
+
+function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.style.display = 'flex'; setTimeout(() => b.style.display = 'none', 4000); }
+function showLockout() {
+  const b = document.getElementById('lockoutBox');
+  document.getElementById('lockoutText').textContent = 'Muitas tentativas! Aguarde ' + Math.ceil(lockoutRemaining() / 60) + ' minuto(s) para tentar novamente.';
+  b.style.display = 'flex';
+}
+function showLogin() { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appScreen').style.display = 'none'; }
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('currentUser').textContent = currentUser;
+  toast('success', 'Bem-vindo, ' + esc(currentUser) + '!');
+}
+document.getElementById('togglePass').addEventListener('click', function () {
+  const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password';
+  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
 });
 
-// ── THEME ──
-function toggleTheme(){
-  const isLight=document.documentElement.hasAttribute('data-theme');
-  if(isLight){document.documentElement.removeAttribute('data-theme');localStorage.setItem('acaiRei_theme','dark');document.getElementById('themeBtn').innerHTML='<i class="fas fa-moon"></i>';}
-  else{document.documentElement.setAttribute('data-theme','light');localStorage.setItem('acaiRei_theme','light');document.getElementById('themeBtn').innerHTML='<i class="fas fa-sun"></i>';}
+/* Troca de senha: re-hash da nova senha e re-cifração dos fiados */
+async function trocarSenhaUI() {
+  const nova = prompt('Nova senha (mínimo 12 caracteres, com maiúsculas, minúsculas, números e símbolos):');
+  if (nova === null) return;
+  if (nova.length < 12 || scorePassword(nova) < 70) { toast('error', 'Senha fraca! Use 12+ caracteres com letras, números e símbolos.'); return; }
+  const { hash, salt } = await hashPassword(nova);
+  localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: currentUser, hash, salt, created: new Date().toISOString() }));
+  const antiga = masterPass; masterPass = nova;
+  // Re-cifra fiados com a nova chave
+  for (const f of fiados) {
+    if (f.firebaseId) {
+      const e2e = await encryptJSON(f, nova);
+      await window.dbUpdate(window.dbChild(dbRefs.fiados, f.firebaseId), { e2e, updated: new Date().toISOString() });
+    }
+  }
+  toast('success', 'Senha trocada e dados re-cifrados com sucesso!');
+  pushNotif('success', 'Senha Alterada', 'Todos os dados sensíveis foram re-cifrados.');
+  closeModal('modalSeguranca');
 }
 
-// ── SOUND ──
-function toggleSound(){
-  soundEnabled=!soundEnabled;localStorage.setItem('acaiRei_sound',soundEnabled);updateSoundBtn();
-  toast('info',soundEnabled?'Som ativado':'Som desativado');
+/* ── TEMA / SOM ── */
+function toggleTheme() {
+  const isLight = document.documentElement.hasAttribute('data-theme');
+  if (isLight) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('acaiRei_theme', 'dark'); }
+  else { document.documentElement.setAttribute('data-theme', 'light'); localStorage.setItem('acaiRei_theme', 'light'); }
+  updateThemeBtn();
 }
-function updateSoundBtn(){document.getElementById('soundBtn').innerHTML=soundEnabled?'<i class="fas fa-volume-high"></i>':'<i class="fas fa-volume-xmark"></i>';}
+function updateThemeBtn() { document.getElementById('themeBtn').innerHTML = document.documentElement.hasAttribute('data-theme') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+function toggleSound() { soundEnabled = !soundEnabled; localStorage.setItem('acaiRei_sound', soundEnabled); updateSoundBtn(); toast('info', soundEnabled ? 'Som ativado' : 'Som desativado'); }
+function updateSoundBtn() { document.getElementById('soundBtn').innerHTML = soundEnabled ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-xmark"></i>'; }
 
-// ── TABS ──
-function switchTab(name,btn){
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+name+"'"))b.classList.add('active')});
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  if(name==='dashboard')updateDashboard();
+/* ── TABS ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active'); });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'dashboard') updateDashboard();
 }
 
-// ── FIREBASE ──
-async function salvarCaixa(){
-  await window.dbSet(dbRefs.caixa,{aberto:caixaAberto,horaAbertura:horaAbertura?horaAbertura.toISOString():null,faturaAtual,lastUpdate:new Date().toISOString()});
+/* ── FIREBASE HELPERS ── */
+async function salvarCaixa() {
+  await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura ? horaAbertura.toISOString() : null, faturaAtual, lastUpdate: new Date().toISOString() });
 }
-async function fbAdd(ref,data){const r=window.dbPush(ref);await window.dbSet(r,{...data,firebaseId:r.key})}
-async function fbDel(ref,fid){await window.dbRemove(window.dbChild(ref,fid))}
-async function fbUpd(ref,fid,data){await window.dbUpdate(window.dbChild(ref,fid),data)}
+async function fbAdd(ref, data) { const r = window.dbPush(ref); await window.dbSet(r, { ...data, firebaseId: r.key }); }
+async function fbDel(ref, fid) { await window.dbRemove(window.dbChild(ref, fid)); }
+async function fbUpd(ref, fid, data) { await window.dbUpdate(window.dbChild(ref, fid), data); }
 
-// ── CAIXA ──
-function toggleCaixa(){
-  if(!caixaAberto)abrirCaixa();
-  else if(confirm('Deseja realmente fechar o caixa?'))fecharCaixa();
+/* ── CAIXA ── */
+function toggleCaixa() { if (!caixaAberto) abrirCaixa(); else if (confirm('Deseja realmente fechar o caixa?')) fecharCaixa(); }
+async function abrirCaixa() {
+  caixaAberto = true; horaAbertura = new Date();
+  faturaAtual = { id: Date.now(), dataAbertura: horaAbertura.toISOString(), dataFechamento: null, produtos: [], total: 0 };
+  await salvarCaixa(); toast('success', 'Caixa aberto!'); soundSuccess();
+  pushNotif('success', 'Caixa Aberto', 'Expediente iniciado às ' + formatHora(horaAbertura));
 }
-async function abrirCaixa(){
-  caixaAberto=true;horaAbertura=new Date();
-  faturaAtual={id:Date.now(),dataAbertura:horaAbertura.toISOString(),dataFechamento:null,produtos:[],total:0};
-  await salvarCaixa();toast('success','Caixa aberto!');soundSuccess();
-  pushNotif('success','Caixa Aberto','Expediente iniciado às '+formatHora(horaAbertura));
+async function fecharCaixa() {
+  const hf = new Date();
+  faturaAtual.dataFechamento = hf.toISOString();
+  faturaAtual.produtos = [...produtosVenda];
+  faturaAtual.total = calcTotal();
+  await fbAdd(dbRefs.faturas, { ...faturaAtual });
+  await window.dbSet(dbRefs.vendas, null);
+  const tot = faturaAtual.total;
+  caixaAberto = false; horaAbertura = null; faturaAtual = null;
+  await salvarCaixa(); stopTimer();
+  toast('info', 'Caixa fechado! Total: ' + fmt(tot));
+  pushNotif('info', 'Caixa Fechado', 'Total: ' + fmt(tot));
 }
-async function fecharCaixa(){
-  const hf=new Date();
-  faturaAtual.dataFechamento=hf.toISOString();
-  faturaAtual.produtos=[...produtosVenda];
-  faturaAtual.total=calcTotal();
-  await fbAdd(dbRefs.faturas,{...faturaAtual});
-  await window.dbSet(dbRefs.vendas,null);
-  const tot=faturaAtual.total;
-  caixaAberto=false;horaAbertura=null;faturaAtual=null;
-  await salvarCaixa();stopTimer();
-  toast('info','Caixa fechado! Total: '+fmt(tot));
-  pushNotif('info','Caixa Fechado','Total: '+fmt(tot));
-}
-function updateCaixaUI(){
-  const orb=document.getElementById('caixaOrb'),icon=document.getElementById('caixaOrbIcon');
-  const btn=document.getElementById('btnCaixa'),meta=document.getElementById('caixaMeta');
-  const tw=document.getElementById('liveTimerWrap');
-  if(caixaAberto){
-    orb.className='caixa-orb aberto';icon.className='fas fa-lock-open';
-    document.getElementById('caixaTitulo').textContent='Caixa Aberto';
-    document.getElementById('caixaSubtitle').textContent='Expediente em andamento';
-    document.getElementById('horaAbertura').textContent=formatDT(horaAbertura);
-    document.getElementById('horaFechamento').textContent='—';
-    meta.classList.add('show');tw.style.display='block';
-    btn.className='btn-caixa-action btn-fechar';btn.innerHTML='<i class="fas fa-lock"></i> Fechar Caixa';
-  }else{
-    orb.className='caixa-orb fechado';icon.className='fas fa-lock';
-    document.getElementById('caixaTitulo').textContent='Caixa Fechado';
-    document.getElementById('caixaSubtitle').textContent='Clique abaixo para iniciar o expediente';
-    meta.classList.remove('show');tw.style.display='none';
+function updateCaixaUI() {
+  const orb = document.getElementById('caixaOrb'), icon = document.getElementById('caixaOrbIcon');
+  const btn = document.getElementById('btnCaixa'), meta = document.getElementById('caixaMeta');
+  const tw = document.getElementById('liveTimerWrap');
+  if (caixaAberto) {
+    orb.className = 'caixa-orb aberto'; icon.className = 'fas fa-lock-open';
+    document.getElementById('caixaTitulo').textContent = 'Caixa Aberto';
+    document.getElementById('caixaSubtitle').textContent = 'Expediente em andamento';
+    document.getElementById('horaAbertura').textContent = formatDT(horaAbertura);
+    document.getElementById('horaFechamento').textContent = '—';
+    meta.classList.add('show'); tw.style.display = 'block';
+    btn.className = 'btn-caixa-action btn-fechar'; btn.innerHTML = '<i class="fas fa-lock"></i> Fechar Caixa';
+  } else {
+    orb.className = 'caixa-orb fechado'; icon.className = 'fas fa-lock';
+    document.getElementById('caixaTitulo').textContent = 'Caixa Fechado';
+    document.getElementById('caixaSubtitle').textContent = 'Clique abaixo para iniciar o expediente';
+    meta.classList.remove('show'); tw.style.display = 'none';
     document.getElementById('caixaAlert').classList.remove('show');
-    btn.className='btn-caixa-action btn-abrir';btn.innerHTML='<i class="fas fa-lock-open"></i> Abrir Caixa';
+    btn.className = 'btn-caixa-action btn-abrir'; btn.innerHTML = '<i class="fas fa-lock-open"></i> Abrir Caixa';
   }
 }
-function updateBadge(){
-  const b=document.getElementById('caixaBadge');
-  const fb=document.getElementById('fiadoBadge');
-  if(caixaAberto){b.className='status-badge badge-open';b.innerHTML='<i class="fas fa-lock-open"></i> Caixa Aberto'}
-  else{b.className='status-badge badge-closed';b.innerHTML='<i class="fas fa-lock"></i> Caixa Fechado'}
-  if(fb){
-    if(caixaAberto){fb.className='status-badge badge-open';fb.innerHTML='<i class="fas fa-lock-open"></i> Caixa Aberto'}
-    else{fb.className='status-badge badge-closed';fb.innerHTML='<i class="fas fa-lock"></i> Caixa Fechado'}
+function updateBadge() {
+  const b = document.getElementById('caixaBadge'), fb = document.getElementById('fiadoBadge');
+  const open = caixaAberto;
+  b.className = 'status-badge ' + (open ? 'badge-open' : 'badge-closed');
+  b.innerHTML = open ? '<i class="fas fa-lock-open"></i> Caixa Aberto' : '<i class="fas fa-lock"></i> Caixa Fechado';
+  if (fb) {
+    fb.className = 'status-badge ' + (open ? 'badge-open' : 'badge-closed');
+    fb.innerHTML = open ? '<i class="fas fa-lock-open"></i> Caixa Aberto' : '<i class="fas fa-lock"></i> Caixa Fechado';
   }
 }
-function startTimer(){
-  stopTimer();if(!caixaAberto||!horaAbertura)return;
-  timerInterval=setInterval(()=>{
-    const diff=Math.floor((Date.now()-horaAbertura)/1000);
-    const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;
-    document.getElementById('liveTimer').textContent=
-      `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    if(diff>28800){
+function startTimer() {
+  stopTimer(); if (!caixaAberto || !horaAbertura) return;
+  timerInterval = setInterval(() => {
+    const diff = Math.floor((Date.now() - horaAbertura) / 1000);
+    const h = Math.floor(diff / 3600), m = Math.floor((diff % 3600) / 60), s = diff % 60;
+    document.getElementById('liveTimer').textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    if (diff > 28800) {
       document.getElementById('caixaAlert').classList.add('show');
-      document.getElementById('caixaAlertText').textContent=`Caixa aberto há ${h}h ${m}min!`;
+      document.getElementById('caixaAlertText').textContent = `Caixa aberto há ${h}h ${m}min!`;
       document.getElementById('notifBadge').classList.add('show');
     }
-  },1000);
+  }, 1000);
 }
-function stopTimer(){clearInterval(timerInterval);timerInterval=null}
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
 
-// ── DASHBOARD ──
-function updateDashboard(){
-  const totalV=calcTotal();
-  const qtdV=produtosVenda.length;
-  const ticket=qtdV?totalV/qtdV:0;
-  const totalD=comprasDispensa.reduce((s,c)=>s+c.total,0);
-  const saldo=totalV-totalD;
-  const pres=produtosVenda.filter(p=>p.tipo==='Presencial');
-  const deliv=produtosVenda.filter(p=>p.tipo==='Delivery');
-  const presTotal=pres.reduce((s,p)=>s+p.valor,0);
-  const delivTotal=deliv.reduce((s,p)=>s+p.valor,0);
-  const pendentes=produtosVenda.filter(p=>p.status==='pendente'&&p.tipo==='Presencial');
-  const totalPend=pendentes.reduce((s,p)=>s+p.valor,0);
-  // NOVO: Total fiado
-  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
-  const totalFiado=fiadosPendentes.reduce((s,f)=>s+f.total,0);
+/* ── DASHBOARD ── */
+function updateDashboard() {
+  const totalV = calcTotal(), qtdV = produtosVenda.length;
+  const ticket = qtdV ? totalV / qtdV : 0;
+  const totalD = comprasDispensa.reduce((s, c) => s + c.total, 0);
+  const saldo = totalV - totalD;
+  const pres = produtosVenda.filter(p => p.tipo === 'Presencial');
+  const deliv = produtosVenda.filter(p => p.tipo === 'Delivery');
+  const presTotal = pres.reduce((s, p) => s + p.valor, 0);
+  const delivTotal = deliv.reduce((s, p) => s + p.valor, 0);
+  const pendentes = produtosVenda.filter(p => p.status === 'pendente' && p.tipo === 'Presencial');
+  const totalPend = pendentes.reduce((s, p) => s + p.valor, 0);
+  const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
+  const totalFiado = fiadosPendentes.reduce((s, f) => s + f.total, 0);
 
-  document.getElementById('dashTotalVendas').textContent=fmt(totalV);
-  document.getElementById('dashQtdVendas').textContent=qtdV+' venda'+(qtdV!==1?'s':'');
-  document.getElementById('dashTicket').textContent=fmt(ticket);
-  document.getElementById('dashTipoTop').textContent=pres.length+' presencial · '+deliv.length+' delivery';
-  document.getElementById('dashDespesas').textContent=fmt(totalD);
-  document.getElementById('dashQtdCompras').textContent=comprasDispensa.length+' compra'+(comprasDispensa.length!==1?'s':'');
-  const sEl=document.getElementById('dashSaldo');
-  sEl.textContent=fmt(Math.abs(saldo));sEl.style.color=saldo>=0?'#5eead4':'#fb7185';
-  document.getElementById('dashPendente').textContent=fmt(totalPend);
-  document.getElementById('dashQtdPendente').textContent=pendentes.length+' pedido'+(pendentes.length!==1?'s':'');
-  // NOVO: Dashboard fiado
-  const dfEl=document.getElementById('dashFiado');
-  if(dfEl){dfEl.textContent=fmt(totalFiado);dfEl.style.color=totalFiado>0?'#fcd34d':'#5eead4';}
-  const dqfEl=document.getElementById('dashQtdFiado');
-  if(dqfEl){dqfEl.textContent=fiadosPendentes.length+' conta'+(fiadosPendentes.length!==1?'s':'');}
+  document.getElementById('dashTotalVendas').textContent = fmt(totalV);
+  document.getElementById('dashQtdVendas').textContent = qtdV + ' venda' + (qtdV !== 1 ? 's' : '');
+  document.getElementById('dashTicket').textContent = fmt(ticket);
+  document.getElementById('dashTipoTop').textContent = pres.length + ' presencial · ' + deliv.length + ' delivery';
+  document.getElementById('dashDespesas').textContent = fmt(totalD);
+  document.getElementById('dashQtdCompras').textContent = comprasDispensa.length + ' compra' + (comprasDispensa.length !== 1 ? 's' : '');
+  const sEl = document.getElementById('dashSaldo');
+  sEl.textContent = fmt(Math.abs(saldo)); sEl.style.color = saldo >= 0 ? '#5eead4' : '#fb7185';
+  document.getElementById('dashPendente').textContent = fmt(totalPend);
+  document.getElementById('dashQtdPendente').textContent = pendentes.length + ' pedido' + (pendentes.length !== 1 ? 's' : '');
+  const dfEl = document.getElementById('dashFiado');
+  if (dfEl) { dfEl.textContent = fmt(totalFiado); dfEl.style.color = totalFiado > 0 ? '#fcd34d' : '#5eead4'; }
+  const dqfEl = document.getElementById('dashQtdFiado');
+  if (dqfEl) dqfEl.textContent = fiadosPendentes.length + ' conta' + (fiadosPendentes.length !== 1 ? 's' : '');
 
-  document.getElementById('balReceita').textContent=fmt(totalV);
-  document.getElementById('balDespesas').textContent=fmt(totalD);
-  const bsEl=document.getElementById('balSaldo');
-  bsEl.textContent=fmt(Math.abs(saldo));bsEl.className='balance-value '+(saldo>=0?'bal-pos':'bal-neg');
+  document.getElementById('balReceita').textContent = fmt(totalV);
+  document.getElementById('balDespesas').textContent = fmt(totalD);
+  const bsEl = document.getElementById('balSaldo');
+  bsEl.textContent = fmt(Math.abs(saldo)); bsEl.className = 'balance-value ' + (saldo >= 0 ? 'bal-pos' : 'bal-neg');
 
-  // Meta
-  if(metaDia>0){
-    const pct=Math.min(Math.round(totalV/metaDia*100),100);
-    document.getElementById('metaBarWrap').style.display='block';
-    document.getElementById('metaBarFill').style.width=pct+'%';
-    document.getElementById('metaPct').textContent=pct+'% da meta';
-    document.getElementById('metaBarMain').style.width=pct+'%';
-    document.getElementById('metaProgressText').textContent=fmt(totalV)+' de '+fmt(metaDia);
-    document.getElementById('metaPctMain').textContent=pct+'% concluído'+(pct>=100?' 🎉':'');
-    document.getElementById('metaValorText').textContent=pct+'%';
-  }else{
-    document.getElementById('metaBarWrap').style.display='none';
-    document.getElementById('metaProgressText').textContent='Sem meta definida';
-    document.getElementById('metaValorText').textContent='—';
-    document.getElementById('metaPctMain').textContent='';
-    document.getElementById('metaBarMain').style.width='0%';
+  if (metaDia > 0) {
+    const pct = Math.min(Math.round(totalV / metaDia * 100), 100);
+    document.getElementById('metaBarWrap').style.display = 'block';
+    document.getElementById('metaBarFill').style.width = pct + '%';
+    document.getElementById('metaPct').textContent = pct + '% da meta';
+    document.getElementById('metaBarMain').style.width = pct + '%';
+    document.getElementById('metaProgressText').textContent = fmt(totalV) + ' de ' + fmt(metaDia);
+    document.getElementById('metaPctMain').textContent = pct + '% concluído' + (pct >= 100 ? ' 🎉' : '');
+    document.getElementById('metaValorText').textContent = pct + '%';
+  } else {
+    document.getElementById('metaBarWrap').style.display = 'none';
+    document.getElementById('metaProgressText').textContent = 'Sem meta definida';
+    document.getElementById('metaValorText').textContent = '—';
+    document.getElementById('metaPctMain').textContent = '';
+    document.getElementById('metaBarMain').style.width = '0%';
   }
 
-  // Ticket por tipo
-  document.getElementById('ticketPres').textContent=fmt(pres.length?presTotal/pres.length:0);
-  document.getElementById('countPres').textContent=pres.length+' pedido'+(pres.length!==1?'s':'');
-  document.getElementById('ticketDeliv').textContent=fmt(deliv.length?delivTotal/deliv.length:0);
-  document.getElementById('countDeliv').textContent=deliv.length+' pedido'+(deliv.length!==1?'s':'');
+  document.getElementById('ticketPres').textContent = fmt(pres.length ? presTotal / pres.length : 0);
+  document.getElementById('countPres').textContent = pres.length + ' pedido' + (pres.length !== 1 ? 's' : '');
+  document.getElementById('ticketDeliv').textContent = fmt(deliv.length ? delivTotal / deliv.length : 0);
+  document.getElementById('countDeliv').textContent = deliv.length + ' pedido' + (deliv.length !== 1 ? 's' : '');
 
-  // Pagamentos
-  const pays={};
-  produtosVenda.forEach(p=>{if(!pays[p.pagamento])pays[p.pagamento]={total:0,count:0};pays[p.pagamento].total+=p.valor;pays[p.pagamento].count++});
-  const pb=document.getElementById('payBreakdown');
-  if(!Object.keys(pays).length){pb.innerHTML='<div class="empty" style="grid-column:1/-1;padding:1.5rem"><i class="fas fa-chart-pie"></i><p>Nenhuma venda ainda</p></div>';}
-  else pb.innerHTML=Object.entries(pays).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>`
-    <div class="pay-row">
-      <div class="pay-row-label">${k}</div>
-      <div class="pay-row-val">${fmt(v.total)}</div>
-      <div class="pay-row-count">${v.count}x · ${totalV?Math.round(v.total/totalV*100):0}%</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${totalV?Math.round(v.total/totalV*100):0}%"></div></div>
-    </div>`).join('');
+  const pays = {};
+  produtosVenda.forEach(p => { if (!pays[p.pagamento]) pays[p.pagamento] = { total: 0, count: 0 }; pays[p.pagamento].total += p.valor; pays[p.pagamento].count++; });
+  const pb = document.getElementById('payBreakdown');
+  if (!Object.keys(pays).length) { pb.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:1.5rem"><i class="fas fa-chart-pie"></i><p>Nenhuma venda ainda</p></div>'; }
+  else pb.innerHTML = Object.entries(pays).sort((a, b) => b[1].total - a[1].total).map(([k, v]) => {
+    const pct = totalV ? Math.round(v.total / totalV * 100) : 0;
+    return `<div class="pay-row"><div class="pay-row-label">${esc(k)}</div><div class="pay-row-val">${fmt(v.total)}</div><div class="pay-row-count">${v.count}x · ${pct}%</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
 
-  // Ranking produtos
-  const prod={};
-  produtosVenda.forEach(p=>{if(!prod[p.nome])prod[p.nome]={count:0,total:0};prod[p.nome].count++;prod[p.nome].total+=p.valor});
-  const rl=document.getElementById('rankList');
-  if(!Object.keys(prod).length){rl.innerHTML='<div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div>';}
-  else{
-    const sorted=Object.entries(prod).sort((a,b)=>b[1].count-a[1].count).slice(0,5);
-    rl.innerHTML='<div class="rank-list">'+sorted.map(([k,v],i)=>`
+  const prod = {};
+  produtosVenda.forEach(p => { if (!prod[p.nome]) prod[p.nome] = { count: 0, total: 0 }; prod[p.nome].count++; prod[p.nome].total += p.valor; });
+  const rl = document.getElementById('rankList');
+  if (!Object.keys(prod).length) { rl.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div>'; }
+  else {
+    const sorted = Object.entries(prod).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
+    rl.innerHTML = '<div class="rank-list">' + sorted.map(([k, v], i) => `
       <div class="rank-item">
-        <div class="rank-pos ${i===0?'p1':i===1?'p2':i===2?'p3':'pn'}">${i+1}</div>
-        <div class="rank-name">${k}</div>
+        <div class="rank-pos ${i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'pn'}">${i + 1}</div>
+        <div class="rank-name">${esc(k)}</div>
         <div class="rank-count">${v.count}x</div>
         <div class="rank-val">${fmt(v.total)}</div>
-      </div>`).join('')+'</div>';
+      </div>`).join('') + '</div>';
   }
 
-  // Horário de pico
-  const hours={};
-  produtosVenda.forEach(p=>{if(p.hora){const h=new Date(p.hora).getHours();hours[h]=(hours[h]||0)+1}});
-  const pg=document.getElementById('picoGrid');
-  if(!Object.keys(hours).length){pg.innerHTML='<div class="empty" style="padding:1rem"><i class="fas fa-chart-bar"></i><p>Sem dados</p></div>';}
-  else{
-    const maxH=Math.max(...Object.values(hours));
-    const allHours=Object.keys(hours).map(Number).sort((a,b)=>a-b);
-    pg.innerHTML=allHours.map(h=>{
-      const pct=Math.round(hours[h]/maxH*100);
-      return`<div class="pico-item">
-        <div class="pico-bar-wrap"><div class="pico-bar" style="height:${pct}%"></div></div>
-        <div class="pico-hour">${String(h).padStart(2,'0')}h</div>
-        <div class="pico-count">${hours[h]}</div>
-      </div>`;
+  const hours = {};
+  produtosVenda.forEach(p => { if (p.hora) { const h = new Date(p.hora).getHours(); hours[h] = (hours[h] || 0) + 1; } });
+  const pg = document.getElementById('picoGrid');
+  if (!Object.keys(hours).length) { pg.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-chart-bar"></i><p>Sem dados</p></div>'; }
+  else {
+    const maxH = Math.max(...Object.values(hours));
+    const allHours = Object.keys(hours).map(Number).sort((a, b) => a - b);
+    pg.innerHTML = allHours.map(h => {
+      const pct = Math.round(hours[h] / maxH * 100);
+      return `<div class="pico-item"><div class="pico-bar-wrap"><div class="pico-bar" style="height:${pct}%"></div></div><div class="pico-hour">${String(h).padStart(2, '0')}h</div><div class="pico-count">${hours[h]}</div></div>`;
     }).join('');
   }
 }
 
-// ── META ──
-function definirMeta(){
-  const v=parseFloat(document.getElementById('metaInput').value)||0;
-  metaDia=v;localStorage.setItem('acaiRei_meta',v);
-  document.getElementById('metaInput').value='';
-  updateDashboard();toast('success',v>0?'Meta de '+fmt(v)+' definida!':'Meta removida');
+/* ── META ── */
+function definirMeta() {
+  const v = parseFloat(document.getElementById('metaInput').value) || 0;
+  metaDia = v; localStorage.setItem('acaiRei_meta', v);
+  document.getElementById('metaInput').value = '';
+  updateDashboard(); toast('success', v > 0 ? 'Meta de ' + fmt(v) + ' definida!' : 'Meta removida');
 }
-function limparMeta(){metaDia=0;localStorage.removeItem('acaiRei_meta');updateDashboard();toast('info','Meta removida');}
+function limparMeta() { metaDia = 0; localStorage.removeItem('acaiRei_meta'); updateDashboard(); toast('info', 'Meta removida'); }
 
-// ── FAVORITOS ──
-function renderFavoritos(){
-  const c=document.getElementById('favChips');
-  const chips=favoritos.map((f,i)=>`
+/* ── FAVORITOS ── */
+function renderFavoritos() {
+  const c = document.getElementById('favChips');
+  const chips = favoritos.map((f, i) => `
     <span class="fav-chip" onclick="aplicarFavorito(${i})">
-      <i class="fas fa-star"></i> ${f.nome} · ${fmt(f.valor)}
+      <i class="fas fa-star"></i> ${esc(f.nome)} · ${fmt(f.valor)}
       <span class="fav-del" onclick="event.stopPropagation();removerFavorito(${i})"><i class="fas fa-times"></i></span>
     </span>`).join('');
-  c.innerHTML=chips+'<button class="btn-add-fav" onclick="salvarFavorito()"><i class="fas fa-plus"></i> Salvar atual</button>';
+  c.innerHTML = chips + '<button class="btn-add-fav" onclick="salvarFavorito()"><i class="fas fa-plus"></i> Salvar atual</button>';
 }
-function salvarFavorito(){
-  const nome=document.getElementById('nomeProduto').value.trim();
-  const valor=parseFloat(document.getElementById('valorProduto').value)||0;
-  const pag=document.getElementById('formaPagamento').value;
-  const tipo=document.getElementById('tipoEntrega').value;
-  if(!nome){toast('error','Preencha pelo menos o produto antes de salvar');return}
-  if(favoritos.find(f=>f.nome===nome&&f.valor===valor)){toast('warning','Favorito já existe');return}
-  favoritos.push({nome,valor,pagamento:pag,tipo});
-  localStorage.setItem('acaiRei_favoritos',JSON.stringify(favoritos));
-  renderFavoritos();toast('success','"'+nome+'" salvo como favorito!');soundSuccess();
+function salvarFavorito() {
+  const nome = clampStr(document.getElementById('nomeProduto').value.trim(), 60);
+  const valor = parseFloat(document.getElementById('valorProduto').value) || 0;
+  const pag = document.getElementById('formaPagamento').value;
+  const tipo = document.getElementById('tipoEntrega').value;
+  if (!nome) { toast('error', 'Preencha pelo menos o produto antes de salvar'); return; }
+  if (favoritos.find(f => f.nome === nome && f.valor === valor)) { toast('warning', 'Favorito já existe'); return; }
+  favoritos.push({ nome, valor, pagamento: pag, tipo });
+  localStorage.setItem('acaiRei_favoritos', JSON.stringify(favoritos));
+  renderFavoritos(); toast('success', '"' + esc(nome) + '" salvo como favorito!'); soundSuccess();
 }
-function aplicarFavorito(i){
-  const f=favoritos[i];
-  document.getElementById('nomeProduto').value=f.nome;
-  document.getElementById('valorProduto').value=f.valor;
-  if(f.pagamento)document.getElementById('formaPagamento').value=f.pagamento;
-  if(f.tipo)document.getElementById('tipoEntrega').value=f.tipo;
-  onPagamentoChange();onTipoChange();calcTroco();
-  toast('info','Favorito aplicado!');
+function aplicarFavorito(i) {
+  const f = favoritos[i];
+  document.getElementById('nomeProduto').value = f.nome;
+  document.getElementById('valorProduto').value = f.valor;
+  if (f.pagamento) document.getElementById('formaPagamento').value = f.pagamento;
+  if (f.tipo) document.getElementById('tipoEntrega').value = f.tipo;
+  onPagamentoChange(); onTipoChange(); calcTroco();
+  toast('info', 'Favorito aplicado!');
 }
-function removerFavorito(i){favoritos.splice(i,1);localStorage.setItem('acaiRei_favoritos',JSON.stringify(favoritos));renderFavoritos();toast('info','Favorito removido');}
+function removerFavorito(i) { favoritos.splice(i, 1); localStorage.setItem('acaiRei_favoritos', JSON.stringify(favoritos)); renderFavoritos(); toast('info', 'Favorito removido'); }
 
-// ── TROCO ──
-function onPagamentoChange(){
-  const v=document.getElementById('formaPagamento').value;
-  document.getElementById('trocoBox').className='troco-box'+(v==='Dinheiro'?' show':'');
-  if(v==='Dinheiro')calcTroco();
+/* ── TROCO ── */
+function onPagamentoChange() {
+  const v = document.getElementById('formaPagamento').value;
+  document.getElementById('trocoBox').className = 'troco-box' + (v === 'Dinheiro' ? ' show' : '');
+  if (v === 'Dinheiro') calcTroco();
 }
-function calcTroco(){
-  const venda=parseFloat(document.getElementById('valorProduto').value)||0;
-  const recebido=parseFloat(document.getElementById('valorRecebido').value)||0;
-  document.getElementById('trocoVenda').textContent=fmt(venda);
-  document.getElementById('trocoRecebido').textContent=fmt(recebido);
-  const troco=recebido-venda;
-  const el=document.getElementById('trocoResultado');
-  if(!recebido){el.textContent='—';el.className='troco-resultado';return}
-  if(troco<0){el.textContent='Falta '+fmt(Math.abs(troco));el.className='troco-resultado troco-negativo';}
-  else{el.textContent='Troco: '+fmt(troco);el.className='troco-resultado';}
-}
-
-// ── STATUS PAG ──
-function onTipoChange(){
-  const v=document.getElementById('tipoEntrega').value;
-  document.getElementById('statusPagWrap').style.display=v==='Presencial'?'block':'none';
-}
-function setStatusPag(s){
-  statusPagAtual=s;
-  document.getElementById('optPago').className='status-opt'+(s==='pago'?' sel-pago':'');
-  document.getElementById('optPendente').className='status-opt'+(s==='pendente'?' sel-pendente':'');
+function calcTroco() {
+  const venda = parseFloat(document.getElementById('valorProduto').value) || 0;
+  const recebido = parseFloat(document.getElementById('valorRecebido').value) || 0;
+  document.getElementById('trocoVenda').textContent = fmt(venda);
+  document.getElementById('trocoRecebido').textContent = fmt(recebido);
+  const troco = recebido - venda;
+  const el = document.getElementById('trocoResultado');
+  if (!recebido) { el.textContent = '—'; el.className = 'troco-resultado'; return; }
+  if (troco < 0) { el.textContent = 'Falta ' + fmt(Math.abs(troco)); el.className = 'troco-resultado troco-negativo'; }
+  else { el.textContent = 'Troco: ' + fmt(troco); el.className = 'troco-resultado'; }
 }
 
-// ── VENDAS ──
-async function addProduto(e){
+/* ── STATUS PAG ── */
+function onTipoChange() {
+  const v = document.getElementById('tipoEntrega').value;
+  document.getElementById('statusPagWrap').style.display = v === 'Presencial' ? 'block' : 'none';
+}
+function setStatusPag(s) {
+  statusPagAtual = s;
+  document.getElementById('optPago').className = 'status-opt' + (s === 'pago' ? ' sel-pago' : '');
+  document.getElementById('optPendente').className = 'status-opt' + (s === 'pendente' ? ' sel-pendente' : '');
+}
+
+/* ── VENDAS (validação de entrada em todos os campos) ── */
+async function addProduto(e) {
   e.preventDefault();
-  if(!caixaAberto){toast('error','Abra o caixa primeiro!');soundError();return}
-  const tipo=document.getElementById('tipoEntrega').value;
-  const status=tipo==='Presencial'?statusPagAtual:'pago';
-  await fbAdd(dbRefs.vendas,{
-    id:Date.now(),
-    cliente:document.getElementById('nomeCliente').value,
-    nome:document.getElementById('nomeProduto').value,
-    valor:parseFloat(document.getElementById('valorProduto').value),
-    pagamento:document.getElementById('formaPagamento').value,
-    tipo,status,
-    obs:document.getElementById('obsVenda').value||'',
-    hora:new Date().toISOString()
+  if (!caixaAberto) { toast('error', 'Abra o caixa primeiro!'); soundError(); return; }
+  const valor = parseFloat(document.getElementById('valorProduto').value);
+  if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); soundError(); return; }
+  const tipo = document.getElementById('tipoEntrega').value;
+  const status = tipo === 'Presencial' ? statusPagAtual : 'pago';
+  await fbAdd(dbRefs.vendas, {
+    id: Date.now(),
+    cliente: clampStr(document.getElementById('nomeCliente').value.trim(), 80),
+    nome: clampStr(document.getElementById('nomeProduto').value.trim(), 60),
+    valor,
+    pagamento: document.getElementById('formaPagamento').value,
+    tipo, status,
+    obs: clampStr(document.getElementById('obsVenda').value, 120),
+    hora: new Date().toISOString()
   });
   document.getElementById('vendaForm').reset();
-  document.getElementById('trocoBox').className='troco-box';
-  document.getElementById('statusPagWrap').style.display='none';
-  document.getElementById('trocoResultado').textContent='—';
-  statusPagAtual='pago';
+  document.getElementById('trocoBox').className = 'troco-box';
+  document.getElementById('statusPagWrap').style.display = 'none';
+  document.getElementById('trocoResultado').textContent = '—';
+  statusPagAtual = 'pago';
   setStatusPag('pago');
-  toast('success','Venda registrada!');soundSuccess();
+  toast('success', 'Venda registrada!'); soundSuccess();
 }
 
-async function removerProduto(id){
-  if(!confirm('Remover esta venda?'))return;
-  const v=produtosVenda.find(p=>p.id===id);
-  if(v?.firebaseId)await fbDel(dbRefs.vendas,v.firebaseId);
-  toast('info','Venda removida');
+async function removerProduto(id) {
+  if (!confirm('Remover esta venda?')) return;
+  const v = produtosVenda.find(p => p.id === id);
+  if (v?.firebaseId) await fbDel(dbRefs.vendas, v.firebaseId);
+  toast('info', 'Venda removida');
 }
 
-async function marcarPago(id){
-  const v=produtosVenda.find(p=>p.id===id);
-  if(v?.firebaseId){await fbUpd(dbRefs.vendas,v.firebaseId,{status:'pago'});toast('success','Marcado como pago!');soundSuccess();}
+async function marcarPago(id) {
+  const v = produtosVenda.find(p => p.id === id);
+  if (v?.firebaseId) { await fbUpd(dbRefs.vendas, v.firebaseId, { status: 'pago' }); toast('success', 'Marcado como pago!'); soundSuccess(); }
 }
 
-function editarProduto(id){
-  const p=produtosVenda.find(x=>x.id===id);if(!p)return;
-  document.getElementById('editId').value=id;
-  document.getElementById('editCliente').value=p.cliente;
-  document.getElementById('editProduto').value=p.nome;
-  document.getElementById('editValor').value=p.valor;
-  document.getElementById('editPagamento').value=p.pagamento;
-  document.getElementById('editTipo').value=p.tipo;
-  document.getElementById('editObs').value=p.obs||'';
-  document.getElementById('editStatus').value=p.status||'pago';
+function editarProduto(id) {
+  const p = produtosVenda.find(x => x.id === id); if (!p) return;
+  document.getElementById('editId').value = id;
+  document.getElementById('editCliente').value = p.cliente;
+  document.getElementById('editProduto').value = p.nome;
+  document.getElementById('editValor').value = p.valor;
+  document.getElementById('editPagamento').value = p.pagamento;
+  document.getElementById('editTipo').value = p.tipo;
+  document.getElementById('editObs').value = p.obs || '';
+  document.getElementById('editStatus').value = p.status || 'pago';
   openModal('modalEditar');
 }
-async function salvarEdicao(e){
+async function salvarEdicao(e) {
   e.preventDefault();
-  const id=parseInt(document.getElementById('editId').value);
-  const p=produtosVenda.find(x=>x.id===id);
-  if(p?.firebaseId){
-    await fbUpd(dbRefs.vendas,p.firebaseId,{
-      cliente:document.getElementById('editCliente').value,nome:document.getElementById('editProduto').value,
-      valor:parseFloat(document.getElementById('editValor').value),pagamento:document.getElementById('editPagamento').value,
-      tipo:document.getElementById('editTipo').value,obs:document.getElementById('editObs').value,
-      status:document.getElementById('editStatus').value
+  const id = parseInt(document.getElementById('editId').value);
+  const valor = parseFloat(document.getElementById('editValor').value);
+  if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); return; }
+  const p = produtosVenda.find(x => x.id === id);
+  if (p?.firebaseId) {
+    await fbUpd(dbRefs.vendas, p.firebaseId, {
+      cliente: clampStr(document.getElementById('editCliente').value.trim(), 80),
+      nome: clampStr(document.getElementById('editProduto').value.trim(), 60),
+      valor,
+      pagamento: document.getElementById('editPagamento').value,
+      tipo: document.getElementById('editTipo').value,
+      obs: clampStr(document.getElementById('editObs').value, 120),
+      status: document.getElementById('editStatus').value
     });
-    closeModal('modalEditar');toast('success','Venda atualizada!');
+    closeModal('modalEditar'); toast('success', 'Venda atualizada!');
   }
 }
 
-function getFiltered(){
-  const q=(document.getElementById('searchVenda')?.value||'').toLowerCase();
-  const fp=document.getElementById('filtPagamento')?.value||'';
-  const ft=document.getElementById('filtTipo')?.value||'';
-  const fs=document.getElementById('filtStatus')?.value||'';
-  return produtosVenda.filter(p=>{
-    const mq=!q||(p.cliente.toLowerCase().includes(q)||p.nome.toLowerCase().includes(q));
-    const mp=!fp||p.pagamento===fp;
-    const mt=!ft||p.tipo===ft;
-    const ms=!fs||p.status===fs;
-    return mq&&mp&&mt&&ms;
+function getFiltered() {
+  const q = (document.getElementById('searchVenda')?.value || '').toLowerCase();
+  const fp = document.getElementById('filtPagamento')?.value || '';
+  const ft = document.getElementById('filtTipo')?.value || '';
+  const fs = document.getElementById('filtStatus')?.value || '';
+  return produtosVenda.filter(p => {
+    const mq = !q || (String(p.cliente).toLowerCase().includes(q) || String(p.nome).toLowerCase().includes(q));
+    const mp = !fp || p.pagamento === fp;
+    const mt = !ft || p.tipo === ft;
+    const ms = !fs || p.status === fs;
+    return mq && mp && mt && ms;
   });
 }
 
-function renderTabela(){
-  const tbody=document.getElementById('tabelaVendas');
-  const filtered=getFiltered();
-  const rc=document.getElementById('resultCount');
-  rc.textContent=produtosVenda.length?`Mostrando ${filtered.length} de ${produtosVenda.length} vendas`:'';
-  if(!filtered.length){
-    tbody.innerHTML='<tr><td colspan="8"><div class="empty"><i class="fas fa-basket-shopping"></i><p>Nenhuma venda encontrada</p></div></td></tr>';
-    document.getElementById('totalVendas').textContent='R$ 0,00';return;
+function renderTabela() {
+  const tbody = document.getElementById('tabelaVendas');
+  const filtered = getFiltered();
+  const rc = document.getElementById('resultCount');
+  rc.textContent = produtosVenda.length ? `Mostrando ${filtered.length} de ${produtosVenda.length} vendas` : '';
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><i class="fas fa-basket-shopping"></i><p>Nenhuma venda encontrada</p></div></td></tr>';
+    document.getElementById('totalVendas').textContent = 'R$ 0,00'; return;
   }
-  tbody.innerHTML=filtered.map(p=>{
-    const h=p.hora?new Date(p.hora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'—';
-    const isPendente=p.status==='pendente';
-    return`<tr style="${isPendente?'background:rgba(245,158,11,.04)':''}">
+  tbody.innerHTML = filtered.map(p => {
+    const h = p.hora ? new Date(p.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+    const isPendente = p.status === 'pendente';
+    const cliSafe = esc(p.cliente);
+    return `<tr style="${isPendente ? 'background:rgba(245,158,11,.04)' : ''}">
       <td>
-        <strong style="color:var(--tp)">${p.cliente}</strong>
-        <div class="cliente-hist-btn" onclick="verHistoricoCliente('${p.cliente.replace(/'/g,"\'")}')">${p.obs?'<span style="color:var(--tm);font-size:.72rem">📝 '+p.obs+'</span><br>':''}ver histórico</div>
+        <strong style="color:var(--tp)">${cliSafe}</strong>
+        <div class="cliente-hist-btn" onclick="verHistoricoCliente(this.dataset.n)" data-n="${cliSafe}">${p.obs ? '<span style="color:var(--tm);font-size:.72rem">📝 ' + esc(p.obs) + '</span><br>' : ''}ver histórico</div>
       </td>
-      <td>${p.nome}</td>
+      <td>${esc(p.nome)}</td>
       <td style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</td>
-      <td><span class="pay-chip">${p.pagamento}</span></td>
-      <td><span class="tag-pill tag-${p.tipo.toLowerCase()}">${p.tipo}</span></td>
-      <td><span class="${isPendente?'badge-pendente':'badge-pago'} status-badge">${isPendente?'⏳ Pendente':'✓ Pago'}</span></td>
+      <td><span class="pay-chip">${esc(p.pagamento)}</span></td>
+      <td><span class="tag-pill tag-${esc(p.tipo.toLowerCase())}">${esc(p.tipo)}</span></td>
+      <td><span class="${isPendente ? 'badge-pendente' : 'badge-pago'} status-badge">${isPendente ? '⏳ Pendente' : '✓ Pago'}</span></td>
       <td style="color:var(--tm);font-size:.8rem">${h}</td>
       <td style="white-space:nowrap">
-        ${isPendente?`<button class="btn-act pago" onclick="marcarPago(${p.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>`:''}
+        ${isPendente ? `<button class="btn-act pago" onclick="marcarPago(${p.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
         <button class="btn-act edit" onclick="editarProduto(${p.id})"><i class="fas fa-pen"></i></button>
         <button class="btn-act del" onclick="removerProduto(${p.id})"><i class="fas fa-trash"></i></button>
       </td></tr>`;
   }).join('');
-  document.getElementById('totalVendas').textContent=fmt(filtered.reduce((s,p)=>s+p.valor,0));
+  document.getElementById('totalVendas').textContent = fmt(filtered.reduce((s, p) => s + p.valor, 0));
 }
-function calcTotal(){return produtosVenda.reduce((s,p)=>s+p.valor,0)}
+function calcTotal() { return produtosVenda.reduce((s, p) => s + p.valor, 0); }
 
-// ── HISTÓRICO CLIENTE ──
-function verHistoricoCliente(nome){
-  const vendas=produtosVenda.filter(p=>p.cliente===nome);
-  const total=vendas.reduce((s,p)=>s+p.valor,0);
-  const body=document.getElementById('modalClienteBody');
-  body.innerHTML=`
-    <div class="detail-row"><span>Cliente</span><strong>${nome}</strong></div>
+/* ── HISTÓRICO CLIENTE ── */
+function verHistoricoCliente(nome) {
+  const vendas = produtosVenda.filter(p => p.cliente === nome);
+  const total = vendas.reduce((s, p) => s + p.valor, 0);
+  const body = document.getElementById('modalClienteBody');
+  body.innerHTML = `
+    <div class="detail-row"><span>Cliente</span><strong>${esc(nome)}</strong></div>
     <div class="detail-row"><span>Pedidos hoje</span><strong>${vendas.length}</strong></div>
     <div class="detail-row"><span>Total gasto hoje</span><strong style="color:#a78bfa">${fmt(total)}</strong></div>
     <div style="margin:1rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Pedidos</div>
     <div style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:.5rem 1rem">
-      ${vendas.map(v=>`<div class="detail-row">
-        <span>${v.nome} ${v.obs?'<span style="color:var(--tm);font-size:.75rem">('+v.obs+')</span>':''}</span>
+      ${vendas.map(v => `<div class="detail-row">
+        <span>${esc(v.nome)} ${v.obs ? '<span style="color:var(--tm);font-size:.75rem">(' + esc(v.obs) + ')</span>' : ''}</span>
         <strong>${fmt(v.valor)}</strong>
       </div>`).join('')}
     </div>`;
   openModal('modalCliente');
 }
 
-// ── DISPENSAS ──
-document.getElementById('unidadeDispensa').addEventListener('change',function(){
-  const map={un:'unidade',kg:'kg',g:'grama',L:'litro',ml:'ml',cx:'caixa',pct:'pacote'};
-  document.getElementById('unidLabel').textContent=map[this.value]||this.value;
+/* ── DISPENSAS ── */
+document.getElementById('unidadeDispensa').addEventListener('change', function () {
+  const map = { un: 'unidade', kg: 'kg', g: 'grama', L: 'litro', ml: 'ml', cx: 'caixa', pct: 'pacote' };
+  document.getElementById('unidLabel').textContent = map[this.value] || this.value;
 });
-async function addDispensa(e){
+async function addDispensa(e) {
   e.preventDefault();
-  await fbAdd(dbRefs.dispensas,{id:Date.now(),nome:document.getElementById('nomeDispensa').value,unidade:document.getElementById('unidadeDispensa').value,valor:parseFloat(document.getElementById('valorDispensa').value),data:new Date().toISOString()});
-  document.getElementById('dispensaForm').reset();document.getElementById('unidLabel').textContent='unidade';
-  toast('success','Produto cadastrado!');
+  const valor = parseFloat(document.getElementById('valorDispensa').value);
+  if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); return; }
+  await fbAdd(dbRefs.dispensas, {
+    id: Date.now(),
+    nome: clampStr(document.getElementById('nomeDispensa').value.trim(), 60),
+    unidade: document.getElementById('unidadeDispensa').value,
+    valor, data: new Date().toISOString()
+  });
+  document.getElementById('dispensaForm').reset(); document.getElementById('unidLabel').textContent = 'unidade';
+  toast('success', 'Produto cadastrado!');
 }
-function renderDispensas(){
-  const cad=document.getElementById('listaCadastrados');
-  cad.innerHTML=dispensas.length?dispensas.map(d=>`
+function renderDispensas() {
+  const cad = document.getElementById('listaCadastrados');
+  cad.innerHTML = dispensas.length ? dispensas.map(d => `
     <div class="product-chip">
-      <div><strong>${d.nome}</strong><div class="punit">${fmt(d.valor)} / ${d.unidade||'un'}</div></div>
-      <button class="btn-act del" onclick="removerDispensa(${d.id},'${d.firebaseId}')"><i class="fas fa-trash"></i></button>
-    </div>`).join(''):'<div class="empty"><i class="fas fa-box-open"></i><p>Nenhum produto</p></div>';
-  const cmp=document.getElementById('listaCompra');
-  cmp.innerHTML=dispensas.length?dispensas.map(d=>{
-    const sel=itensSelecionados.has(d.id);const qty=itensSelecionados.get(d.id)||1;
-    const dec=d.unidade==='kg'||d.unidade==='g'||d.unidade==='L'||d.unidade==='ml';
-    return`<div class="product-chip selectable-chip ${sel?'selected':''}" id="chip-${d.id}">
+      <div><strong>${esc(d.nome)}</strong><div class="punit">${fmt(d.valor)} / ${esc(d.unidade || 'un')}</div></div>
+      <button class="btn-act del" onclick="removerDispensa(${d.id},'${esc(d.firebaseId)}')"><i class="fas fa-trash"></i></button>
+    </div>`).join('') : '<div class="empty"><i class="fas fa-box-open"></i><p>Nenhum produto</p></div>';
+  const cmp = document.getElementById('listaCompra');
+  cmp.innerHTML = dispensas.length ? dispensas.map(d => {
+    const sel = itensSelecionados.has(d.id); const qty = itensSelecionados.get(d.id) || 1;
+    const dec = d.unidade === 'kg' || d.unidade === 'g' || d.unidade === 'L' || d.unidade === 'ml';
+    return `<div class="product-chip selectable-chip ${sel ? 'selected' : ''}" id="chip-${d.id}">
       <div style="flex:1">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
-          <strong style="cursor:pointer" onclick="toggleItem(${d.id})">${d.nome}</strong>
-          <span class="pval" style="white-space:nowrap">${fmt(d.valor)}/${d.unidade||'un'}</span>
+          <strong style="cursor:pointer" onclick="toggleItem(${d.id})">${esc(d.nome)}</strong>
+          <span class="pval" style="white-space:nowrap">${fmt(d.valor)}/${esc(d.unidade || 'un')}</span>
         </div>
-        <div class="chip-label" onclick="toggleItem(${d.id})" style="cursor:pointer">${sel?'✓ Selecionado':'Toque para selecionar'}</div>
-        ${sel?`<div class="qty-row"><span class="qty-unit">Qtd (${d.unidade||'un'}):</span>
-          <input class="qty-input" type="number" min="${dec?'0.1':'1'}" step="${dec?'0.1':'1'}" value="${qty}" id="qty-${d.id}"
+        <div class="chip-label" onclick="toggleItem(${d.id})" style="cursor:pointer">${sel ? '✓ Selecionado' : 'Toque para selecionar'}</div>
+        ${sel ? `<div class="qty-row"><span class="qty-unit">Qtd (${esc(d.unidade || 'un')}):</span>
+          <input class="qty-input" type="number" min="${dec ? '0.1' : '1'}" step="${dec ? '0.1' : '1'}" value="${qty}" id="qty-${d.id}"
             onchange="updateQty(${d.id},this.value)" oninput="updateQty(${d.id},this.value)" onclick="event.stopPropagation()">
-          <span class="qty-sub" id="sub-${d.id}">= ${fmt(d.valor*qty)}</span></div>`:''}
+          <span class="qty-sub" id="sub-${d.id}">= ${fmt(d.valor * qty)}</span></div>` : ''}
       </div></div>`;
-  }).join(''):'<div class="empty"><i class="fas fa-layer-group"></i><p>Cadastre produtos primeiro</p></div>';
+  }).join('') : '<div class="empty"><i class="fas fa-layer-group"></i><p>Cadastre produtos primeiro</p></div>';
   renderTotalDispensa();
 }
-async function removerDispensa(id,fid){if(!confirm('Remover produto?'))return;itensSelecionados.delete(id);await fbDel(dbRefs.dispensas,fid);toast('info','Produto removido');}
-function toggleItem(id){itensSelecionados.has(id)?itensSelecionados.delete(id):itensSelecionados.set(id,1);renderDispensas();}
-function updateQty(id,val){
-  const q=parseFloat(val)||0;
-  if(q>0)itensSelecionados.set(id,q);else itensSelecionados.delete(id);
-  const d=dispensas.find(x=>x.id===id);
-  if(d){const s=document.getElementById('sub-'+id);if(s)s.textContent='= '+fmt(d.valor*(itensSelecionados.get(id)||0));}
+async function removerDispensa(id, fid) { if (!confirm('Remover produto?')) return; itensSelecionados.delete(id); await fbDel(dbRefs.dispensas, fid); toast('info', 'Produto removido'); }
+function toggleItem(id) { itensSelecionados.has(id) ? itensSelecionados.delete(id) : itensSelecionados.set(id, 1); renderDispensas(); }
+function updateQty(id, val) {
+  const q = parseFloat(val) || 0;
+  if (q > 0 && q < 1e6) itensSelecionados.set(id, q); else itensSelecionados.delete(id);
+  const d = dispensas.find(x => x.id === id);
+  if (d) { const s = document.getElementById('sub-' + id); if (s) s.textContent = '= ' + fmt(d.valor * (itensSelecionados.get(id) || 0)); }
   renderTotalDispensa();
 }
-function renderTotalDispensa(){
-  let tot=0;itensSelecionados.forEach((qty,id)=>{const it=dispensas.find(d=>d.id===id);if(it)tot+=it.valor*qty});
-  document.getElementById('countItens').textContent=itensSelecionados.size;
-  document.getElementById('totalDispensa').textContent=fmt(tot);
-  document.getElementById('btnFinalizarCompra').disabled=itensSelecionados.size===0;
+function renderTotalDispensa() {
+  let tot = 0; itensSelecionados.forEach((qty, id) => { const it = dispensas.find(d => d.id === id); if (it) tot += it.valor * qty; });
+  document.getElementById('countItens').textContent = itensSelecionados.size;
+  document.getElementById('totalDispensa').textContent = fmt(tot);
+  document.getElementById('btnFinalizarCompra').disabled = itensSelecionados.size === 0;
 }
-async function finalizarCompraDispensa(){
-  if(!itensSelecionados.size)return;
-  const itens=[];let tot=0;
-  itensSelecionados.forEach((qty,id)=>{const it=dispensas.find(d=>d.id===id);if(it){itens.push({...it,qtd:qty,subtotal:it.valor*qty});tot+=it.valor*qty}});
-  await fbAdd(dbRefs.compras,{id:Date.now(),data:new Date().toISOString(),itens,total:tot});
-  itensSelecionados.clear();renderDispensas();
-  toast('success','Compra registrada! '+fmt(tot));soundSuccess();
-  pushNotif('warning','Nova Despesa','Compra de '+itens.length+' item(s): '+fmt(tot));
+async function finalizarCompraDispensa() {
+  if (!itensSelecionados.size) return;
+  const itens = []; let tot = 0;
+  itensSelecionados.forEach((qty, id) => { const it = dispensas.find(d => d.id === id); if (it) { itens.push({ ...it, qtd: qty, subtotal: it.valor * qty }); tot += it.valor * qty; } });
+  await fbAdd(dbRefs.compras, { id: Date.now(), data: new Date().toISOString(), itens, total: tot });
+  itensSelecionados.clear(); renderDispensas();
+  toast('success', 'Compra registrada! ' + fmt(tot)); soundSuccess();
+  pushNotif('warning', 'Nova Despesa', 'Compra de ' + itens.length + ' item(s): ' + fmt(tot));
 }
-function renderHistoricoDispensas(){
-  const c=document.getElementById('historicoDispensas');
-  if(!comprasDispensa.length){c.innerHTML='<div class="empty"><i class="fas fa-shopping-bag"></i><p>Nenhuma compra</p></div>';return}
-  c.innerHTML=comprasDispensa.map((c2,i)=>{
-    const d=new Date(c2.data);
-    return`<div class="fatura-item" onclick="verCompra(${c2.id})">
-      <div><div class="fatura-num">Compra #${comprasDispensa.length-i}</div>
+function renderHistoricoDispensas() {
+  const c = document.getElementById('historicoDispensas');
+  if (!comprasDispensa.length) { c.innerHTML = '<div class="empty"><i class="fas fa-shopping-bag"></i><p>Nenhuma compra</p></div>'; return; }
+  c.innerHTML = comprasDispensa.map((c2, i) => {
+    const d = new Date(c2.data);
+    return `<div class="fatura-item" onclick="verCompra(${c2.id})">
+      <div><div class="fatura-num">Compra #${comprasDispensa.length - i}</div>
         <div class="fatura-meta">
           <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
-          <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
+          <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
           <span><i class="fas fa-cubes"></i>${c2.itens.length} item(s)</span>
         </div></div>
       <div style="text-align:right"><div class="fatura-amt">${fmt(c2.total)}</div><div style="font-size:.72rem;color:var(--tm)">Finalizada</div></div>
     </div>`;
   }).join('');
 }
-function verCompra(id){
-  const c=comprasDispensa.find(x=>x.id===id);if(!c)return;
-  document.getElementById('modalCompraBody').innerHTML=`
+function verCompra(id) {
+  const c = comprasDispensa.find(x => x.id === id); if (!c) return;
+  document.getElementById('modalCompraBody').innerHTML = `
     <div class="detail-row"><span>Data</span><strong>${formatDT(new Date(c.data))}</strong></div>
     <div class="detail-row"><span>Itens</span><strong>${c.itens.length}</strong></div>
     <div style="margin:1.2rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Produtos</div>
     <div style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:.5rem 1rem">
-      ${c.itens.map(it=>`<div class="detail-row"><span>${it.nome} <span style="color:var(--tm);font-size:.78rem">${it.qtd}${it.unidade||'un'}</span></span><strong>${fmt(it.subtotal||it.valor)}</strong></div>`).join('')}
+      ${c.itens.map(it => `<div class="detail-row"><span>${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}${esc(it.unidade || 'un')}</span></span><strong>${fmt(it.subtotal || it.valor)}</strong></div>`).join('')}
     </div>
     <div class="summary-footer green"><span class="label">TOTAL</span><span class="amount">${fmt(c.total)}</span></div>`;
   openModal('modalCompra');
 }
 
-// ── FATURAS ──
-function renderFaturas(){
-  const c=document.getElementById('listaFaturas');
-  const q=(document.getElementById('searchFatura')?.value||'').toLowerCase();
-  let list=faturas;
-  if(q)list=faturas.filter((f,i)=>('fatura #'+(faturas.length-i)).includes(q)||new Date(f.dataAbertura).toLocaleDateString('pt-BR').includes(q));
-  if(!list.length){c.innerHTML='<div class="empty"><i class="fas fa-receipt"></i><p>Nenhuma fatura encontrada</p></div>';return}
-  c.innerHTML=list.map((f,i)=>{
-    const ab=new Date(f.dataAbertura);
-    return`<div class="fatura-item" onclick="verFatura(${f.id})">
-      <div><div class="fatura-num">Fatura #${faturas.length-faturas.indexOf(f)}</div>
+/* ── FATURAS ── */
+function renderFaturas() {
+  const c = document.getElementById('listaFaturas');
+  const q = (document.getElementById('searchFatura')?.value || '').toLowerCase();
+  let list = faturas;
+  if (q) list = faturas.filter((f, i) => ('fatura #' + (faturas.length - i)).includes(q) || new Date(f.dataAbertura).toLocaleDateString('pt-BR').includes(q));
+  if (!list.length) { c.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>Nenhuma fatura encontrada</p></div>'; return; }
+  c.innerHTML = list.map((f, i) => {
+    const ab = new Date(f.dataAbertura);
+    return `<div class="fatura-item" onclick="verFatura(${f.id})">
+      <div><div class="fatura-num">Fatura #${faturas.length - faturas.indexOf(f)}</div>
         <div class="fatura-meta">
           <span><i class="fas fa-calendar"></i>${ab.toLocaleDateString('pt-BR')}</span>
-          <span><i class="fas fa-clock"></i>${ab.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
-          <span><i class="fas fa-basket-shopping"></i>${f.produtos?.length||0} venda(s)</span>
+          <span><i class="fas fa-clock"></i>${ab.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+          <span><i class="fas fa-basket-shopping"></i>${f.produtos?.length || 0} venda(s)</span>
         </div></div>
       <div style="text-align:right">
-        <div class="fatura-amt">${fmt(f.total||0)}</div>
-        <div style="font-size:.72rem;margin-top:.3rem;color:${f.dataFechamento?'#60a5fa':'#5eead4'}">${f.dataFechamento?'Fechada':'Em Aberto'}</div>
+        <div class="fatura-amt">${fmt(f.total || 0)}</div>
+        <div style="font-size:.72rem;margin-top:.3rem;color:${f.dataFechamento ? '#60a5fa' : '#5eead4'}">${f.dataFechamento ? 'Fechada' : 'Em Aberto'}</div>
       </div></div>`;
   }).join('');
 }
-function verFatura(id){
-  const f=faturas.find(x=>x.id===id);if(!f)return;
-  const ab=new Date(f.dataAbertura);const fch=f.dataFechamento?new Date(f.dataFechamento):null;
-  const prods=f.produtos||[];
-  const pays={};prods.forEach(p=>{pays[p.pagamento]=(pays[p.pagamento]||0)+p.valor});
-  document.getElementById('modalFaturaBody').innerHTML=`
-    <div class="detail-row"><span>Nº</span><strong>#${faturas.length-faturas.indexOf(f)}</strong></div>
+function verFatura(id) {
+  const f = faturas.find(x => x.id === id); if (!f) return;
+  const ab = new Date(f.dataAbertura); const fch = f.dataFechamento ? new Date(f.dataFechamento) : null;
+  const prods = f.produtos || [];
+  const pays = {}; prods.forEach(p => { pays[p.pagamento] = (pays[p.pagamento] || 0) + p.valor; });
+  document.getElementById('modalFaturaBody').innerHTML = `
+    <div class="detail-row"><span>Nº</span><strong>#${faturas.length - faturas.indexOf(f)}</strong></div>
     <div class="detail-row"><span>Aberto em</span><strong>${formatDT(ab)}</strong></div>
-    ${fch?`<div class="detail-row"><span>Fechado em</span><strong>${formatDT(fch)}</strong></div><div class="detail-row"><span>Duração</span><strong>${calcDur(ab,fch)}</strong></div>`:'<div class="detail-row"><span>Status</span><strong style="color:#5eead4">Em Aberto</strong></div>'}
+    ${fch ? `<div class="detail-row"><span>Fechado em</span><strong>${formatDT(fch)}</strong></div><div class="detail-row"><span>Duração</span><strong>${calcDur(ab, fch)}</strong></div>` : '<div class="detail-row"><span>Status</span><strong style="color:#5eead4">Em Aberto</strong></div>'}
     <div class="detail-row"><span>Vendas</span><strong>${prods.length}</strong></div>
-    ${Object.keys(pays).length?`<div style="margin:1rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Por pagamento</div>
+    ${Object.keys(pays).length ? `<div style="margin:1rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Por pagamento</div>
       <div style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:.5rem 1rem">
-        ${Object.entries(pays).map(([k,v])=>`<div class="detail-row"><span>${k}</span><strong>${fmt(v)}</strong></div>`).join('')}
-      </div>`:''}
+        ${Object.entries(pays).map(([k, v]) => `<div class="detail-row"><span>${esc(k)}</span><strong>${fmt(v)}</strong></div>`).join('')}
+      </div>` : ''}
     <div style="margin:1.2rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Vendas</div>
     <div style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:.5rem 1rem">
-      ${prods.length?prods.map(p=>`
+      ${prods.length ? prods.map(p => `
         <div style="padding:.8rem 0;border-bottom:1px solid rgba(255,255,255,.04)">
           <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
-            <strong style="color:var(--tp)">${p.cliente}</strong>
+            <strong style="color:var(--tp)">${esc(p.cliente)}</strong>
             <span style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</span>
           </div>
           <div style="display:flex;gap:.8rem;font-size:.8rem;color:var(--tm);flex-wrap:wrap">
-            <span><i class="fas fa-ice-cream" style="color:var(--vs);margin-right:.3rem"></i>${p.nome}</span>
-            <span class="pay-chip">${p.pagamento}</span>
-            <span class="tag-pill tag-${p.tipo.toLowerCase()}">${p.tipo}</span>
-            <span class="${(p.status||'pago')==='pendente'?'badge-pendente':'badge-pago'} status-badge">${(p.status||'pago')==='pendente'?'Pendente':'Pago'}</span>
+            <span><i class="fas fa-ice-cream" style="color:var(--vs);margin-right:.3rem"></i>${esc(p.nome)}</span>
+            <span class="pay-chip">${esc(p.pagamento)}</span>
+            <span class="tag-pill tag-${esc(p.tipo.toLowerCase())}">${esc(p.tipo)}</span>
+            <span class="${(p.status || 'pago') === 'pendente' ? 'badge-pendente' : 'badge-pago'} status-badge">${(p.status || 'pago') === 'pendente' ? 'Pendente' : 'Pago'}</span>
           </div>
-          ${p.obs?`<div style="font-size:.75rem;color:var(--tm);margin-top:.3rem">📝 ${p.obs}</div>`:''}
-        </div>`).join(''):'<p style="color:var(--tm);text-align:center;padding:1rem">Nenhuma venda</p>'}
+          ${p.obs ? `<div style="font-size:.75rem;color:var(--tm);margin-top:.3rem">📝 ${esc(p.obs)}</div>` : ''}
+        </div>`).join('') : '<p style="color:var(--tm);text-align:center;padding:1rem">Nenhuma venda</p>'}
     </div>
-    <div class="summary-footer"><span class="label">TOTAL GERAL</span><span class="amount">${fmt(f.total||0)}</span></div>
+    <div class="summary-footer"><span class="label">TOTAL GERAL</span><span class="amount">${fmt(f.total || 0)}</span></div>
     <button class="btn-export" onclick="exportarFatura(${f.id})"><i class="fas fa-file-export"></i> Exportar TXT</button>`;
   openModal('modalFatura');
 }
 
-// ======== NOVAS FUNÇÕES: FIADO / CREDIÁRIO ========
-
-// Status do fiado
-function setStatusFiado(s){
-  statusFiadoAtual=s;
-  document.getElementById('optFiadoPendente').className='status-opt'+(s==='pendente'?' sel-pendente':'');
-  document.getElementById('optFiadoPago').className='status-opt'+(s==='pago'?' sel-pago':'');
+/* ======== FIADO / CREDIÁRIO (criptografado ponta a ponta) ======== */
+function setStatusFiado(s) {
+  statusFiadoAtual = s;
+  document.getElementById('optFiadoPendente').className = 'status-opt' + (s === 'pendente' ? ' sel-pendente' : '');
+  document.getElementById('optFiadoPago').className = 'status-opt' + (s === 'pago' ? ' sel-pago' : '');
 }
 
-// Adicionar produto temporário ao fiado
-function addProdutoFiado(){
-  const cod=document.getElementById('fiadoCodProd').value.trim()||'—';
-  const nome=document.getElementById('fiadoNomeProd').value.trim();
-  const qtd=parseFloat(document.getElementById('fiadoQtdProd').value)||1;
-  const valor=parseFloat(document.getElementById('fiadoValorProd').value)||0;
+function addProdutoFiado() {
+  const cod = clampStr(document.getElementById('fiadoCodProd').value.trim(), 12) || '—';
+  const nome = clampStr(document.getElementById('fiadoNomeProd').value.trim(), 60);
+  const qtd = parseFloat(document.getElementById('fiadoQtdProd').value) || 1;
+  const valor = parseFloat(document.getElementById('fiadoValorProd').value) || 0;
 
-  if(!nome){toast('error','Informe o nome do produto');return;}
-  if(valor<=0){toast('error','Informe o valor unitário');return;}
+  if (!nome) { toast('error', 'Informe o nome do produto'); return; }
+  if (valor <= 0 || !isSafeNumber(valor)) { toast('error', 'Informe um valor unitário válido'); return; }
+  if (qtd <= 0 || qtd > 1e6) { toast('error', 'Quantidade inválida'); return; }
 
-  fiadoItensTemp.push({cod,nome,qtd,valor,subtotal:valor*qtd});
+  fiadoItensTemp.push({ cod, nome, qtd, valor, subtotal: valor * qtd });
 
-  // Limpar campos
-  document.getElementById('fiadoCodProd').value='';
-  document.getElementById('fiadoNomeProd').value='';
-  document.getElementById('fiadoQtdProd').value='1';
-  document.getElementById('fiadoValorProd').value='';
+  document.getElementById('fiadoCodProd').value = '';
+  document.getElementById('fiadoNomeProd').value = '';
+  document.getElementById('fiadoQtdProd').value = '1';
+  document.getElementById('fiadoValorProd').value = '';
   document.getElementById('fiadoNomeProd').focus();
 
   renderFiadoItensTemp();
   soundSuccess();
 }
 
-// Renderizar itens temporários do fiado
-function renderFiadoItensTemp(){
-  const box=document.getElementById('fiadoItensTemp');
-  const list=document.getElementById('fiadoItensTempList');
-  const btn=document.getElementById('btnRegistrarFiado');
-
-  if(!fiadoItensTemp.length){box.style.display='none';btn.disabled=true;return;}
-
-  box.style.display='block';btn.disabled=false;
-
-  const total=fiadoItensTemp.reduce((s,it)=>s+it.subtotal,0);
-
-  list.innerHTML=fiadoItensTemp.map((it,i)=>`
+function renderFiadoItensTemp() {
+  const box = document.getElementById('fiadoItensTemp');
+  const list = document.getElementById('fiadoItensTempList');
+  const btn = document.getElementById('btnRegistrarFiado');
+  if (!fiadoItensTemp.length) { box.style.display = 'none'; btn.disabled = true; return; }
+  box.style.display = 'block'; btn.disabled = false;
+  const total = fiadoItensTemp.reduce((s, it) => s + it.subtotal, 0);
+  list.innerHTML = fiadoItensTemp.map((it, i) => `
     <div class="fiado-temp-row">
-      <span><strong>${it.cod}</strong> ${it.nome} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
+      <span><strong>${esc(it.cod)}</strong> ${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
       <div>
         <strong style="color:#a78bfa">${fmt(it.subtotal)}</strong>
         <span class="del" onclick="removerProdutoFiadoTemp(${i})"><i class="fas fa-times"></i></span>
       </div>
     </div>
   `).join('');
-
-  document.getElementById('fiadoSubTotal').textContent=fmt(total);
+  document.getElementById('fiadoSubTotal').textContent = fmt(total);
 }
 
-// Remover produto temporário
-function removerProdutoFiadoTemp(idx){
-  fiadoItensTemp.splice(idx,1);
-  renderFiadoItensTemp();
-}
+function removerProdutoFiadoTemp(idx) { fiadoItensTemp.splice(idx, 1); renderFiadoItensTemp(); }
 
-// Registrar fiado no Firebase
-async function registrarFiado(e){
+async function registrarFiado(e) {
   e.preventDefault();
-  if(!caixaAberto){toast('error','Abra o caixa primeiro!');soundError();return;}
-  if(!fiadoItensTemp.length){toast('error','Adicione pelo menos um produto');return;}
+  if (!caixaAberto) { toast('error', 'Abra o caixa primeiro!'); soundError(); return; }
+  if (!fiadoItensTemp.length) { toast('error', 'Adicione pelo menos um produto'); return; }
+  if (!masterPass) { toast('error', 'Chave de criptografia indisponível. Faça login novamente.'); logout(true); return; }
 
-  const total=fiadoItensTemp.reduce((s,it)=>s+it.subtotal,0);
-  const now=new Date();
+  const total = fiadoItensTemp.reduce((s, it) => s + it.subtotal, 0);
+  const now = new Date();
 
-  const fiadoData={
-    id:Date.now(),
-    cliente:document.getElementById('fiadoCliente').value.trim(),
-    telefone:document.getElementById('fiadoTelefone').value.trim(),
-    endereco:document.getElementById('fiadoEndereco').value.trim(),
-    vendedor:document.getElementById('fiadoVendedor').value.trim(),
-    entregador:document.getElementById('fiadoEntregador').value.trim(),
-    obs:document.getElementById('fiadoObs').value.trim(),
-    itens:[...fiadoItensTemp],
+  const fiadoData = {
+    id: Date.now(),
+    cliente: clampStr(document.getElementById('fiadoCliente').value.trim(), 80),
+    telefone: clampStr(document.getElementById('fiadoTelefone').value.trim(), 20),
+    endereco: clampStr(document.getElementById('fiadoEndereco').value.trim(), 120),
+    vendedor: clampStr(document.getElementById('fiadoVendedor').value.trim(), 60),
+    entregador: clampStr(document.getElementById('fiadoEntregador').value.trim(), 60),
+    obs: clampStr(document.getElementById('fiadoObs').value.trim(), 120),
+    itens: [...fiadoItensTemp],
     total,
-    status:statusFiadoAtual,
-    data:now.toISOString(),
-    dataPagamento:null
+    status: statusFiadoAtual,
+    data: now.toISOString(),
+    dataPagamento: null
   };
 
-  await fbAdd(dbRefs.fiados,fiadoData);
+  // CRIPTOGRAFIA PONTA A PONTA: o payload (cliente, telefone, endereço, itens)
+  // é cifrado com AES-256-GCM antes de tocar o banco. O servidor só vê bytes cifrados.
+  const e2e = await encryptJSON(fiadoData, masterPass);
+  await fbAdd(dbRefs.fiados, { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e, firebaseId: undefined });
 
-  // Limpar formulário
   document.getElementById('fiadoForm').reset();
-  fiadoItensTemp=[];
+  fiadoItensTemp = [];
   renderFiadoItensTemp();
-  statusFiadoAtual='pendente';
+  statusFiadoAtual = 'pendente';
   setStatusFiado('pendente');
 
-  toast('success','Fiado registrado! Total: '+fmt(total));
+  toast('success', 'Fiado registrado (criptografado)! Total: ' + fmt(total));
   soundSuccess();
-  pushNotif('warning','Novo Fiado',fiadoData.cliente+' — '+fmt(total));
+  pushNotif('warning', 'Novo Fiado', 'Registro cifrado de ' + fmt(total) + ' salvo no banco.');
 
-  // Abrir prévia da bobina automaticamente
-  fiadoAtualPrint=fiadoData;
+  fiadoAtualPrint = fiadoData;
   abrirModalBobina(fiadoData);
 }
 
-// Renderizar lista de fiados
-function renderFiados(){
-  const c=document.getElementById('listaFiados');
-  const q=(document.getElementById('searchFiado')?.value||'').toLowerCase();
-  const fs=document.getElementById('filtStatusFiado')?.value||'';
+function renderFiados() {
+  const c = document.getElementById('listaFiados');
+  const q = (document.getElementById('searchFiado')?.value || '').toLowerCase();
+  const fs = document.getElementById('filtStatusFiado')?.value || '';
 
-  let list=fiados;
-  if(q)list=list.filter(f=>f.cliente.toLowerCase().includes(q));
-  if(fs)list=list.filter(f=>f.status===fs);
+  let list = fiados;
+  if (q) list = list.filter(f => String(f.cliente).toLowerCase().includes(q));
+  if (fs) list = list.filter(f => f.status === fs);
 
-  const rc=document.getElementById('resultCountFiado');
-  rc.textContent=fiados.length?`Mostrando ${list.length} de ${fiados.length} contas`:'';
+  const rc = document.getElementById('resultCountFiado');
+  rc.textContent = fiados.length ? `Mostrando ${list.length} de ${fiados.length} contas` : '';
 
-  if(!list.length){
-    c.innerHTML='<div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div>';
-    return;
-  }
+  if (!list.length) { c.innerHTML = '<div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div>'; return; }
 
-  c.innerHTML='<div class="fiado-lista">'+list.map((f,i)=>{
-    const d=new Date(f.data);
-    const isPago=f.status==='pago';
-    return`
-      <div class="fiado-item ${isPago?'pago':''}">
+  c.innerHTML = '<div class="fiado-lista">' + list.map(f => {
+    const d = new Date(f.data);
+    const isPago = f.status === 'pago';
+    return `
+      <div class="fiado-item ${isPago ? 'pago' : ''}">
         <div class="fiado-info">
-          <div class="fiado-nome">${f.cliente} ${isPago?'<span style="color:#86efac;font-size:.75rem">✓ PAGO</span>':''}</div>
+          <div class="fiado-nome">${esc(f.cliente)} ${isPago ? '<span style="color:#86efac;font-size:.75rem">✓ PAGO</span>' : ''}</div>
           <div class="fiado-meta">
             <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
-            <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
+            <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
             <span><i class="fas fa-cubes"></i>${f.itens.length} item(s)</span>
-            ${f.telefone?`<span><i class="fas fa-phone"></i>${f.telefone}</span>`:''}
-            ${f.vendedor?`<span><i class="fas fa-user"></i>${f.vendedor}</span>`:''}
+            ${f.telefone ? `<span><i class="fas fa-phone"></i>${esc(f.telefone)}</span>` : ''}
+            ${f.vendedor ? `<span><i class="fas fa-user"></i>${esc(f.vendedor)}</span>` : ''}
           </div>
         </div>
         <div style="text-align:right">
-          <div class="fiado-valor ${isPago?'pago':''}">${fmt(f.total)}</div>
+          <div class="fiado-valor ${isPago ? 'pago' : ''}">${fmt(f.total)}</div>
           <div class="fiado-acoes">
             <button class="btn-act edit" onclick="verDetalhesFiado(${f.id})" title="Ver detalhes"><i class="fas fa-eye"></i></button>
             <button class="btn-act pago" onclick="imprimirFiadoBobina(${f.id})" title="Imprimir bobina"><i class="fas fa-print"></i></button>
-            ${!isPago?`<button class="btn-act pago" onclick="marcarFiadoPago(${f.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>`:''}
+            ${!isPago ? `<button class="btn-act pago" onclick="marcarFiadoPago(${f.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
             <button class="btn-act del" onclick="removerFiado(${f.id})" title="Remover"><i class="fas fa-trash"></i></button>
           </div>
         </div>
       </div>`;
-  }).join('')+'</div>';
+  }).join('') + '</div>';
 }
 
-// Ver detalhes do fiado
-function verDetalhesFiado(id){
-  const f=fiados.find(x=>x.id===id);if(!f)return;
-  const d=new Date(f.data);
-  const body=document.getElementById('modalFiadoBody');
-
-  body.innerHTML=`
-    <div class="detail-row"><span>Cliente</span><strong>${f.cliente}</strong></div>
-    ${f.telefone?`<div class="detail-row"><span>Telefone</span><strong>${f.telefone}</strong></div>`:''}
-    ${f.endereco?`<div class="detail-row"><span>Endereço</span><strong>${f.endereco}</strong></div>`:''}
-    <div class="detail-row"><span>Vendedor</span><strong>${f.vendedor||'—'}</strong></div>
-    ${f.entregador?`<div class="detail-row"><span>Entregador</span><strong>${f.entregador}</strong></div>`:''}
+function verDetalhesFiado(id) {
+  const f = fiados.find(x => x.id === id); if (!f) return;
+  const d = new Date(f.data);
+  const body = document.getElementById('modalFiadoBody');
+  body.innerHTML = `
+    <div class="detail-row"><span>Cliente</span><strong>${esc(f.cliente)}</strong></div>
+    ${f.telefone ? `<div class="detail-row"><span>Telefone</span><strong>${esc(f.telefone)}</strong></div>` : ''}
+    ${f.endereco ? `<div class="detail-row"><span>Endereço</span><strong>${esc(f.endereco)}</strong></div>` : ''}
+    <div class="detail-row"><span>Vendedor</span><strong>${esc(f.vendedor || '—')}</strong></div>
+    ${f.entregador ? `<div class="detail-row"><span>Entregador</span><strong>${esc(f.entregador)}</strong></div>` : ''}
     <div class="detail-row"><span>Data</span><strong>${formatDT(d)}</strong></div>
-    <div class="detail-row"><span>Status</span><strong style="color:${f.status==='pago'?'#86efac':'#fcd34d'}">${f.status==='pago'?'✓ Pago':'⏳ Pendente'}</strong></div>
-    ${f.obs?`<div class="detail-row"><span>Observação</span><strong>${f.obs}</strong></div>`:''}
-
+    <div class="detail-row"><span>Status</span><strong style="color:${f.status === 'pago' ? '#86efac' : '#fcd34d'}">${f.status === 'pago' ? '✓ Pago' : '⏳ Pendente'}</strong></div>
+    ${f.obs ? `<div class="detail-row"><span>Observação</span><strong>${esc(f.obs)}</strong></div>` : ''}
     <div class="fiado-itens-lista">
       <h4>Itens da Compra</h4>
-      ${f.itens.map(it=>`
+      ${f.itens.map(it => `
         <div class="fiado-item-row">
-          <span><strong>${it.cod}</strong> ${it.nome} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
+          <span><strong>${esc(it.cod)}</strong> ${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}x ${fmt(it.valor)}</span></span>
           <strong>${fmt(it.subtotal)}</strong>
         </div>
       `).join('')}
     </div>
-
-    <div class="summary-footer ${f.status==='pago'?'green':''}">
-      <span class="label">TOTAL ${f.status==='pago'?'PAGO':'PENDENTE'}</span>
+    <div class="summary-footer ${f.status === 'pago' ? 'green' : ''}">
+      <span class="label">TOTAL ${f.status === 'pago' ? 'PAGO' : 'PENDENTE'}</span>
       <span class="amount">${fmt(f.total)}</span>
     </div>
-
     <div style="display:flex;gap:.5rem;margin-top:1rem">
       <button class="btn-print-bobina" onclick="imprimirFiadoBobina(${f.id})" style="flex:1">
         <i class="fas fa-print"></i> Imprimir Bobina
       </button>
-      ${f.status==='pendente'?`<button class="btn-primary" onclick="marcarFiadoPago(${f.id});closeModal('modalFiado');" style="flex:1">
+      ${f.status === 'pendente' ? `<button class="btn-primary" onclick="marcarFiadoPago(${f.id});closeModal('modalFiado');" style="flex:1">
         <i class="fas fa-check"></i> Marcar Pago
-      </button>`:''}
+      </button>` : ''}
     </div>
   `;
   openModal('modalFiado');
 }
 
-// Marcar fiado como pago
-async function marcarFiadoPago(id){
-  const f=fiados.find(x=>x.id===id);
-  if(f?.firebaseId){
-    await fbUpd(dbRefs.fiados,f.firebaseId,{status:'pago',dataPagamento:new Date().toISOString()});
-    toast('success','Fiado marcado como pago!');soundSuccess();
-    pushNotif('success','Fiado Quitado',f.cliente+' — '+fmt(f.total));
+async function marcarFiadoPago(id) {
+  const f = fiados.find(x => x.id === id);
+  if (f?.firebaseId) {
+    f.status = 'pago'; f.dataPagamento = new Date().toISOString();
+    const e2e = masterPass ? await encryptJSON(f, masterPass) : f.e2e;
+    await fbUpd(dbRefs.fiados, f.firebaseId, { status: 'pago', dataPagamento: f.dataPagamento, e2e });
+    toast('success', 'Fiado marcado como pago!'); soundSuccess();
+    pushNotif('success', 'Fiado Quitado', fmt(f.total) + ' recebido.');
   }
 }
 
-// Remover fiado
-async function removerFiado(id){
-  if(!confirm('Remover esta conta de fiado?'))return;
-  const f=fiados.find(x=>x.id===id);
-  if(f?.firebaseId){await fbDel(dbRefs.fiados,f.firebaseId);toast('info','Fiado removido');}
+async function removerFiado(id) {
+  if (!confirm('Remover esta conta de fiado?')) return;
+  const f = fiados.find(x => x.id === id);
+  if (f?.firebaseId) { await fbDel(dbRefs.fiados, f.firebaseId); toast('info', 'Fiado removido'); }
 }
 
-// ======== IMPRESSÃO BOBINA 79MM ========
+/* ======== IMPRESSÃO BOBINA 79MM ======== */
+function gerarBobinaHTML(dados) {
+  const d = new Date(dados.data);
+  const dataStr = d.toLocaleDateString('pt-BR');
+  const horaStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const notaNum = String(dados.id).slice(-4);
 
-// Gerar HTML da bobina otimizado para MP-4200 TH + bobina 79mm
-function gerarBobinaHTML(dados){
-  const d=new Date(dados.data);
-  const dataStr=d.toLocaleDateString('pt-BR');
-  const horaStr=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const notaNum=String(dados.id).slice(-4);
-
-  let itensHTML=dados.itens.map(it=>`
+  const itensHTML = dados.itens.map(it => `
     <div class="item-row">
-      <span class="desc">${it.cod!=='—'?it.cod+' ':''}${it.nome}</span>
+      <span class="desc">${esc(it.cod) !== '—' ? esc(it.cod) + ' ' : ''}${esc(it.nome)}</span>
       <span class="qtd">${it.qtd}</span>
-      <span class="val">${fmt(it.valor).replace('R$ ','')}</span>
-      <span class="tot">${fmt(it.subtotal).replace('R$ ','')}</span>
+      <span class="val">${fmt(it.valor).replace('R$ ', '')}</span>
+      <span class="tot">${fmt(it.subtotal).replace('R$ ', '')}</span>
     </div>
   `).join('');
 
@@ -2037,14 +2150,14 @@ function gerarBobinaHTML(dados){
       <div class="cabecalho">AÇAÍ REI</div>
       <div class="sub-cabecalho">Sistema de Controle de Caixa</div>
       <div class="linha"></div>
-      <div class="nota-num">*** NOTA No. ${notaNum} ***</div>
+      <div class="nota-num">*** NOTA No. ${esc(notaNum)} ***</div>
       <div class="linha"></div>
-      <div class="info-row"><span class="info-label">Cliente:</span>${dados.cliente}</div>
-      ${dados.telefone?`<div class="info-row"><span class="info-label">Telefone:</span>${dados.telefone}</div>`:''}
+      <div class="info-row"><span class="info-label">Cliente:</span>${esc(dados.cliente)}</div>
+      ${dados.telefone ? `<div class="info-row"><span class="info-label">Telefone:</span>${esc(dados.telefone)}</div>` : ''}
       <div class="info-row"><span class="info-label">Emitido em:</span>${dataStr}</div>
       <div class="info-row"><span class="info-label">Hora:</span>${horaStr}</div>
-      <div class="info-row"><span class="info-label">Vendedor:</span>${dados.vendedor||'LOJA'}</div>
-      ${dados.entregador?`<div class="info-row"><span class="info-label">Entregador:</span>${dados.entregador}</div>`:''}
+      <div class="info-row"><span class="info-label">Vendedor:</span>${esc(dados.vendedor || 'LOJA')}</div>
+      ${dados.entregador ? `<div class="info-row"><span class="info-label">Entregador:</span>${esc(dados.entregador)}</div>` : ''}
       <div class="linha"></div>
       <div class="item-row" style="border-bottom:1px dashed #000;padding-bottom:2px;margin-bottom:2px">
         <span class="desc">PRODUTO</span>
@@ -2054,12 +2167,11 @@ function gerarBobinaHTML(dados){
       </div>
       ${itensHTML}
       <div class="linha"></div>
-      <div class="total-row">SubTotal: ${fmt(dados.total).replace('R$ ','')}</div>
-      <div class="total-row">Total: ${fmt(dados.total).replace('R$ ','')}</div>
-      <div class="total-row">Troco: 0,00</div>
+      <div class="total-row">SubTotal: ${fmt(dados.total).replace('R$ ', '')}</div>
+      <div class="total-row">Total: ${fmt(dados.total).replace('R$ ', '')}</div>
       <div class="linha"></div>
       <div class="center bold" style="font-size:10pt">FORMA DE PAGAMENTO</div>
-      <div class="forma-pag">FIADO (PAGAR DEPOIS): ${fmt(dados.total).replace('R$ ','')}</div>
+      <div class="forma-pag">FIADO (PAGAR DEPOIS): ${fmt(dados.total).replace('R$ ', '')}</div>
       <div class="linha"></div>
       <div style="font-size:9pt;margin-top:4px">Declaro ter recebido a mercadoria.</div>
       <div style="font-size:9pt">Assinatura:</div>
@@ -2072,29 +2184,24 @@ function gerarBobinaHTML(dados){
   `;
 }
 
-// Abrir modal com prévia da bobina
-function abrirModalBobina(dados){
-  fiadoAtualPrint=dados;
-  const html=gerarBobinaHTML(dados);
-  document.getElementById('modalBobinaBody').innerHTML=`<div class="bobina-preview">${html}</div>`;
+function abrirModalBobina(dados) {
+  fiadoAtualPrint = dados;
+  const html = gerarBobinaHTML(dados);
+  document.getElementById('modalBobinaBody').innerHTML = `<div class="bobina-preview">${html}</div>`;
   openModal('modalBobina');
 }
 
-// Imprimir fiado na bobina
-function imprimirFiadoBobina(id){
-  const f=fiados.find(x=>x.id===id);
-  if(!f){toast('error','Fiado não encontrado');return;}
+function imprimirFiadoBobina(id) {
+  const f = fiados.find(x => x.id === id);
+  if (!f) { toast('error', 'Fiado não encontrado'); return; }
   abrirModalBobina(f);
 }
 
-// Impressão direta via iframe — não trava na tela do navegador
-function imprimirBobina(){
-  if(!fiadoAtualPrint){toast('error','Nenhum fiado selecionado');return;}
-
+function imprimirBobina() {
+  if (!fiadoAtualPrint) { toast('error', 'Nenhum fiado selecionado'); return; }
   const bobina = document.getElementById('bobinaPrint');
-  if(!bobina){toast('error','Erro ao gerar bobina');return;}
+  if (!bobina) { toast('error', 'Erro ao gerar bobina'); return; }
 
-  // Cria iframe invisível
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
   iframe.style.left = '-9999px';
@@ -2102,93 +2209,57 @@ function imprimirBobina(){
   iframe.style.width = '79mm';
   iframe.style.height = '1px';
   iframe.style.border = 'none';
+  iframe.setAttribute('sandbox', 'allow-modals');
   document.body.appendChild(iframe);
 
   const doc = iframe.contentWindow.document;
   doc.open();
-  doc.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        @page { size: 79mm auto; margin: 0; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-          width: 79mm;
-          max-width: 79mm;
-          min-width: 79mm;
-          margin: 0;
-          padding: 4mm 2mm;
-          background: #fff;
-          color: #000;
-          font-family: 'Courier New', 'Consolas', monospace;
-          font-size: 11pt;
-          font-weight: bold;
-          line-height: 1.35;
-        }
-        .center { text-align: center; }
-        .right { text-align: right; }
-        .linha { border-top: 1px dashed #000; margin: 3px 0; }
-        .linha-esp { margin: 6px 0; }
-        .bold { font-weight: bold; }
-        .item-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 10pt;
-          font-weight: bold;
-          margin-bottom: 1px;
-        }
-        .item-row .desc { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .item-row .qtd { width: 32px; text-align: center; flex-shrink: 0; }
-        .item-row .val { width: 58px; text-align: right; flex-shrink: 0; }
-        .item-row .tot { width: 58px; text-align: right; flex-shrink: 0; }
-        .assinatura { margin-top: 16px; border-top: 1px dashed #000; padding-top: 6px; }
-        .assinatura-line { border-bottom: 1.5px solid #000; width: 70%; margin: 16px auto 4px; height: 18px; }
-        .cabecalho { font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 2px; }
-        .sub-cabecalho { font-size: 9pt; text-align: center; margin-bottom: 4px; }
-        .nota-num { font-size: 11pt; font-weight: bold; text-align: center; margin: 3px 0; }
-        .info-row { font-size: 10pt; margin-bottom: 1px; }
-        .info-label { display: inline-block; width: 85px; }
-        .total-row { font-size: 12pt; font-weight: bold; text-align: right; margin: 2px 0; }
-        .forma-pag { font-size: 10pt; margin: 2px 0; }
-      </style>
-    </head>
-    <body>
-      ${bobina.innerHTML}
-    </body>
-    </html>
-  `);
+  doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    @page{size:79mm auto;margin:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{width:79mm;max-width:79mm;min-width:79mm;margin:0;padding:4mm 2mm;background:#fff;color:#000;font-family:'Courier New','Consolas',monospace;font-size:11pt;font-weight:bold;line-height:1.35}
+    .center{text-align:center}.right{text-align:right}
+    .linha{border-top:1px dashed #000;margin:3px 0}
+    .linha-esp{margin:6px 0}.bold{font-weight:bold}
+    .item-row{display:flex;justify-content:space-between;font-size:10pt;font-weight:bold;margin-bottom:1px}
+    .item-row .desc{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .item-row .qtd{width:32px;text-align:center;flex-shrink:0}
+    .item-row .val{width:58px;text-align:right;flex-shrink:0}
+    .item-row .tot{width:58px;text-align:right;flex-shrink:0}
+    .assinatura-line{border-bottom:1.5px solid #000;width:70%;margin:16px auto 4px;height:18px}
+    .cabecalho{font-size:14pt;font-weight:bold;text-align:center;margin-bottom:2px}
+    .sub-cabecalho{font-size:9pt;text-align:center;margin-bottom:4px}
+    .nota-num{font-size:11pt;font-weight:bold;text-align:center;margin:3px 0}
+    .info-row{font-size:10pt;margin-bottom:1px}
+    .info-label{display:inline-block;width:85px}
+    .total-row{font-size:12pt;font-weight:bold;text-align:right;margin:2px 0}
+    .forma-pag{font-size:10pt;margin:2px 0}
+  </style></head><body>${bobina.innerHTML}</body></html>`);
   doc.close();
 
-  // Aguarda renderização e imprime
   setTimeout(() => {
     try {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
       toast('success', 'Imprimindo...');
-    } catch(e) {
-      toast('error', 'Erro na impressão: ' + e.message);
+    } catch (e) {
+      toast('error', 'Erro na impressão');
     }
-    // Remove iframe após impressão
-    setTimeout(() => {
-      if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    }, 3000);
+    setTimeout(() => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 3000);
   }, 300);
 }
 
-// ── RELATÓRIO ──
-function abrirRelatorio(){
-  const totalV=calcTotal(),qtdV=produtosVenda.length,totalD=comprasDispensa.reduce((s,c)=>s+c.total,0),saldo=totalV-totalD;
-  const pays={};produtosVenda.forEach(p=>{if(!pays[p.pagamento])pays[p.pagamento]={total:0,count:0};pays[p.pagamento].total+=p.valor;pays[p.pagamento].count++});
-  const pres=produtosVenda.filter(p=>p.tipo==='Presencial'),deliv=produtosVenda.filter(p=>p.tipo==='Delivery');
-  const presTotal=pres.reduce((s,p)=>s+p.valor,0),delivTotal=deliv.reduce((s,p)=>s+p.valor,0);
-  const pendentes=produtosVenda.filter(p=>p.status==='pendente');
-  // NOVO: Fiados no relatório
-  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
-  const totalFiado=fiadosPendentes.reduce((s,f)=>s+f.total,0);
+/* ── RELATÓRIO ── */
+function abrirRelatorio() {
+  const totalV = calcTotal(), qtdV = produtosVenda.length, totalD = comprasDispensa.reduce((s, c) => s + c.total, 0), saldo = totalV - totalD;
+  const pays = {}; produtosVenda.forEach(p => { if (!pays[p.pagamento]) pays[p.pagamento] = { total: 0, count: 0 }; pays[p.pagamento].total += p.valor; pays[p.pagamento].count++; });
+  const pres = produtosVenda.filter(p => p.tipo === 'Presencial'), deliv = produtosVenda.filter(p => p.tipo === 'Delivery');
+  const presTotal = pres.reduce((s, p) => s + p.valor, 0), delivTotal = deliv.reduce((s, p) => s + p.valor, 0);
+  const pendentes = produtosVenda.filter(p => p.status === 'pendente');
+  const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
+  const totalFiado = fiadosPendentes.reduce((s, f) => s + f.total, 0);
 
-  document.getElementById('modalRelatorioBody').innerHTML=`
+  document.getElementById('modalRelatorioBody').innerHTML = `
     <div style="text-align:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gbr)">
       <div style="font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Gerado em</div>
       <div style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-top:.3rem">${new Date().toLocaleString('pt-BR')}</div>
@@ -2196,151 +2267,138 @@ function abrirRelatorio(){
     <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1.5rem">
       <div class="stat-card s-violet"><div class="stat-label">Receita</div><div class="stat-value">${fmt(totalV)}</div><div class="stat-sub">${qtdV} venda(s)</div></div>
       <div class="stat-card s-gold"><div class="stat-label">Despesas</div><div class="stat-value">${fmt(totalD)}</div></div>
-      <div class="stat-card s-teal"><div class="stat-label">Ticket Médio</div><div class="stat-value">${fmt(qtdV?totalV/qtdV:0)}</div></div>
-      <div class="stat-card s-rose"><div class="stat-label">Saldo</div><div class="stat-value" style="color:${saldo>=0?'#5eead4':'#fb7185'}">${fmt(Math.abs(saldo))}</div><div class="stat-sub">${saldo>=0?'Positivo':'Negativo'}</div></div>
+      <div class="stat-card s-teal"><div class="stat-label">Ticket Médio</div><div class="stat-value">${fmt(qtdV ? totalV / qtdV : 0)}</div></div>
+      <div class="stat-card s-rose"><div class="stat-label">Saldo</div><div class="stat-value" style="color:${saldo >= 0 ? '#5eead4' : '#fb7185'}">${fmt(Math.abs(saldo))}</div><div class="stat-sub">${saldo >= 0 ? 'Positivo' : 'Negativo'}</div></div>
     </div>
-    ${pendentes.length?`<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#fcd34d"><i class="fas fa-triangle-exclamation"></i> ${pendentes.length} pedido(s) presencial ainda <strong>pendente(s)</strong> — Total: ${fmt(pendentes.reduce((s,p)=>s+p.valor,0))}</div>`:''}
-    ${fiadosPendentes.length?`<div style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#a78bfa"><i class="fas fa-hand-holding-dollar"></i> ${fiadosPendentes.length} conta(s) de <strong>fiado pendente(s)</strong> — Total: ${fmt(totalFiado)}</div>`:''}
+    ${pendentes.length ? `<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#fcd34d"><i class="fas fa-triangle-exclamation"></i> ${pendentes.length} pedido(s) presencial ainda <strong>pendente(s)</strong> — Total: ${fmt(pendentes.reduce((s, p) => s + p.valor, 0))}</div>` : ''}
+    ${fiadosPendentes.length ? `<div style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#a78bfa"><i class="fas fa-hand-holding-dollar"></i> ${fiadosPendentes.length} conta(s) de <strong>fiado pendente(s)</strong> — Total: ${fmt(totalFiado)}</div>` : ''}
     <div class="report-section"><h4>Por Forma de Pagamento</h4>
-      ${Object.keys(pays).length?Object.entries(pays).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>`
-        <div class="report-pay-row"><span>${k} <span style="color:var(--tm);font-size:.78rem">(${v.count}x)</span></span><strong>${fmt(v.total)} · ${totalV?Math.round(v.total/totalV*100):0}%</strong></div>
-        <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${totalV?Math.round(v.total/totalV*100):0}%"></div></div>`).join('')
-      :'<p style="color:var(--tm);font-size:.88rem">Sem vendas</p>'}
+      ${Object.keys(pays).length ? Object.entries(pays).sort((a, b) => b[1].total - a[1].total).map(([k, v]) => {
+    const pct = totalV ? Math.round(v.total / totalV * 100) : 0;
+    return `<div class="report-pay-row"><span>${esc(k)} <span style="color:var(--tm);font-size:.78rem">(${v.count}x)</span></span><strong>${fmt(v.total)} · ${pct}%</strong></div>
+        <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+  }).join('')
+      : '<p style="color:var(--tm);font-size:.88rem">Sem vendas</p>'}
     </div>
     <div class="report-section"><h4>Presencial vs Delivery</h4>
       <div class="report-pay-row"><span>Presencial (${pres.length})</span><strong>${fmt(presTotal)}</strong></div>
-      <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${totalV?Math.round(presTotal/totalV*100):0}%;background:linear-gradient(90deg,#6366f1,#a5b4fc)"></div></div>
+      <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${totalV ? Math.round(presTotal / totalV * 100) : 0}%;background:linear-gradient(90deg,#6366f1,#a5b4fc)"></div></div>
       <div class="report-pay-row"><span>Delivery (${deliv.length})</span><strong>${fmt(delivTotal)}</strong></div>
-      <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${totalV?Math.round(delivTotal/totalV*100):0}%;background:linear-gradient(90deg,#f59e0b,#fcd34d)"></div></div>
+      <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${totalV ? Math.round(delivTotal / totalV * 100) : 0}%;background:linear-gradient(90deg,#f59e0b,#fcd34d)"></div></div>
     </div>
     <button class="btn-export" onclick="exportarRelatorio()"><i class="fas fa-file-export"></i> Exportar TXT</button>`;
   openModal('modalRelatorio');
 }
 
-function exportarRelatorio(){
-  const totalV=calcTotal(),totalD=comprasDispensa.reduce((s,c)=>s+c.total,0);
-  const pays={};produtosVenda.forEach(p=>{if(!pays[p.pagamento])pays[p.pagamento]={total:0,count:0};pays[p.pagamento].total+=p.valor;pays[p.pagamento].count++});
-  let txt=`============================
-   RELATÓRIO — AÇAÍ REI
-============================
-Gerado: ${new Date().toLocaleString('pt-BR')}
-
-`;
-  txt+=`RECEITA TOTAL : ${fmt(totalV)}
-DESPESAS      : ${fmt(totalD)}
-SALDO LÍQUIDO : ${fmt(totalV-totalD)}
-TICKET MÉDIO  : ${fmt(produtosVenda.length?totalV/produtosVenda.length:0)}
-
-`;
-  txt+=`PAGAMENTOS:
-`;Object.entries(pays).forEach(([k,v])=>{txt+=`  ${k}: ${fmt(v.total)} (${v.count}x)
-`});
-  txt+=`
-VENDAS:
-${'─'.repeat(45)}
-`;
-  produtosVenda.forEach(p=>{const h=p.hora?new Date(p.hora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';txt+=`${h} | ${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}${p.obs?' | '+p.obs:''}
-`});
-  // NOVO: Fiados no relatório
-  const fiadosPendentes=fiados.filter(f=>f.status==='pendente');
-  if(fiadosPendentes.length){
-    txt+=`
-FIADOS PENDENTES:
-${'─'.repeat(45)}
-`;
-    fiadosPendentes.forEach(f=>{txt+=`${f.cliente} | ${fmt(f.total)} | ${f.itens.length} itens | ${new Date(f.data).toLocaleDateString('pt-BR')}
-`;f.itens.forEach(it=>{txt+=`  ${it.cod} ${it.nome} | ${it.qtd}x | ${fmt(it.valor)} | ${fmt(it.subtotal)}
-`;});});
+function exportarRelatorio() {
+  const totalV = calcTotal(), totalD = comprasDispensa.reduce((s, c) => s + c.total, 0);
+  const pays = {}; produtosVenda.forEach(p => { if (!pays[p.pagamento]) pays[p.pagamento] = { total: 0, count: 0 }; pays[p.pagamento].total += p.valor; pays[p.pagamento].count++; });
+  let txt = `============================\n   RELATÓRIO — AÇAÍ REI\n============================\nGerado: ${new Date().toLocaleString('pt-BR')}\n\n`;
+  txt += `RECEITA TOTAL : ${fmt(totalV)}\nDESPESAS      : ${fmt(totalD)}\nSALDO LÍQUIDO : ${fmt(totalV - totalD)}\nTICKET MÉDIO  : ${fmt(produtosVenda.length ? totalV / produtosVenda.length : 0)}\n\n`;
+  txt += `PAGAMENTOS:\n`; Object.entries(pays).forEach(([k, v]) => { txt += `  ${k}: ${fmt(v.total)} (${v.count}x)\n`; });
+  txt += `\nVENDAS:\n${'─'.repeat(45)}\n`;
+  produtosVenda.forEach(p => {
+    const h = p.hora ? new Date(p.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+    txt += `${h} | ${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status || 'pago'}${p.obs ? ' | ' + p.obs : ''}\n`;
+  });
+  const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
+  if (fiadosPendentes.length) {
+    txt += `\nFIADOS PENDENTES:\n${'─'.repeat(45)}\n`;
+    fiadosPendentes.forEach(f => {
+      txt += `${f.cliente} | ${fmt(f.total)} | ${f.itens.length} itens | ${new Date(f.data).toLocaleDateString('pt-BR')}\n`;
+      f.itens.forEach(it => { txt += `  ${it.cod} ${it.nome} | ${it.qtd}x | ${fmt(it.valor)} | ${fmt(it.subtotal)}\n`; });
+    });
   }
-  baixarTxt(txt,`relatorio-acairei-${new Date().toISOString().split('T')[0]}.txt`);toast('success','Relatório exportado!');
+  baixarTxt(txt, `relatorio-acairei-${new Date().toISOString().split('T')[0]}.txt`); toast('success', 'Relatório exportado!');
 }
 
-function exportarFatura(id){
-  const f=faturas.find(x=>x.id===id);if(!f)return;
-  let txt=`============================
-   FATURA — AÇAÍ REI
-============================
-Aberta: ${formatDT(new Date(f.dataAbertura))}
-`;
-  if(f.dataFechamento)txt+=`Fechada: ${formatDT(new Date(f.dataFechamento))}
-`;
-  txt+=`
-${'─'.repeat(45)}
-`;
-  (f.produtos||[]).forEach(p=>{txt+=`${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status||'pago'}
-`});
-  txt+=`${'─'.repeat(45)}
-TOTAL: ${fmt(f.total||0)}
-`;
-  baixarTxt(txt,`fatura-acairei.txt`);toast('success','Fatura exportada!');
+function exportarFatura(id) {
+  const f = faturas.find(x => x.id === id); if (!f) return;
+  let txt = `============================\n   FATURA — AÇAÍ REI\n============================\nAberta: ${formatDT(new Date(f.dataAbertura))}\n`;
+  if (f.dataFechamento) txt += `Fechada: ${formatDT(new Date(f.dataFechamento))}\n`;
+  txt += `\n${'─'.repeat(45)}\n`;
+  (f.produtos || []).forEach(p => { txt += `${p.cliente} | ${p.nome} | ${fmt(p.valor)} | ${p.pagamento} | ${p.tipo} | ${p.status || 'pago'}\n`; });
+  txt += `${'─'.repeat(45)}\nTOTAL: ${fmt(f.total || 0)}\n`;
+  baixarTxt(txt, `fatura-acairei.txt`); toast('success', 'Fatura exportada!');
 }
-function baixarTxt(txt,nome){const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=nome;a.click();URL.revokeObjectURL(url)}
+function baixarTxt(txt, nome) { const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = nome; a.click(); URL.revokeObjectURL(url); }
 
-// ── NOTIFICAÇÕES ──
-function pushNotif(type,title,msg){
-  notificacoes.unshift({type,title,msg,time:new Date()});
-  if(notificacoes.length>30)notificacoes.pop();
+/* ── NOTIFICAÇÕES ── */
+function pushNotif(type, title, msg) {
+  notificacoes.unshift({ type, title, msg, time: new Date() });
+  if (notificacoes.length > 30) notificacoes.pop();
   document.getElementById('notifBadge').classList.add('show');
 }
-function verNotificacoes(){
+function verNotificacoes() {
   document.getElementById('notifBadge').classList.remove('show');
-  const body=document.getElementById('modalNotifBody');
-  const icons={success:'fa-check-circle',warning:'fa-triangle-exclamation',error:'fa-circle-xmark',info:'fa-circle-info'};
-  const colors={success:'#22c55e',warning:'#f59e0b',error:'#f43f5e',info:'#a78bfa'};
-  if(!notificacoes.length){body.innerHTML='<div class="empty"><i class="fas fa-bell-slash"></i><p>Nenhuma notificação</p></div>';openModal('modalNotif');return}
-  body.innerHTML=notificacoes.map(n=>`
+  const body = document.getElementById('modalNotifBody');
+  const icons = { success: 'fa-check-circle', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+  const colors = { success: '#22c55e', warning: '#f59e0b', error: '#f43f5e', info: '#a78bfa' };
+  if (!notificacoes.length) { body.innerHTML = '<div class="empty"><i class="fas fa-bell-slash"></i><p>Nenhuma notificação</p></div>'; openModal('modalNotif'); return; }
+  body.innerHTML = notificacoes.map(n => `
     <div style="display:flex;gap:.8rem;align-items:flex-start;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.04)">
-      <i class="fas ${icons[n.type]||icons.info}" style="color:${colors[n.type]||colors.info};margin-top:.15rem;flex-shrink:0"></i>
+      <i class="fas ${icons[n.type] || icons.info}" style="color:${colors[n.type] || colors.info};margin-top:.15rem;flex-shrink:0"></i>
       <div>
-        <div style="font-size:.88rem;color:var(--tp);font-weight:500">${n.title}</div>
-        ${n.msg?`<div style="font-size:.78rem;color:var(--tm);margin-top:.2rem">${n.msg}</div>`:''}
-        <div style="font-size:.72rem;color:var(--tm);margin-top:.3rem">${n.time.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+        <div style="font-size:.88rem;color:var(--tp);font-weight:500">${esc(n.title)}</div>
+        ${n.msg ? `<div style="font-size:.78rem;color:var(--tm);margin-top:.2rem">${esc(n.msg)}</div>` : ''}
+        <div style="font-size:.72rem;color:var(--tm);margin-top:.3rem">${n.time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
       </div></div>`).join('');
   openModal('modalNotif');
 }
 
-function toast(type,msg){
-  const c=document.getElementById('toastContainer');const t=document.createElement('div');
-  const icons={success:'fa-check-circle',warning:'fa-triangle-exclamation',error:'fa-circle-xmark',info:'fa-circle-info'};
-  t.className=`toast ${type}`;t.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
-  c.appendChild(t);setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300)},3500);
+function toast(type, msg) {
+  const c = document.getElementById('toastContainer'); const t = document.createElement('div');
+  const icons = { success: 'fa-check-circle', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+  t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${esc(msg)}</span>`;
+  c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3500);
 }
 
-// ── BACKUP ──
-function sincronizarDados(){
-  const dados={faturas,dispensas,comprasDispensa,favoritos,fiados,lastSync:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();URL.revokeObjectURL(url);toast('success','Backup baixado!');
+/* ── CENTRAL DE SEGURANÇA (novo painel) ── */
+function verSeguranca() {
+  document.getElementById('secListBody').innerHTML = `
+    <div class="sec-row"><i class="fas fa-shield-halved si"></i><div><div class="t">Criptografia de ponta a ponta (AES-256-GCM)</div><div class="d">Fiados (cliente, telefone, endereço, itens) são cifrados no dispositivo antes de irem ao Firebase. O banco só guarda bytes ilegíveis.</div></div></div>
+    <div class="sec-row"><i class="fas fa-key si"></i><div><div class="t">Senha protegida com PBKDF2 (210.000 iterações)</div><div class="d">A senha nunca é armazenada nem transmitida. Só um hash resistente a força bruta é salvo, com salt aleatório de 128 bits.</div></div></div>
+    <div class="sec-row"><i class="fas fa-user-lock si"></i><div><div class="t">Bloqueio anti força bruta</div><div class="d">5 tentativas erradas bloqueiam o login por 15 minutos neste dispositivo.</div></div></div>
+    <div class="sec-row"><i class="fas fa-clock si"></i><div><div class="t">Sessão expira em 30 min</div><div class="d">Inatividade encerra a sessão e apaga a chave de criptografia da memória.</div></div></div>
+    <div class="sec-row"><i class="fas fa-code si"></i><div><div class="t">Proteção contra XSS</div><div class="d">Todos os dados sensíveis exibidos passam por escape de HTML; inputs têm limite de tamanho e validação numérica.</div></div></div>
+    <div class="sec-row"><i class="fas fa-window-maximize si"></i><div><div class="t">Anti-clickjacking + CSP</div><div class="d">A página recusa execução dentro de iframes e aplica Content Security Policy restritiva.</div></div></div>
+    <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">No console do Firebase → Realtime Database → Rules, ative autenticação (regra abaixo) para bloquear leitura/escrita anônima da internet.</div></div></div>
+    <pre style="background:rgba(0,0,0,.35);border:1px solid var(--gbr);border-radius:10px;padding:1rem;font-family:monospace;font-size:.72rem;color:#5eead4;margin-top:.6rem;overflow-x:auto">{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</pre>`;
+  openModal('modalSeguranca');
 }
 
-// ── UTILS ──
-function fmt(n){
-  if(n==null||isNaN(n))return'R$ 0,00';
-  return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+/* ── BACKUP (fiados exportados cifrados + aviso) ── */
+function sincronizarDados() {
+  const dados = { faturas, dispensas, comprasDispensa, favoritos, fiados: fiados.map(f => ({ id: f.id, status: f.status, total: f.total, data: f.data, itensCount: f.itens.length })), lastSync: new Date().toISOString(), nota: 'Fiados exportados sem dados pessoais (permanecem criptografados no banco).' };
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = url; a.download = `acai-rei-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url); toast('success', 'Backup baixado!');
 }
-function formatHora(d){
-  if(!d)return'—';
-  return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+/* ── UTILS ── */
+function fmt(n) {
+  if (n == null || isNaN(n)) return 'R$ 0,00';
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
-function formatDT(d){
-  if(!d)return'—';
-  return d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-}
-function calcDur(a,b){
-  const diff=Math.floor((b-a)/1000);
-  const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;
+function formatHora(d) { if (!d) return '—'; return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+function formatDT(d) { if (!d) return '—'; return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+function calcDur(a, b) {
+  const diff = Math.floor((b - a) / 1000);
+  const h = Math.floor(diff / 3600), m = Math.floor((diff % 3600) / 60), s = diff % 60;
   return `${h}h ${m}min ${s}s`;
 }
-function logout(){
-  localStorage.removeItem('acaiRei_session');
-  currentUser=null;
+function logout(expired) {
+  localStorage.removeItem(SEC.APP_NS + '_sess');
+  currentUser = null;
+  masterPass = null;   // chave de criptografia apagada da memória no logout
+  fiados = [];
+  clearTimeout(sessionTimer);
   showLogin();
-  toast('info','Sessão encerrada');
+  toast('info', expired ? 'Faça login novamente para descriptografar os dados.' : 'Sessão encerrada com segurança.');
 }
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 </script>
 </body>
 </html>
