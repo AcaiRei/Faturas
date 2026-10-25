@@ -82,6 +82,11 @@ body::before{content:'';position:fixed;inset:0;background:
 @keyframes spinning{to{transform:rotate(360deg)}}
 .shake{animation:shakeX .45s cubic-bezier(.36,.07,.19,.97)}
 @keyframes shakeX{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+/* CONSOLE DE DIAGNÓSTICO EMBUTIDO */
+.dbg{position:fixed;bottom:0;left:0;right:0;max-height:220px;overflow-y:auto;background:rgba(5,2,15,.96);border-top:2px solid rgba(244,63,94,.5);font-family:'Courier New',monospace;font-size:.72rem;line-height:1.5;color:#fca5a5;z-index:9998;padding:.6rem 1rem;display:none;box-shadow:0 -8px 30px rgba(0,0,0,.6)}
+.dbg.show{display:block}
+.dbg div{padding:1px 0;white-space:pre-wrap;word-break:break-all}
+.dbg .ok{color:#86efac}.dbg .warn{color:#fcd34d}
 
 .app-screen{display:none;position:relative;z-index:1;min-height:100vh}
 .app-screen.visible{display:block}
@@ -111,7 +116,7 @@ body::before{content:'';position:fixed;inset:0;background:
 .theme-btn{background:none;border:none;color:var(--ts);font-size:1rem;cursor:pointer;padding:.4rem;border-radius:8px;transition:all .3s}
 .theme-btn:hover{color:var(--tp);background:var(--gb)}
 .toast-container{position:fixed;top:76px;right:1.2rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{background:var(--s2);border:1px solid var(--gbr);border-radius:14px;padding:.8rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.84rem;color:var(--tp);box-shadow:0 8px 30px rgba(0,0,0,.4);pointer-events:all;animation:toastIn .4s cubic-bezier(.16,1,.3,1) both;max-width:320px}
+.toast{background:var(--s2);border:1px solid var(--gbr);border-radius:14px;padding:.8rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.84rem;color:var(--tp);box-shadow:0 8px 30px rgba(0,0,0,.4);pointer-events:all;animation:toastIn .4s cubic-bezier(.16,1,.3,1) both;max-width:340px}
 @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 .toast.out{animation:toastOut .3s ease forwards}
 @keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
@@ -225,16 +230,6 @@ body::before{content:'';position:fixed;inset:0;background:
 .badge-pago{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;font-size:.7rem;padding:.2rem .5rem}
 .badge-pendente{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fcd34d;font-size:.7rem;padding:.2rem .5rem}
 
-.meta-widget{background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:1.2rem 1.5rem;margin-top:1.2rem}
-.meta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
-.meta-header span{font-size:.82rem;color:var(--ts)}
-.meta-header strong{font-size:1rem;color:var(--tp)}
-.meta-set-row{display:flex;gap:.5rem;margin-top:.8rem}
-.meta-input{flex:1;padding:.6rem .9rem;background:rgba(255,255,255,.06);border:1px solid var(--gbr);border-radius:9px;color:var(--tp);font-family:'DM Sans',sans-serif;font-size:.88rem}
-.meta-input:focus{outline:none;border-color:var(--vs)}
-.meta-input::placeholder{color:var(--tm)}
-.btn-meta{padding:.6rem 1rem;background:var(--vb);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .3s}
-.btn-meta:hover{background:#6d28d9}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.2rem}
 .fg{display:flex;flex-direction:column;gap:.4rem}
 .fg label{font-size:.75rem;font-weight:600;color:var(--tm);letter-spacing:.6px;text-transform:uppercase}
@@ -346,6 +341,8 @@ tbody tr:last-child td{border-bottom:none}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 .btn-secondary{padding:.7rem 1.2rem;background:var(--gb);border:1px solid var(--gbr);border-radius:10px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.4rem}
 .btn-secondary:hover{background:rgba(255,255,255,.08);color:var(--tp);border-color:var(--vs)}
+.btn-danger{padding:.7rem 1.4rem;background:linear-gradient(135deg,#f43f5e,#be123c);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s}
+.btn-danger:hover{box-shadow:0 6px 20px rgba(244,63,94,.4)}
 
 .fiado-lista{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
 .fiado-item{background:rgba(255,255,255,.04);border:1px solid var(--gbr);border-radius:14px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;transition:all .25s}
@@ -403,6 +400,11 @@ tbody tr:last-child td{border-bottom:none}
 .sec-row i.si{margin-top:.15rem;flex-shrink:0;font-size:.95rem;color:#5eead4}
 .sec-row .t{font-size:.85rem;color:var(--tp);font-weight:600}
 .sec-row .d{font-size:.78rem;color:var(--tm);margin-top:.15rem;line-height:1.4}
+.diag-row{display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem}
+.diag-row:last-child{border-bottom:none}
+.diag-row .node{font-family:monospace;color:var(--vs)}
+.diag-row .res-ok{color:#86efac;font-weight:600}
+.diag-row .res-fail{color:#fb7185;font-weight:600}
 @media(max-width:1024px){
   .sidebar{display:none}
   .tabs-mobile{display:flex;gap:.4rem;margin-bottom:1.5rem;background:var(--gb);border:1px solid var(--gbr);border-radius:16px;padding:.4rem;overflow-x:auto}
@@ -438,6 +440,7 @@ tbody tr:last-child td{border-bottom:none}
 </head>
 <body>
 <div class="toast-container" id="toastContainer"></div>
+<div class="dbg" id="dbgConsole"></div>
 
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
@@ -491,6 +494,7 @@ tbody tr:last-child td{border-bottom:none}
     <div class="topbar-right">
       <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema" id="themeBtn" aria-label="Alternar tema"><i class="fas fa-moon"></i></button>
       <button class="theme-btn" onclick="toggleSound()" title="Som" id="soundBtn" aria-label="Som"><i class="fas fa-volume-high"></i></button>
+      <button class="btn-topbar" onclick="abrirDiagnostico()" title="Diagnóstico do Firebase"><i class="fas fa-stethoscope"></i> <span>Diagnóstico</span></button>
       <button class="sec-pill" onclick="verSeguranca()" title="Status de segurança"><i class="fas fa-shield-halved"></i> Seguro</button>
       <button class="notif-bell" onclick="verNotificacoes()" aria-label="Notificações"><i class="fas fa-bell"></i><div class="notif-badge" id="notifBadge"></div></button>
       <button class="btn-topbar" onclick="abrirRelatorio()"><i class="fas fa-chart-bar"></i> <span>Relatório</span></button>
@@ -570,7 +574,7 @@ tbody tr:last-child td{border-bottom:none}
 
         <div class="glass-card">
           <div class="card-head"><h3 class="card-title"><i class="fas fa-bullseye"></i> Meta do Dia</h3></div>
-          <div id="metaDisplay" style="margin-bottom:1rem">
+          <div style="margin-bottom:1rem">
             <div class="meta-header">
               <span id="metaProgressText">Sem meta definida</span>
               <strong id="metaValorText">—</strong>
@@ -578,10 +582,10 @@ tbody tr:last-child td{border-bottom:none}
             <div class="meta-bar-track" style="height:10px"><div class="meta-bar-fill" id="metaBarMain" style="width:0%"></div></div>
             <div class="meta-pct" id="metaPctMain" style="margin-top:.4rem"></div>
           </div>
-          <div class="meta-set-row">
-            <input class="meta-input" type="number" id="metaInput" placeholder="Definir meta (R$)" min="0" step="10">
-            <button class="btn-meta" onclick="definirMeta()"><i class="fas fa-check"></i> Salvar</button>
-            <button class="btn-meta" style="background:rgba(255,255,255,.1)" onclick="limparMeta()" aria-label="Limpar meta"><i class="fas fa-times"></i></button>
+          <div style="display:flex;gap:.5rem;margin-top:.8rem">
+            <input style="flex:1;padding:.6rem .9rem;background:rgba(255,255,255,.06);border:1px solid var(--gbr);border-radius:9px;color:var(--tp);font-family:'DM Sans',sans-serif;font-size:.88rem" type="number" id="metaInput" placeholder="Definir meta (R$)" min="0" step="10">
+            <button class="btn-primary" style="width:auto;padding:.6rem 1.2rem" onclick="definirMeta()"><i class="fas fa-check"></i> Salvar</button>
+            <button class="btn-secondary" onclick="limparMeta()"><i class="fas fa-times"></i></button>
           </div>
         </div>
 
@@ -667,14 +671,14 @@ tbody tr:last-child td{border-bottom:none}
             <div class="fav-chips" id="favChips"></div>
           </div>
 
-          <form id="vendaForm" onsubmit="addProduto(event)" style="margin-top:1.5rem">
+          <form id="vendaForm" onsubmit="addProduto(event)" style="margin-top:1.5rem" novalidate>
             <div class="form-grid">
-              <div class="fg"><label>Cliente</label><input type="text" id="nomeCliente" placeholder="Nome do cliente" maxlength="80" required></div>
-              <div class="fg"><label>Produto</label><input type="text" id="nomeProduto" placeholder="Nome do produto" maxlength="60" required></div>
-              <div class="fg"><label>Valor (R$)</label><input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" max="999999.99" required oninput="calcTroco()"></div>
+              <div class="fg"><label>Cliente</label><input type="text" id="nomeCliente" placeholder="Nome do cliente" maxlength="80"></div>
+              <div class="fg"><label>Produto</label><input type="text" id="nomeProduto" placeholder="Nome do produto" maxlength="60"></div>
+              <div class="fg"><label>Valor (R$)</label><input type="number" id="valorProduto" placeholder="0,00" step="0.01" min="0" max="999999.99" oninput="calcTroco()"></div>
               <div class="fg">
                 <label>Pagamento</label>
-                <select id="formaPagamento" required onchange="onPagamentoChange()">
+                <select id="formaPagamento" onchange="onPagamentoChange()">
                   <option value="">Selecione</option>
                   <option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option>
                   <option>PIX</option><option>PicPay</option><option>Outro</option>
@@ -682,7 +686,7 @@ tbody tr:last-child td{border-bottom:none}
               </div>
               <div class="fg">
                 <label>Tipo</label>
-                <select id="tipoEntrega" required onchange="onTipoChange()">
+                <select id="tipoEntrega" onchange="onTipoChange()">
                   <option value="">Selecione</option><option>Presencial</option><option>Delivery</option>
                 </select>
               </div>
@@ -743,7 +747,7 @@ tbody tr:last-child td{border-bottom:none}
         <div class="dispensas-layout">
           <div class="glass-card">
             <div class="card-head"><h3 class="card-title"><i class="fas fa-plus-circle"></i> Cadastrar Produto</h3></div>
-            <form id="dispensaForm" onsubmit="addDispensa(event)">
+            <form id="dispensaForm" onsubmit="addDispensa(event)" novalidate>
               <div class="fg" style="margin-bottom:1rem">
                 <label>Nome do Produto</label>
                 <input type="text" id="nomeDispensa" placeholder="Ex: Açaí, Copo 500ml, Polpa…" maxlength="60" required>
@@ -810,12 +814,12 @@ tbody tr:last-child td{border-bottom:none}
             <span class="status-badge badge-closed" id="fiadoBadge"><i class="fas fa-lock"></i> Caixa Fechado</span>
           </div>
 
-          <form id="fiadoForm" onsubmit="registrarFiado(event)">
+          <form id="fiadoForm" onsubmit="registrarFiado(event)" novalidate>
             <div class="form-grid">
-              <div class="fg"><label>Cliente *</label><input type="text" id="fiadoCliente" placeholder="Nome completo do cliente" maxlength="80" required></div>
-              <div class="fg"><label>Telefone</label><input type="tel" id="fiadoTelefone" placeholder="(27) 99999-9999" maxlength="20" pattern="[0-9()\s\-\+]{0,20}"></div>
+              <div class="fg"><label>Cliente *</label><input type="text" id="fiadoCliente" placeholder="Nome completo do cliente" maxlength="80"></div>
+              <div class="fg"><label>Telefone</label><input type="tel" id="fiadoTelefone" placeholder="(27) 99999-9999" maxlength="20"></div>
               <div class="fg"><label>Endereço</label><input type="text" id="fiadoEndereco" placeholder="Rua, número, bairro…" maxlength="120"></div>
-              <div class="fg"><label>Vendedor *</label><input type="text" id="fiadoVendedor" placeholder="Nome do vendedor" maxlength="60" required></div>
+              <div class="fg"><label>Vendedor *</label><input type="text" id="fiadoVendedor" placeholder="Nome do vendedor" maxlength="60"></div>
               <div class="fg"><label>Entregador</label><input type="text" id="fiadoEntregador" placeholder="Nome do entregador" maxlength="60"></div>
               <div class="fg"><label>Observação</label><input type="text" id="fiadoObs" placeholder="Ex: pagar dia 05, sem juros…" maxlength="120"></div>
             </div>
@@ -895,13 +899,59 @@ tbody tr:last-child td{border-bottom:none}
 </div>
 
 <!-- MODAIS -->
+<div class="modal" id="modalConfirm" onclick="if(event.target===this)fecharConfirm()">
+  <div class="modal-box" style="max-width:420px">
+    <div class="modal-head">
+      <h3 id="confirmTitle"><i class="fas fa-triangle-exclamation" style="color:var(--gold);margin-right:.5rem"></i> Confirmar</h3>
+    </div>
+    <p style="color:var(--ts);font-size:.9rem;margin-bottom:1.5rem" id="confirmMsg"></p>
+    <div style="display:flex;gap:.5rem">
+      <button class="btn-danger" style="flex:1" id="confirmYes" onclick="responderConfirm(true)"><i class="fas fa-check"></i> Confirmar</button>
+      <button class="btn-secondary" style="flex:1" onclick="responderConfirm(false)"><i class="fas fa-times"></i> Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalTrocarSenha" onclick="if(event.target===this)closeModal('modalTrocarSenha')">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-head">
+      <h3><i class="fas fa-key" style="color:var(--gold);margin-right:.5rem"></i> Trocar Senha</h3>
+      <button class="btn-close" onclick="closeModal('modalTrocarSenha')">&times;</button>
+    </div>
+    <div class="fg" style="margin-bottom:1rem">
+      <label>Nova senha (mín. 12, com maiúsculas, minúsculas, números e símbolos)</label>
+      <input type="password" id="novaSenhaInput" placeholder="Nova senha" minlength="12" maxlength="128">
+      <div class="strength-meter"><div class="strength-fill" id="novaStrengthFill"></div></div>
+    </div>
+    <div class="fg" style="margin-bottom:1rem">
+      <label>Confirmar nova senha</label>
+      <input type="password" id="novaSenhaConfirm" placeholder="Repita a senha" minlength="12" maxlength="128">
+    </div>
+    <button class="btn-primary" id="btnTrocarSenha" onclick="executarTrocaSenha()"><i class="fas fa-key"></i> Salvar Nova Senha</button>
+  </div>
+</div>
+
+<div class="modal" id="modalDiagnostico" onclick="if(event.target===this)closeModal('modalDiagnostico')">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-head">
+      <h3><i class="fas fa-stethoscope" style="color:#5eead4;margin-right:.5rem"></i> Diagnóstico Firebase</h3>
+      <button class="btn-close" onclick="closeModal('modalDiagnostico')">&times;</button>
+    </div>
+    <p style="color:var(--tm);font-size:.82rem;margin-bottom:1rem">
+      Este teste grava e apaga um registro de teste em cada nó do banco. Se algum nó falhar, o motivo provável é a regra de segurança do Firebase (permission denied) — ative o login anônimo em Authentication → Sign-in method.
+    </p>
+    <div id="diagBody" style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:1rem"></div>
+    <button class="btn-primary" onclick="executarDiagnostico()" style="margin-top:1rem"><i class="fas fa-rotate"></i> Executar Teste Novamente</button>
+  </div>
+</div>
+
 <div class="modal" id="modalEditar" onclick="if(event.target===this)closeModal('modalEditar')">
   <div class="modal-box">
     <div class="modal-head">
       <h3><i class="fas fa-pen-to-square" style="color:var(--vs);margin-right:.5rem"></i> Editar Venda</h3>
       <button class="btn-close" onclick="closeModal('modalEditar')">&times;</button>
     </div>
-    <form id="formEditar" onsubmit="salvarEdicao(event)">
+    <form id="formEditar" onsubmit="salvarEdicao(event)" novalidate>
       <input type="hidden" id="editId">
       <div class="form-grid">
         <div class="fg"><label>Cliente</label><input type="text" id="editCliente" maxlength="80" required></div>
@@ -1017,7 +1067,7 @@ tbody tr:last-child td{border-bottom:none}
     </div>
     <div class="sec-list" id="secListBody"></div>
     <div style="display:flex;gap:.5rem;margin-top:1.2rem;flex-wrap:wrap">
-      <button class="btn-secondary" onclick="trocarSenhaUI()" style="flex:1"><i class="fas fa-key"></i> Trocar senha</button>
+      <button class="btn-secondary" onclick="abrirTrocarSenha()" style="flex:1"><i class="fas fa-key"></i> Trocar senha</button>
       <button class="btn-secondary" onclick="zerarTentativas()" style="flex:1"><i class="fas fa-unlock"></i> Resetar bloqueio</button>
     </div>
   </div>
@@ -1035,7 +1085,7 @@ window.dbOnValue=onValue;window.dbRemove=remove;window.dbUpdate=update;
 
 <script>
 /* ================================================================
-   NÚCLEO DE SEGURANÇA (Web Crypto — AES-256-GCM + PBKDF2 210k)
+   SEGURANÇA (Web Crypto — AES-256-GCM + PBKDF2 210k)
    ================================================================ */
 const SEC = {
   PBKDF2_ITER: 210000, KEY_LEN: 256, SALT_LEN: 16, IV_LEN: 12,
@@ -1050,10 +1100,7 @@ const b64 = {
 };
 const te = new TextEncoder(), td = new TextDecoder();
 
-function assertCrypto() {
-  if (!window.crypto || !crypto.subtle) throw new Error('WebCrypto indisponível (use HTTPS).');
-}
-
+function assertCrypto() { if (!window.crypto || !crypto.subtle) throw new Error('WebCrypto indisponível (use HTTPS).'); }
 async function importPBKDF2Base(password) {
   assertCrypto();
   return crypto.subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey', 'deriveBits']);
@@ -1102,6 +1149,29 @@ function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;',
 function clampStr(s, n) { return String(s ?? '').slice(0, n); }
 function isSafeNumber(v) { const n = Number(v); return isFinite(n) && n >= 0 && n < SEC.MAX_INPUT_LEN; }
 
+/* ── CONSOLE DE DIAGNÓSTICO VISÍVEL ── */
+const dbg = {
+  el: null,
+  show(v) { document.getElementById('dbgConsole').classList.add('show'); },
+  log(msg, cls) {
+    const d = document.getElementById('dbgConsole');
+    d.classList.add('show');
+    const row = document.createElement('div');
+    if (cls) row.className = cls;
+    row.textContent = `[${new Date().toLocaleTimeString('pt-BR')}] ${msg}`;
+    d.appendChild(row);
+    d.scrollTop = d.scrollHeight;
+    if (d.children.length > 80) d.removeChild(d.firstChild);
+    console.log('[AçaíRei]', msg);
+  },
+  clear() { document.getElementById('dbgConsole').innerHTML = ''; }
+};
+window.addEventListener('error', e => dbg.log('ERRO JS: ' + (e.message || 'desconhecido') + (e.filename ? ' @ ' + e.filename + ':' + e.lineno : ''), ''));
+window.addEventListener('unhandledrejection', e => dbg.log('PROMESSA REJEITADA: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)), ''));
+/* intercepta console.error do app para o painel também */
+const _ce = console.error.bind(console);
+console.error = function (...a) { _ce(...a); dbg.log('console.error: ' + a.map(x => x && x.message ? x.message : String(x)).join(' '), ''); };
+
 /* Lockout */
 const lockStore = {
   get() { try { return JSON.parse(sessionStorage.getItem(SEC.APP_NS + '_lock')) || { tries: 0, until: 0 }; } catch { return { tries: 0, until: 0 }; } },
@@ -1116,7 +1186,6 @@ function registerFail() {
 }
 function zerarTentativas() { lockStore.set({ tries: 0, until: 0 }); toast('success', 'Bloqueio resetado.'); closeModal('modalSeguranca'); }
 
-/* Força de senha */
 function scorePassword(p) {
   let s = 0;
   if (p.length >= 12) s += 40;
@@ -1125,6 +1194,21 @@ function scorePassword(p) {
   if (/\d/.test(p)) s += 15;
   if (/[^A-Za-z0-9]/.test(p)) s += 15;
   return Math.min(100, s);
+}
+
+/* ── CONFIRMAÇÃO COM MODAL (substitui confirm() nativo) ── */
+let confirmCallback = null;
+function pedirConfirmacao(titulo, msg, cb) {
+  confirmCallback = cb;
+  document.getElementById('confirmTitle').innerHTML = '<i class="fas fa-triangle-exclamation" style="color:var(--gold);margin-right:.5rem"></i> ' + esc(titulo);
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('modalConfirm').classList.add('open');
+}
+function fecharConfirm() { document.getElementById('modalConfirm').classList.remove('open'); confirmCallback = null; }
+function responderConfirm(v) {
+  const cb = confirmCallback;
+  fecharConfirm();
+  if (v && typeof cb === 'function') { try { cb(); } catch (err) { dbg.log('Erro na ação confirmada: ' + err.message); toast('error', 'Erro: ' + err.message); } }
 }
 
 /* ================ ESTADO ================ */
@@ -1136,7 +1220,7 @@ let timerInterval = null, notificacoes = [], favoritos = [], metaDia = 0;
 let statusPagAtual = 'pago', soundEnabled = true;
 let fiados = [], fiadoItensTemp = [], statusFiadoAtual = 'pendente', fiadoAtualPrint = null;
 let sessionTimer = null, audioCtx = null;
-let fiadosCacheRaw = [];   /* backup dos registros cifrados recebidos antes do login */
+let fiadosCacheRaw = [];
 
 function getAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
 function playSound(freq = 880, dur = .15, type = 'sine') {
@@ -1155,6 +1239,8 @@ window.addEventListener('load', () => {
   loadLocalPrefs();
   setupFirstRun();
   bindLoginForm();
+  dbg.log('Aplicação carregada. Protocolo: ' + location.protocol, 'ok');
+  if (location.protocol === 'http:') dbg.log('ATENÇÃO: http:// puro — WebCrypto NÃO funciona. Use HTTPS ou abra o arquivo localmente.', 'warn');
   setTimeout(initFirebase, 300);
 });
 
@@ -1176,15 +1262,10 @@ function setupFirstRun() {
       '<strong>Primeiro acesso:</strong> defina um usuário e uma senha de <strong>mínimo 12 caracteres</strong> ' +
       '(maiúsculas, minúsculas, números e símbolos). Ela será a chave mestra para criptografar os dados no banco — nunca sai do dispositivo.';
   } else {
-    /* sessão existente: apenas pré-preenche usuário, senha sempre obrigatória */
-    try {
-      const c = JSON.parse(rec);
-      document.getElementById('username').value = c.user || '';
-    } catch { }
+    try { const c = JSON.parse(rec); document.getElementById('username').value = c.user || ''; } catch { }
   }
 }
 
-/* Medidor de força + campo de confirmação dinâmico */
 document.getElementById('password').addEventListener('input', function () {
   const s = scorePassword(this.value);
   const f = document.getElementById('strengthFill'), t = document.getElementById('strengthText'), pct = document.getElementById('strengthPct');
@@ -1192,24 +1273,22 @@ document.getElementById('password').addEventListener('input', function () {
   if (s < 40) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f43f5e,#fb7185)'; t.textContent = 'Fraca'; }
   else if (s < 70) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f59e0b,#fcd34d)'; t.textContent = 'Média'; }
   else { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#14b8a6,#5eead4)'; t.textContent = 'Forte'; }
-  updateConfirmVisibility();
-});
-function updateConfirmVisibility() {
   const cred = localStorage.getItem(SEC.APP_NS + '_cred');
-  const cf = document.getElementById('confirmField');
-  const isNew = !cred && scorePassword(document.getElementById('password').value) >= 40;
-  cf.hidden = !isNew;
-}
-
+  document.getElementById('confirmField').hidden = !(!cred && s >= 40);
+});
+document.getElementById('novaSenhaInput')?.addEventListener('input', function () {
+  const s = scorePassword(this.value);
+  const f = document.getElementById('novaStrengthFill');
+  f.style.width = s + '%';
+  f.style.background = s < 70 ? 'linear-gradient(90deg,#f43f5e,#fcd34d)' : 'linear-gradient(90deg,#14b8a6,#5eead4)';
+});
 document.getElementById('togglePass').addEventListener('click', function () {
   const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password';
   this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
 });
 
-/* ── LOGIN (bind dinâmico, à prova de erros) ── */
 function bindLoginForm() {
   const form = document.getElementById('loginForm');
-  form.setAttribute('novalidate', 'novalidate');   /* o form nunca bloqueia o submit por conta própria */
   form.addEventListener('submit', async e => {
     e.preventDefault();
     if (isLocked()) { showLockout(); return; }
@@ -1219,16 +1298,14 @@ function bindLoginForm() {
     try {
       const u = clampStr(document.getElementById('username').value.trim(), 40);
       const p = document.getElementById('password').value;
-
       if (!u) { showErr('Informe o usuário.'); return; }
       if (p.length < 12) { showErr('A senha deve ter no mínimo 12 caracteres.'); return; }
-      if (!window.crypto || !crypto.subtle) { showErr('Criptografia indisponível. Abra o sistema por HTTPS ou localhost.'); return; }
+      if (!window.crypto || !crypto.subtle) { showErr('Criptografia indisponível. Abra o sistema por HTTPS ou localmente.'); return; }
 
       const credRaw = localStorage.getItem(SEC.APP_NS + '_cred');
       let credOK = false;
 
       if (!credRaw) {
-        /* PRIMEIRO ACESSO */
         const conf = document.getElementById('passwordConfirm').value;
         const confErr = document.getElementById('confirmErrorBox');
         if (scorePassword(p) < 70) { showErr('Senha fraca! Use 12+ caracteres com maiúsculas, minúsculas, números e símbolos.'); return; }
@@ -1237,13 +1314,12 @@ function bindLoginForm() {
         const { hash, salt } = await hashPassword(p);
         localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
         credOK = true;
-        toast('info', 'Credenciais criadas com criptografia forte!');
+        dbg.log('Credenciais criadas com PBKDF2.', 'ok');
       } else {
         let rec;
-        try { rec = JSON.parse(credRaw); } catch { showErr('Registro de credencial corrompido. Apague "acaiReiSec_v1_cred" no DevTools e tente de novo.'); return; }
+        try { rec = JSON.parse(credRaw); } catch { showErr('Registro de credencial corrompido. Apague "acaiReiSec_v1_cred" no DevTools (F12 → Application → Local Storage).'); return; }
         if (!rec || typeof rec.user !== 'string' || typeof rec.hash !== 'string' || typeof rec.salt !== 'string') {
-          showErr('Registro de credencial inválido (versão antiga). Apague "acaiReiSec_v1_cred" no DevTools e tente de novo.');
-          return;
+          showErr('Registro de credencial inválido (versão antiga). Apague "acaiReiSec_v1_cred" no DevTools e tente de novo.'); return;
         }
         credOK = rec.user === u && await verifyPassword(p, rec);
       }
@@ -1255,7 +1331,8 @@ function bindLoginForm() {
         document.getElementById('setupNote').classList.remove('show');
         lockStore.set({ tries: 0, until: 0 });
         showApp(); scheduleSessionExpiry(); soundSuccess();
-        decryptFiadosFromCache();   /* decifra dados que chegaram antes do login */
+        dbg.log('Login OK — descriptografando fiados do cache...', 'ok');
+        decryptFiadosFromCache();
       } else {
         registerFail();
         const card = document.querySelector('.login-card');
@@ -1266,8 +1343,8 @@ function bindLoginForm() {
         soundError();
       }
     } catch (err) {
-      console.error('Falha no processo de login:', err);
-      showErr('Erro interno de criptografia (' + (err && err.name ? err.name : 'desconhecido') + '). Verifique o console (F12).');
+      dbg.log('Falha no login: ' + (err.message || err.name || err));
+      showErr('Erro interno de criptografia (' + (err && err.name ? err.name : 'desconhecido') + '). Veja o painel de diagnóstico abaixo.');
       soundError();
     } finally {
       btn.disabled = false;
@@ -1276,7 +1353,7 @@ function bindLoginForm() {
   });
 }
 
-function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 4500); }
+function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 5000); }
 function showLockout() {
   const b = document.getElementById('lockoutBox');
   document.getElementById('lockoutText').textContent = 'Muitas tentativas! Aguarde ' + Math.ceil(lockoutRemaining() / 60) + ' minuto(s) para tentar novamente.';
@@ -1290,27 +1367,40 @@ function showApp() {
   toast('success', 'Bem-vindo, ' + esc(currentUser) + '!');
 }
 
-/* Troca de senha */
-async function trocarSenhaUI() {
-  const nova = prompt('Nova senha (mínimo 12 caracteres, com maiúsculas, minúsculas, números e símbolos):');
-  if (nova === null) return;
-  if (nova.length < 12 || scorePassword(nova) < 70) { toast('error', 'Senha fraca! Use 12+ caracteres com letras, números e símbolos.'); return; }
+/* Troca de senha com modal */
+function abrirTrocarSenha() {
+  document.getElementById('novaSenhaInput').value = '';
+  document.getElementById('novaSenhaConfirm').value = '';
+  document.getElementById('novaStrengthFill').style.width = '0%';
+  closeModal('modalSeguranca');
+  openModal('modalTrocarSenha');
+}
+async function executarTrocaSenha() {
+  const nova = document.getElementById('novaSenhaInput').value;
+  const conf = document.getElementById('novaSenhaConfirm').value;
+  if (nova.length < 12 || scorePassword(nova) < 70) { toast('error', 'Senha fraca! Use 12+ caracteres com maiúsculas, minúsculas, números e símbolos.'); return; }
+  if (nova !== conf) { toast('error', 'As senhas não conferem.'); return; }
+  const btn = document.getElementById('btnTrocarSenha');
+  btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Salvando...';
   try {
     const { hash, salt } = await hashPassword(nova);
     localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: currentUser, hash, salt, created: new Date().toISOString() }));
     masterPass = nova;
+    let ok = 0, fail = 0;
     for (const f of fiados) {
       if (f.firebaseId) {
-        const e2e = await encryptJSON(f, nova);
-        await window.dbUpdate(window.dbRef(db, 'fiados/' + f.firebaseId), { e2e, updated: new Date().toISOString() });
+        try { const e2e = await encryptJSON(f, nova); await window.dbUpdate(window.dbRef(db, 'fiados/' + f.firebaseId), { e2e, updated: new Date().toISOString() }); ok++; }
+        catch (err) { fail++; dbg.log('Falha ao re-cifrar fiado ' + f.firebaseId + ': ' + err.message); }
       }
     }
-    toast('success', 'Senha trocada e dados re-cifrados com sucesso!');
-    pushNotif('success', 'Senha Alterada', 'Todos os dados sensíveis foram re-cifrados.');
-    closeModal('modalSeguranca');
+    toast('success', 'Senha trocada! ' + ok + ' registro(s) re-cifrado(s)' + (fail ? ', ' + fail + ' falha(s) — veja diagnóstico' : '') + '.');
+    pushNotif('success', 'Senha Alterada', 'Dados sensíveis re-cifrados.');
+    closeModal('modalTrocarSenha');
   } catch (err) {
-    console.error('Erro ao trocar senha:', err);
-    toast('error', 'Falha ao re-cifrar dados. Tente novamente.');
+    dbg.log('Erro na troca de senha: ' + err.message);
+    toast('error', 'Falha ao trocar senha: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-key"></i> Salvar Nova Senha';
   }
 }
 
@@ -1325,7 +1415,6 @@ function updateThemeBtn() { document.getElementById('themeBtn').innerHTML = docu
 function toggleSound() { soundEnabled = !soundEnabled; localStorage.setItem('acaiRei_sound', soundEnabled); updateSoundBtn(); toast('info', soundEnabled ? 'Som ativado' : 'Som desativado'); }
 function updateSoundBtn() { document.getElementById('soundBtn').innerHTML = soundEnabled ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-xmark"></i>'; }
 
-/* Tabs */
 function switchTab(name) {
   document.querySelectorAll('.nav-item').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active'); else b.classList.remove('active'); });
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -1333,12 +1422,7 @@ function switchTab(name) {
   if (name === 'dashboard') updateDashboard();
 }
 
-/* Firebase helpers */
-async function fbAdd(ref, data) { const r = window.dbPush(ref); await window.dbSet(r, data); return r.key; }
-async function fbDel(ref, fid) { await window.dbRemove(window.dbRef(ref, fid)); }
-async function fbUpd(ref, fid, data) { await window.dbUpdate(window.dbRef(ref, fid), data); }
-
-/* Firebase init + listeners */
+/* ── FIREBASE INIT ── */
 function initFirebase() {
   if (!window.firebaseDB) { setTimeout(initFirebase, 400); return; }
   db = window.firebaseDB;
@@ -1348,7 +1432,15 @@ function initFirebase() {
     compras: window.dbRef(db, 'compras'), conn: window.dbRef(db, '.info/connected'),
     fiados: window.dbRef(db, 'fiados')
   };
+  dbg.log('Firebase SDK carregado. Registrando listeners...', 'ok');
   setupListeners();
+}
+
+function describeFbErr(err) {
+  const m = (err && (err.message || err.code)) || String(err);
+  if (/permission_denied|PERMISSION_DENIED/i.test(m)) return 'PERMISSÃO NEGADA pelo Firebase (regra auth != null sem login anônimo). Vá em Authentication → Sign-in method → Anonymous → Enable.';
+  if (/network/i.test(m)) return 'Erro de rede — verifique sua internet.';
+  return m;
 }
 
 function setupListeners() {
@@ -1358,33 +1450,33 @@ function setupListeners() {
     horaAbertura = d.horaAbertura ? new Date(d.horaAbertura) : null;
     faturaAtual = d.faturaAtual || null;
     updateCaixaUI(); updateBadge(); startTimer();
-  }, err => { console.error('caixa:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /caixa FALHOU: ' + describeFbErr(err)); toast('error', 'Firebase bloqueou /caixa. Veja o painel inferior.'); });
   window.dbOnValue(dbRefs.vendas, snap => {
     const raw = snap.val();
     produtosVenda = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && typeof v === 'object' && v.id && isSafeNumber(v.valor)) : [];
     renderTabela(); updateDashboard();
-  }, err => { console.error('vendas:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /vendas FALHOU: ' + describeFbErr(err)); });
   window.dbOnValue(dbRefs.faturas, snap => {
     const raw = snap.val();
     faturas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id).sort((a, b) => b.id - a.id) : [];
     renderFaturas();
-  }, err => { console.error('faturas:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /faturas FALHOU: ' + describeFbErr(err)); });
   window.dbOnValue(dbRefs.dispensas, snap => {
     const raw = snap.val();
     dispensas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
     renderDispensas();
-  }, err => { console.error('dispensas:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /dispensas FALHOU: ' + describeFbErr(err)); });
   window.dbOnValue(dbRefs.compras, snap => {
     const raw = snap.val();
     comprasDispensa = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id).sort((a, b) => b.id - a.id) : [];
     renderHistoricoDispensas(); updateDashboard();
-  }, err => { console.error('compras:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /compras FALHOU: ' + describeFbErr(err)); });
   window.dbOnValue(dbRefs.fiados, snap => {
     const raw = snap.val();
     fiadosCacheRaw = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
     if (masterPass) decryptFiadosFromCache();
     else { fiados = []; renderFiados(); updateDashboard(); }
-  }, err => { console.error('fiados:', err); showSyncDenied(err); });
+  }, err => { dbg.log('Leitura /fiados FALHOU: ' + describeFbErr(err)); });
   window.dbOnValue(dbRefs.conn, snap => {
     const on = snap.val() === true;
     const pill = document.getElementById('syncPill');
@@ -1393,28 +1485,9 @@ function setupListeners() {
   });
 }
 
-/* Erro de permissão → aviso claro (regra auth != null ativa sem login anônimo) */
-let deniedShown = false;
-function showSyncDenied(err) {
-  if (deniedShown) return;
-  deniedShown = true;
-  const msg = (err && err.message) || '';
-  if (/permission_denied|Permission denied/i.test(msg)) {
-    toast('error', 'Firebase bloqueou o acesso (regra auth != null). Ative o login anônimo em Authentication → Sign-in method.');
-    pushNotif('error', 'Acesso negado', 'Configure o Firebase Authentication (login anônimo) ou volte as regras para teste.');
-  } else {
-    toast('warning', 'Falha ao carregar dados do banco. Verifique a conexão.');
-  }
-}
-
-/* Decifra fiados a partir do cache (chamado após login OU a cada evento) */
 function decryptFiadosFromCache() {
-  if (!masterPass || !fiadosCacheRaw.length) {
-    fiados = masterPass ? [] : fiados;
-    renderFiados(); updateDashboard();
-    if (masterPass && !fiadosCacheRaw.length) { /* sem dados */ }
-    return;
-  }
+  if (!masterPass) return;
+  if (!fiadosCacheRaw.length) { fiados = []; renderFiados(); updateDashboard(); return; }
   Promise.all(fiadosCacheRaw.map(async r => {
     try {
       const base = r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
@@ -1424,42 +1497,83 @@ function decryptFiadosFromCache() {
   })).then(l => {
     fiados = l.filter(Boolean).sort((a, b) => b.id - a.id);
     renderFiados(); updateDashboard();
-  }).catch(err => {
-    console.error('decrypt fiados:', err);
-    toast('error', 'Não foi possível descriptografar os fiados. A senha mestra pode ter mudado.');
-  });
+    dbg.log('Fiados decifrados: ' + fiados.length + ' registro(s).', 'ok');
+  }).catch(err => { dbg.log('Erro ao decifrar fiados: ' + err.message); });
+}
+
+/* ── DIAGNÓSTICO ── */
+function abrirDiagnostico() { openModal('modalDiagnostico'); executarDiagnostico(); }
+async function testarNode(path) {
+  try {
+    const testRef = window.dbRef(db, path + '/_diag_' + Date.now());
+    await window.dbSet(testRef, { t: 1 });
+    await window.dbRemove(testRef);
+    return { ok: true, msg: 'OK' };
+  } catch (err) { return { ok: false, msg: describeFbErr(err) }; }
+}
+async function executarDiagnostico() {
+  const body = document.getElementById('diagBody');
+  if (!db) { body.innerHTML = '<p style="color:#fb7185">Firebase SDK não carregou. Verifique sua conexão/internet.</p>'; return; }
+  const paths = ['caixa', 'vendas', 'faturas', 'dispensas', 'compras', 'fiados'];
+  body.innerHTML = '<p style="color:var(--tm);font-size:.8rem">Testando 6 nós (gravação + leitura + exclusão)…</p>';
+  const results = [];
+  for (const p of paths) {
+    const r = await testarNode(p);
+    results.push({ p, ...r });
+    body.innerHTML = results.map(r =>
+      `<div class="diag-row"><span class="node">/${r.p}</span><span class="${r.ok ? 'res-ok' : 'res-fail'}">${r.ok ? '✓ ' + r.msg : '✗ ' + r.msg}</span></div>`
+    ).join('');
+  }
+  const falhas = results.filter(r => !r.ok);
+  if (!falhas.length) {
+    body.innerHTML += '<p style="color:#86efac;font-size:.85rem;margin-top:1rem">🎉 Tudo OK! O banco está gravando e lendo normalmente. Se um botão não funcionar, o problema é outro — clique no botão e observe o painel de diagnóstico na parte inferior da tela.</p>';
+  } else {
+    body.innerHTML += `<p style="color:#fcd34d;font-size:.85rem;margin-top:1rem">⚠ ${falhas.length} nó(s) com FALHA. Causa mais provável: as regras do Firebase exigem autenticação (<code>{"rules":{".read":"auth != null"}}</code>) sem login anônimo ativo. Corrija em: Console Firebase → Authentication → Sign-in method → <strong>Anonymous → Enable</strong>. Depois rode o teste novamente.</p>`;
+  }
+  dbg.log('Diagnóstico concluído: ' + (results.length - falhas.length) + ' OK, ' + falhas.length + ' falha(s).', falhas.length ? '' : 'ok');
 }
 
 /* ── CAIXA ── */
-function toggleCaixa() { if (!caixaAberto) abrirCaixa(); else if (confirm('Deseja realmente fechar o caixa?')) fecharCaixa(); }
+function toggleCaixa() {
+  if (!caixaAberto) { abrirCaixa(); return; }
+  pedirConfirmacao('Fechar Caixa', 'Deseja realmente fechar o caixa? As vendas do dia serão salvas como fatura.', () => fecharCaixa());
+}
 async function salvarCaixa() {
   await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura ? horaAbertura.toISOString() : null, faturaAtual, lastUpdate: new Date().toISOString() });
 }
 async function abrirCaixa() {
+  const btn = document.getElementById('btnCaixa');
+  btn.disabled = true;
   try {
     caixaAberto = true; horaAbertura = new Date();
     faturaAtual = { id: Date.now(), dataAbertura: horaAbertura.toISOString(), dataFechamento: null, produtos: [], total: 0 };
     await salvarCaixa();
     toast('success', 'Caixa aberto!'); soundSuccess();
+    dbg.log('Caixa aberto com sucesso.', 'ok');
     pushNotif('success', 'Caixa Aberto', 'Expediente iniciado às ' + formatHora(horaAbertura));
-  } catch (e) { console.error(e); toast('error', 'Falha ao abrir caixa (conexão/permissão?).'); }
+  } catch (e) { dbg.log('FALHA ao abrir caixa: ' + describeFbErr(e)); toast('error', 'Falha ao abrir caixa: ' + describeFbErr(e)); caixaAberto = false; }
+  finally { btn.disabled = false; }
 }
 async function fecharCaixa() {
+  const btn = document.getElementById('btnCaixa');
+  btn.disabled = true;
   try {
     const hf = new Date();
     faturaAtual = faturaAtual || { id: Date.now(), dataAbertura: horaAbertura ? horaAbertura.toISOString() : hf.toISOString() };
     faturaAtual.dataFechamento = hf.toISOString();
     faturaAtual.produtos = [...produtosVenda];
     faturaAtual.total = calcTotal();
-    await fbAdd(dbRefs.faturas, faturaAtual);
+    await window.dbSet(window.dbPush(dbRefs.faturas), faturaAtual);
     await window.dbSet(dbRefs.vendas, null);
     const tot = faturaAtual.total;
     caixaAberto = false; horaAbertura = null; faturaAtual = null;
     await salvarCaixa();
     stopTimer();
     toast('info', 'Caixa fechado! Total: ' + fmt(tot));
+    dbg.log('Caixa fechado com sucesso. Fatura salva.', 'ok');
     pushNotif('info', 'Caixa Fechado', 'Total: ' + fmt(tot));
-  } catch (e) { console.error(e); toast('error', 'Falha ao fechar caixa (conexão/permissão?).'); }
+  } catch (e) { dbg.log('FALHA ao fechar caixa: ' + describeFbErr(e)); toast('error', 'Falha ao fechar caixa: ' + describeFbErr(e)); }
+  finally { btn.disabled = false; }
 }
 function updateCaixaUI() {
   const orb = document.getElementById('caixaOrb'), icon = document.getElementById('caixaOrbIcon');
@@ -1509,97 +1623,99 @@ function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
 
 /* ── DASHBOARD ── */
 function updateDashboard() {
-  const totalV = calcTotal(), qtdV = produtosVenda.length;
-  const ticket = qtdV ? totalV / qtdV : 0;
-  const totalD = comprasDispensa.reduce((s, c) => s + c.total, 0);
-  const saldo = totalV - totalD;
-  const pres = produtosVenda.filter(p => p.tipo === 'Presencial');
-  const deliv = produtosVenda.filter(p => p.tipo === 'Delivery');
-  const presTotal = pres.reduce((s, p) => s + p.valor, 0);
-  const delivTotal = deliv.reduce((s, p) => s + p.valor, 0);
-  const pendentes = produtosVenda.filter(p => p.status === 'pendente' && p.tipo === 'Presencial');
-  const totalPend = pendentes.reduce((s, p) => s + p.valor, 0);
-  const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
-  const totalFiado = fiadosPendentes.reduce((s, f) => s + f.total, 0);
+  try {
+    const totalV = calcTotal(), qtdV = produtosVenda.length;
+    const ticket = qtdV ? totalV / qtdV : 0;
+    const totalD = comprasDispensa.reduce((s, c) => s + c.total, 0);
+    const saldo = totalV - totalD;
+    const pres = produtosVenda.filter(p => p.tipo === 'Presencial');
+    const deliv = produtosVenda.filter(p => p.tipo === 'Delivery');
+    const presTotal = pres.reduce((s, p) => s + p.valor, 0);
+    const delivTotal = deliv.reduce((s, p) => s + p.valor, 0);
+    const pendentes = produtosVenda.filter(p => p.status === 'pendente' && p.tipo === 'Presencial');
+    const totalPend = pendentes.reduce((s, p) => s + p.valor, 0);
+    const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
+    const totalFiado = fiadosPendentes.reduce((s, f) => s + f.total, 0);
 
-  document.getElementById('dashTotalVendas').textContent = fmt(totalV);
-  document.getElementById('dashQtdVendas').textContent = qtdV + ' venda' + (qtdV !== 1 ? 's' : '');
-  document.getElementById('dashTicket').textContent = fmt(ticket);
-  document.getElementById('dashTipoTop').textContent = pres.length + ' presencial · ' + deliv.length + ' delivery';
-  document.getElementById('dashDespesas').textContent = fmt(totalD);
-  document.getElementById('dashQtdCompras').textContent = comprasDispensa.length + ' compra' + (comprasDispensa.length !== 1 ? 's' : '');
-  const sEl = document.getElementById('dashSaldo');
-  sEl.textContent = fmt(Math.abs(saldo)); sEl.style.color = saldo >= 0 ? '#5eead4' : '#fb7185';
-  document.getElementById('dashPendente').textContent = fmt(totalPend);
-  document.getElementById('dashQtdPendente').textContent = pendentes.length + ' pedido' + (pendentes.length !== 1 ? 's' : '');
-  const dfEl = document.getElementById('dashFiado');
-  if (dfEl) { dfEl.textContent = fmt(totalFiado); dfEl.style.color = totalFiado > 0 ? '#fcd34d' : '#5eead4'; }
-  const dqfEl = document.getElementById('dashQtdFiado');
-  if (dqfEl) dqfEl.textContent = fiadosPendentes.length + ' conta' + (fiadosPendentes.length !== 1 ? 's' : '');
+    document.getElementById('dashTotalVendas').textContent = fmt(totalV);
+    document.getElementById('dashQtdVendas').textContent = qtdV + ' venda' + (qtdV !== 1 ? 's' : '');
+    document.getElementById('dashTicket').textContent = fmt(ticket);
+    document.getElementById('dashTipoTop').textContent = pres.length + ' presencial · ' + deliv.length + ' delivery';
+    document.getElementById('dashDespesas').textContent = fmt(totalD);
+    document.getElementById('dashQtdCompras').textContent = comprasDispensa.length + ' compra' + (comprasDispensa.length !== 1 ? 's' : '');
+    const sEl = document.getElementById('dashSaldo');
+    sEl.textContent = fmt(Math.abs(saldo)); sEl.style.color = saldo >= 0 ? '#5eead4' : '#fb7185';
+    document.getElementById('dashPendente').textContent = fmt(totalPend);
+    document.getElementById('dashQtdPendente').textContent = pendentes.length + ' pedido' + (pendentes.length !== 1 ? 's' : '');
+    const dfEl = document.getElementById('dashFiado');
+    if (dfEl) { dfEl.textContent = fmt(totalFiado); dfEl.style.color = totalFiado > 0 ? '#fcd34d' : '#5eead4'; }
+    const dqfEl = document.getElementById('dashQtdFiado');
+    if (dqfEl) dqfEl.textContent = fiadosPendentes.length + ' conta' + (fiadosPendentes.length !== 1 ? 's' : '');
 
-  document.getElementById('balReceita').textContent = fmt(totalV);
-  document.getElementById('balDespesas').textContent = fmt(totalD);
-  const bsEl = document.getElementById('balSaldo');
-  bsEl.textContent = fmt(Math.abs(saldo)); bsEl.className = 'balance-value ' + (saldo >= 0 ? 'bal-pos' : 'bal-neg');
+    document.getElementById('balReceita').textContent = fmt(totalV);
+    document.getElementById('balDespesas').textContent = fmt(totalD);
+    const bsEl = document.getElementById('balSaldo');
+    bsEl.textContent = fmt(Math.abs(saldo)); bsEl.className = 'balance-value ' + (saldo >= 0 ? 'bal-pos' : 'bal-neg');
 
-  if (metaDia > 0) {
-    const pct = Math.min(Math.round(totalV / metaDia * 100), 100);
-    document.getElementById('metaBarWrap').style.display = 'block';
-    document.getElementById('metaBarFill').style.width = pct + '%';
-    document.getElementById('metaPct').textContent = pct + '% da meta';
-    document.getElementById('metaBarMain').style.width = pct + '%';
-    document.getElementById('metaProgressText').textContent = fmt(totalV) + ' de ' + fmt(metaDia);
-    document.getElementById('metaPctMain').textContent = pct + '% concluído' + (pct >= 100 ? ' 🎉' : '');
-    document.getElementById('metaValorText').textContent = pct + '%';
-  } else {
-    document.getElementById('metaBarWrap').style.display = 'none';
-    document.getElementById('metaProgressText').textContent = 'Sem meta definida';
-    document.getElementById('metaValorText').textContent = '—';
-    document.getElementById('metaPctMain').textContent = '';
-    document.getElementById('metaBarMain').style.width = '0%';
-  }
+    if (metaDia > 0) {
+      const pct = Math.min(Math.round(totalV / metaDia * 100), 100);
+      document.getElementById('metaBarWrap').style.display = 'block';
+      document.getElementById('metaBarFill').style.width = pct + '%';
+      document.getElementById('metaPct').textContent = pct + '% da meta';
+      document.getElementById('metaBarMain').style.width = pct + '%';
+      document.getElementById('metaProgressText').textContent = fmt(totalV) + ' de ' + fmt(metaDia);
+      document.getElementById('metaPctMain').textContent = pct + '% concluído' + (pct >= 100 ? ' 🎉' : '');
+      document.getElementById('metaValorText').textContent = pct + '%';
+    } else {
+      document.getElementById('metaBarWrap').style.display = 'none';
+      document.getElementById('metaProgressText').textContent = 'Sem meta definida';
+      document.getElementById('metaValorText').textContent = '—';
+      document.getElementById('metaPctMain').textContent = '';
+      document.getElementById('metaBarMain').style.width = '0%';
+    }
 
-  document.getElementById('ticketPres').textContent = fmt(pres.length ? presTotal / pres.length : 0);
-  document.getElementById('countPres').textContent = pres.length + ' pedido' + (pres.length !== 1 ? 's' : '');
-  document.getElementById('ticketDeliv').textContent = fmt(deliv.length ? delivTotal / deliv.length : 0);
-  document.getElementById('countDeliv').textContent = deliv.length + ' pedido' + (deliv.length !== 1 ? 's' : '');
+    document.getElementById('ticketPres').textContent = fmt(pres.length ? presTotal / pres.length : 0);
+    document.getElementById('countPres').textContent = pres.length + ' pedido' + (pres.length !== 1 ? 's' : '');
+    document.getElementById('ticketDeliv').textContent = fmt(deliv.length ? delivTotal / deliv.length : 0);
+    document.getElementById('countDeliv').textContent = deliv.length + ' pedido' + (deliv.length !== 1 ? 's' : '');
 
-  const pays = {};
-  produtosVenda.forEach(p => { if (!pays[p.pagamento]) pays[p.pagamento] = { total: 0, count: 0 }; pays[p.pagamento].total += p.valor; pays[p.pagamento].count++; });
-  const pb = document.getElementById('payBreakdown');
-  if (!Object.keys(pays).length) { pb.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:1.5rem"><i class="fas fa-chart-pie"></i><p>Nenhuma venda ainda</p></div>'; }
-  else pb.innerHTML = Object.entries(pays).sort((a, b) => b[1].total - a[1].total).map(([k, v]) => {
-    const pct = totalV ? Math.round(v.total / totalV * 100) : 0;
-    return `<div class="pay-row"><div class="pay-row-label">${esc(k)}</div><div class="pay-row-val">${fmt(v.total)}</div><div class="pay-row-count">${v.count}x · ${pct}%</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
-  }).join('');
-
-  const prod = {};
-  produtosVenda.forEach(p => { if (!prod[p.nome]) prod[p.nome] = { count: 0, total: 0 }; prod[p.nome].count++; prod[p.nome].total += p.valor; });
-  const rl = document.getElementById('rankList');
-  if (!Object.keys(prod).length) { rl.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div>'; }
-  else {
-    const sorted = Object.entries(prod).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
-    rl.innerHTML = sorted.map(([k, v], i) => `
-      <div class="rank-item">
-        <div class="rank-pos ${i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'pn'}">${i + 1}</div>
-        <div class="rank-name">${esc(k)}</div>
-        <div class="rank-count">${v.count}x</div>
-        <div class="rank-val">${fmt(v.total)}</div>
-      </div>`).join('');
-  }
-
-  const hours = {};
-  produtosVenda.forEach(p => { if (p.hora) { const h = new Date(p.hora).getHours(); if (!isNaN(h)) hours[h] = (hours[h] || 0) + 1; } });
-  const pg = document.getElementById('picoGrid');
-  if (!Object.keys(hours).length) { pg.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-chart-bar"></i><p>Sem dados</p></div>'; }
-  else {
-    const maxH = Math.max(...Object.values(hours));
-    const allHours = Object.keys(hours).map(Number).sort((a, b) => a - b);
-    pg.innerHTML = allHours.map(h => {
-      const pct = Math.round(hours[h] / maxH * 100);
-      return `<div class="pico-item"><div class="pico-bar-wrap"><div class="pico-bar" style="height:${pct}%"></div></div><div class="pico-hour">${String(h).padStart(2, '0')}h</div><div class="pico-count">${hours[h]}</div></div>`;
+    const pays = {};
+    produtosVenda.forEach(p => { if (!pays[p.pagamento]) pays[p.pagamento] = { total: 0, count: 0 }; pays[p.pagamento].total += p.valor; pays[p.pagamento].count++; });
+    const pb = document.getElementById('payBreakdown');
+    if (!Object.keys(pays).length) { pb.innerHTML = '<div class="empty" style="grid-column:1/-1;padding:1.5rem"><i class="fas fa-chart-pie"></i><p>Nenhuma venda ainda</p></div>'; }
+    else pb.innerHTML = Object.entries(pays).sort((a, b) => b[1].total - a[1].total).map(([k, v]) => {
+      const pct = totalV ? Math.round(v.total / totalV * 100) : 0;
+      return `<div class="pay-row"><div class="pay-row-label">${esc(k)}</div><div class="pay-row-val">${fmt(v.total)}</div><div class="pay-row-count">${v.count}x · ${pct}%</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
     }).join('');
-  }
+
+    const prod = {};
+    produtosVenda.forEach(p => { if (!prod[p.nome]) prod[p.nome] = { count: 0, total: 0 }; prod[p.nome].count++; prod[p.nome].total += p.valor; });
+    const rl = document.getElementById('rankList');
+    if (!Object.keys(prod).length) { rl.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-medal"></i><p>Sem dados</p></div>'; }
+    else {
+      const sorted = Object.entries(prod).sort((a, b) => b[1].count - a[1].count).slice(0, 5);
+      rl.innerHTML = sorted.map(([k, v], i) => `
+        <div class="rank-item">
+          <div class="rank-pos ${i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : 'pn'}">${i + 1}</div>
+          <div class="rank-name">${esc(k)}</div>
+          <div class="rank-count">${v.count}x</div>
+          <div class="rank-val">${fmt(v.total)}</div>
+        </div>`).join('');
+    }
+
+    const hours = {};
+    produtosVenda.forEach(p => { if (p.hora) { const h = new Date(p.hora).getHours(); if (!isNaN(h)) hours[h] = (hours[h] || 0) + 1; } });
+    const pg = document.getElementById('picoGrid');
+    if (!Object.keys(hours).length) { pg.innerHTML = '<div class="empty" style="padding:1rem"><i class="fas fa-chart-bar"></i><p>Sem dados</p></div>'; }
+    else {
+      const maxH = Math.max(...Object.values(hours));
+      const allHours = Object.keys(hours).map(Number).sort((a, b) => a - b);
+      pg.innerHTML = allHours.map(h => {
+        const pct = Math.round(hours[h] / maxH * 100);
+        return `<div class="pico-item"><div class="pico-bar-wrap"><div class="pico-bar" style="height:${pct}%"></div></div><div class="pico-hour">${String(h).padStart(2, '0')}h</div><div class="pico-count">${hours[h]}</div></div>`;
+      }).join('');
+    }
+  } catch (err) { dbg.log('Erro ao atualizar dashboard: ' + err.message); }
 }
 
 /* ── META ── */
@@ -1673,22 +1789,25 @@ function setStatusPag(s) {
   document.getElementById('optPendente').className = 'status-opt' + (s === 'pendente' ? ' sel-pendente' : '');
 }
 
-/* ── VENDAS ── */
+/* ── VENDAS (validação manual completa, sem required nativo) ── */
 async function addProduto(e) {
   e.preventDefault();
   if (!caixaAberto) { toast('error', 'Abra o caixa primeiro!'); soundError(); return; }
+  const cliente = clampStr(document.getElementById('nomeCliente').value.trim(), 80);
+  const nome = clampStr(document.getElementById('nomeProduto').value.trim(), 60);
   const valor = parseFloat(document.getElementById('valorProduto').value);
-  if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); soundError(); return; }
+  const pagamento = document.getElementById('formaPagamento').value;
   const tipo = document.getElementById('tipoEntrega').value;
+  if (!cliente) { toast('error', 'Informe o cliente!'); soundError(); return; }
+  if (!nome) { toast('error', 'Informe o produto!'); soundError(); return; }
+  if (!isSafeNumber(valor) || valor <= 0) { toast('error', 'Valor inválido!'); soundError(); return; }
+  if (!pagamento) { toast('error', 'Selecione a forma de pagamento!'); soundError(); return; }
+  if (!tipo) { toast('error', 'Selecione o tipo (Presencial/Delivery)!'); soundError(); return; }
+  if (!db) { toast('error', 'Banco de dados ainda carregando. Aguarde 2 segundos e tente de novo.'); return; }
   const status = tipo === 'Presencial' ? statusPagAtual : 'pago';
   try {
-    await fbAdd(dbRefs.vendas, {
-      id: Date.now(),
-      cliente: clampStr(document.getElementById('nomeCliente').value.trim(), 80),
-      nome: clampStr(document.getElementById('nomeProduto').value.trim(), 60),
-      valor,
-      pagamento: document.getElementById('formaPagamento').value,
-      tipo, status,
+    await window.dbSet(window.dbPush(dbRefs.vendas), {
+      id: Date.now(), cliente, nome, valor, pagamento, tipo, status,
       obs: clampStr(document.getElementById('obsVenda').value, 120),
       hora: new Date().toISOString()
     });
@@ -1699,19 +1818,30 @@ async function addProduto(e) {
     statusPagAtual = 'pago';
     setStatusPag('pago');
     toast('success', 'Venda registrada!'); soundSuccess();
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar venda (conexão/permissão?).'); }
+    dbg.log('Venda registrada: ' + cliente + ' — ' + fmt(valor), 'ok');
+  } catch (err) {
+    dbg.log('FALHA ao registrar venda: ' + describeFbErr(err));
+    toast('error', 'Falha ao registrar venda: ' + describeFbErr(err));
+    soundError();
+  }
 }
 
 async function removerProduto(id) {
-  if (!confirm('Remover esta venda?')) return;
-  const v = produtosVenda.find(p => p.id === id);
-  if (v?.firebaseId) await fbDel(dbRefs.vendas, v.firebaseId);
-  toast('info', 'Venda removida');
+  pedirConfirmacao('Remover Venda', 'Remover esta venda? Esta ação não pode ser desfeita.', async () => {
+    const v = produtosVenda.find(p => p.id === id);
+    if (v?.firebaseId) {
+      try { await window.dbRemove(window.dbRef(dbRefs.vendas, v.firebaseId)); toast('info', 'Venda removida'); }
+      catch (err) { toast('error', 'Falha ao remover: ' + describeFbErr(err)); }
+    }
+  });
 }
 
 async function marcarPago(id) {
   const v = produtosVenda.find(p => p.id === id);
-  if (v?.firebaseId) { await fbUpd(dbRefs.vendas, v.firebaseId, { status: 'pago' }); toast('success', 'Marcado como pago!'); soundSuccess(); }
+  if (v?.firebaseId) {
+    try { await window.dbUpdate(window.dbRef(dbRefs.vendas, v.firebaseId), { status: 'pago' }); toast('success', 'Marcado como pago!'); soundSuccess(); }
+    catch (err) { toast('error', 'Falha ao atualizar: ' + describeFbErr(err)); }
+  }
 }
 
 function editarProduto(id) {
@@ -1733,16 +1863,18 @@ async function salvarEdicao(e) {
   if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); return; }
   const p = produtosVenda.find(x => x.id === id);
   if (p?.firebaseId) {
-    await fbUpd(dbRefs.vendas, p.firebaseId, {
-      cliente: clampStr(document.getElementById('editCliente').value.trim(), 80),
-      nome: clampStr(document.getElementById('editProduto').value.trim(), 60),
-      valor,
-      pagamento: document.getElementById('editPagamento').value,
-      tipo: document.getElementById('editTipo').value,
-      obs: clampStr(document.getElementById('editObs').value, 120),
-      status: document.getElementById('editStatus').value
-    });
-    closeModal('modalEditar'); toast('success', 'Venda atualizada!');
+    try {
+      await window.dbUpdate(window.dbRef(dbRefs.vendas, p.firebaseId), {
+        cliente: clampStr(document.getElementById('editCliente').value.trim(), 80),
+        nome: clampStr(document.getElementById('editProduto').value.trim(), 60),
+        valor,
+        pagamento: document.getElementById('editPagamento').value,
+        tipo: document.getElementById('editTipo').value,
+        obs: clampStr(document.getElementById('editObs').value, 120),
+        status: document.getElementById('editStatus').value
+      });
+      closeModal('modalEditar'); toast('success', 'Venda atualizada!');
+    } catch (err) { toast('error', 'Falha ao atualizar: ' + describeFbErr(err)); }
   }
 }
 
@@ -1761,41 +1893,42 @@ function getFiltered() {
 }
 
 function renderTabela() {
-  const tbody = document.getElementById('tabelaVendas');
-  const filtered = getFiltered();
-  const rc = document.getElementById('resultCount');
-  rc.textContent = produtosVenda.length ? `Mostrando ${filtered.length} de ${produtosVenda.length} vendas` : '';
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><i class="fas fa-basket-shopping"></i><p>Nenhuma venda encontrada</p></div></td></tr>';
-    document.getElementById('totalVendas').textContent = 'R$ 0,00'; return;
-  }
-  tbody.innerHTML = filtered.map(p => {
-    const h = p.hora ? new Date(p.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
-    const isPendente = p.status === 'pendente';
-    const cliSafe = esc(p.cliente);
-    return `<tr style="${isPendente ? 'background:rgba(245,158,11,.04)' : ''}">
-      <td>
-        <strong style="color:var(--tp)">${cliSafe}</strong>
-        ${p.obs ? '<div style="color:var(--tm);font-size:.72rem">📝 ' + esc(p.obs) + '</div>' : ''}
-        <div class="cliente-hist-btn" onclick="verHistoricoCliente(this.dataset.n)" data-n="${cliSafe}">ver histórico</div>
-      </td>
-      <td>${esc(p.nome)}</td>
-      <td style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</td>
-      <td><span class="pay-chip">${esc(p.pagamento)}</span></td>
-      <td><span class="tag-pill tag-${esc(p.tipo.toLowerCase())}">${esc(p.tipo)}</span></td>
-      <td><span class="${isPendente ? 'badge-pendente' : 'badge-pago'} status-badge">${isPendente ? '⏳ Pendente' : '✓ Pago'}</span></td>
-      <td style="color:var(--tm);font-size:.8rem">${h}</td>
-      <td style="white-space:nowrap">
-        ${isPendente ? `<button class="btn-act pago" onclick="marcarPago(${p.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
-        <button class="btn-act edit" onclick="editarProduto(${p.id})" title="Editar"><i class="fas fa-pen"></i></button>
-        <button class="btn-act del" onclick="removerProduto(${p.id})" title="Remover"><i class="fas fa-trash"></i></button>
-      </td></tr>`;
-  }).join('');
-  document.getElementById('totalVendas').textContent = fmt(filtered.reduce((s, p) => s + p.valor, 0));
+  try {
+    const tbody = document.getElementById('tabelaVendas');
+    const filtered = getFiltered();
+    const rc = document.getElementById('resultCount');
+    rc.textContent = produtosVenda.length ? `Mostrando ${filtered.length} de ${produtosVenda.length} vendas` : '';
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><i class="fas fa-basket-shopping"></i><p>Nenhuma venda encontrada</p></div></td></tr>';
+      document.getElementById('totalVendas').textContent = 'R$ 0,00'; return;
+    }
+    tbody.innerHTML = filtered.map(p => {
+      const h = p.hora ? new Date(p.hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+      const isPendente = p.status === 'pendente';
+      const cliSafe = esc(p.cliente);
+      return `<tr style="${isPendente ? 'background:rgba(245,158,11,.04)' : ''}">
+        <td>
+          <strong style="color:var(--tp)">${cliSafe}</strong>
+          ${p.obs ? '<div style="color:var(--tm);font-size:.72rem">📝 ' + esc(p.obs) + '</div>' : ''}
+          <div class="cliente-hist-btn" onclick="verHistoricoCliente(this.dataset.n)" data-n="${cliSafe}">ver histórico</div>
+        </td>
+        <td>${esc(p.nome)}</td>
+        <td style="color:#a78bfa;font-weight:600">${fmt(p.valor)}</td>
+        <td><span class="pay-chip">${esc(p.pagamento)}</span></td>
+        <td><span class="tag-pill tag-${esc(p.tipo.toLowerCase())}">${esc(p.tipo)}</span></td>
+        <td><span class="${isPendente ? 'badge-pendente' : 'badge-pago'} status-badge">${isPendente ? '⏳ Pendente' : '✓ Pago'}</span></td>
+        <td style="color:var(--tm);font-size:.8rem">${h}</td>
+        <td style="white-space:nowrap">
+          ${isPendente ? `<button class="btn-act pago" onclick="marcarPago(${p.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
+          <button class="btn-act edit" onclick="editarProduto(${p.id})" title="Editar"><i class="fas fa-pen"></i></button>
+          <button class="btn-act del" onclick="removerProduto(${p.id})" title="Remover"><i class="fas fa-trash"></i></button>
+        </td></tr>`;
+    }).join('');
+    document.getElementById('totalVendas').textContent = fmt(filtered.reduce((s, p) => s + p.valor, 0));
+  } catch (err) { dbg.log('Erro ao renderizar tabela: ' + err.message); }
 }
 function calcTotal() { return produtosVenda.reduce((s, p) => s + p.valor, 0); }
 
-/* ── HISTÓRICO CLIENTE ── */
 function verHistoricoCliente(nome) {
   const vendas = produtosVenda.filter(p => p.cliente === nome);
   const total = vendas.reduce((s, p) => s + p.valor, 0);
@@ -1820,51 +1953,59 @@ document.getElementById('unidadeDispensa').addEventListener('change', function (
 });
 async function addDispensa(e) {
   e.preventDefault();
+  const nome = clampStr(document.getElementById('nomeDispensa').value.trim(), 60);
   const valor = parseFloat(document.getElementById('valorDispensa').value);
-  if (!isSafeNumber(valor)) { toast('error', 'Valor inválido!'); return; }
+  if (!nome) { toast('error', 'Informe o nome do produto!'); soundError(); return; }
+  if (!isSafeNumber(valor) || valor <= 0) { toast('error', 'Valor inválido!'); soundError(); return; }
+  if (!db) { toast('error', 'Banco de dados ainda carregando. Aguarde 2 segundos e tente de novo.'); return; }
   try {
-    await fbAdd(dbRefs.dispensas, {
-      id: Date.now(),
-      nome: clampStr(document.getElementById('nomeDispensa').value.trim(), 60),
+    await window.dbSet(window.dbPush(dbRefs.dispensas), {
+      id: Date.now(), nome,
       unidade: document.getElementById('unidadeDispensa').value,
       valor, data: new Date().toISOString()
     });
     document.getElementById('dispensaForm').reset(); document.getElementById('unidLabel').textContent = 'unidade';
     toast('success', 'Produto cadastrado!');
-  } catch (err) { console.error(err); toast('error', 'Falha ao cadastrar (conexão/permissão?).'); }
+    dbg.log('Produto cadastrado: ' + nome, 'ok');
+  } catch (err) { dbg.log('FALHA ao cadastrar produto: ' + describeFbErr(err)); toast('error', 'Falha ao cadastrar: ' + describeFbErr(err)); }
 }
 function renderDispensas() {
-  const cad = document.getElementById('listaCadastrados');
-  cad.innerHTML = dispensas.length ? dispensas.map(d => `
-    <div class="product-chip">
-      <div><strong>${esc(d.nome)}</strong><div class="punit">${fmt(d.valor)} / ${esc(d.unidade || 'un')}</div></div>
-      <button class="btn-act del" onclick="removerDispensa(${d.id})"><i class="fas fa-trash"></i></button>
-    </div>`).join('') : '<div class="empty"><i class="fas fa-box-open"></i><p>Nenhum produto</p></div>';
-  const cmp = document.getElementById('listaCompra');
-  cmp.innerHTML = dispensas.length ? dispensas.map(d => {
-    const sel = itensSelecionados.has(d.id); const qty = itensSelecionados.get(d.id) || 1;
-    const dec = ['kg', 'g', 'L', 'ml'].includes(d.unidade);
-    return `<div class="product-chip selectable-chip ${sel ? 'selected' : ''}" id="chip-${d.id}">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
-          <strong style="cursor:pointer" onclick="toggleItem(${d.id})">${esc(d.nome)}</strong>
-          <span class="pval" style="white-space:nowrap">${fmt(d.valor)}/${esc(d.unidade || 'un')}</span>
-        </div>
-        <div class="chip-label" onclick="toggleItem(${d.id})" style="cursor:pointer">${sel ? '✓ Selecionado' : 'Toque para selecionar'}</div>
-        ${sel ? `<div class="qty-row"><span class="qty-unit">Qtd (${esc(d.unidade || 'un')}):</span>
-          <input class="qty-input" type="number" min="${dec ? '0.1' : '1'}" step="${dec ? '0.1' : '1'}" value="${qty}" id="qty-${d.id}"
-            onchange="updateQty(${d.id},this.value)" oninput="updateQty(${d.id},this.value)" onclick="event.stopPropagation()">
-          <span class="qty-sub" id="sub-${d.id}">= ${fmt(d.valor * qty)}</span></div>` : ''}
-      </div></div>`;
-  }).join('') : '<div class="empty"><i class="fas fa-layer-group"></i><p>Cadastre produtos primeiro</p></div>';
-  renderTotalDispensa();
+  try {
+    const cad = document.getElementById('listaCadastrados');
+    cad.innerHTML = dispensas.length ? dispensas.map(d => `
+      <div class="product-chip">
+        <div><strong>${esc(d.nome)}</strong><div class="punit">${fmt(d.valor)} / ${esc(d.unidade || 'un')}</div></div>
+        <button class="btn-act del" onclick="removerDispensa(${d.id})"><i class="fas fa-trash"></i></button>
+      </div>`).join('') : '<div class="empty"><i class="fas fa-box-open"></i><p>Nenhum produto</p></div>';
+    const cmp = document.getElementById('listaCompra');
+    cmp.innerHTML = dispensas.length ? dispensas.map(d => {
+      const sel = itensSelecionados.has(d.id); const qty = itensSelecionados.get(d.id) || 1;
+      const dec = ['kg', 'g', 'L', 'ml'].includes(d.unidade);
+      return `<div class="product-chip selectable-chip ${sel ? 'selected' : ''}" id="chip-${d.id}">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
+            <strong style="cursor:pointer" onclick="toggleItem(${d.id})">${esc(d.nome)}</strong>
+            <span class="pval" style="white-space:nowrap">${fmt(d.valor)}/${esc(d.unidade || 'un')}</span>
+          </div>
+          <div class="chip-label" onclick="toggleItem(${d.id})" style="cursor:pointer">${sel ? '✓ Selecionado' : 'Toque para selecionar'}</div>
+          ${sel ? `<div class="qty-row"><span class="qty-unit">Qtd (${esc(d.unidade || 'un')}):</span>
+            <input class="qty-input" type="number" min="${dec ? '0.1' : '1'}" step="${dec ? '0.1' : '1'}" value="${qty}" id="qty-${d.id}"
+              onchange="updateQty(${d.id},this.value)" oninput="updateQty(${d.id},this.value)" onclick="event.stopPropagation()">
+            <span class="qty-sub" id="sub-${d.id}">= ${fmt(d.valor * qty)}</span></div>` : ''}
+        </div></div>`;
+    }).join('') : '<div class="empty"><i class="fas fa-layer-group"></i><p>Cadastre produtos primeiro</p></div>';
+    renderTotalDispensa();
+  } catch (err) { dbg.log('Erro ao renderizar dispensas: ' + err.message); }
 }
 async function removerDispensa(id) {
-  if (!confirm('Remover produto?')) return;
-  itensSelecionados.delete(id);
-  const d = dispensas.find(x => x.id === id);
-  if (d?.firebaseId) await fbDel(dbRefs.dispensas, d.firebaseId);
-  toast('info', 'Produto removido');
+  pedirConfirmacao('Remover Produto', 'Remover este produto cadastrado?', async () => {
+    itensSelecionados.delete(id);
+    const d = dispensas.find(x => x.id === id);
+    if (d?.firebaseId) {
+      try { await window.dbRemove(window.dbRef(dbRefs.dispensas, d.firebaseId)); toast('info', 'Produto removido'); }
+      catch (err) { toast('error', 'Falha ao remover: ' + describeFbErr(err)); }
+    }
+  });
 }
 function toggleItem(id) { itensSelecionados.has(id) ? itensSelecionados.delete(id) : itensSelecionados.set(id, 1); renderDispensas(); }
 function updateQty(id, val) {
@@ -1881,15 +2022,16 @@ function renderTotalDispensa() {
   document.getElementById('btnFinalizarCompra').disabled = itensSelecionados.size === 0;
 }
 async function finalizarCompraDispensa() {
-  if (!itensSelecionados.size) return;
+  if (!itensSelecionados.size) { toast('error', 'Selecione pelo menos um produto!'); return; }
+  if (!db) { toast('error', 'Banco de dados ainda carregando.'); return; }
   const itens = []; let tot = 0;
   itensSelecionados.forEach((qty, id) => { const it = dispensas.find(d => d.id === id); if (it) { itens.push({ nome: it.nome, unidade: it.unidade, valor: it.valor, qtd: qty, subtotal: it.valor * qty }); tot += it.valor * qty; } });
   try {
-    await fbAdd(dbRefs.compras, { id: Date.now(), data: new Date().toISOString(), itens, total: tot });
+    await window.dbSet(window.dbPush(dbRefs.compras), { id: Date.now(), data: new Date().toISOString(), itens, total: tot });
     itensSelecionados.clear(); renderDispensas();
     toast('success', 'Compra registrada! ' + fmt(tot)); soundSuccess();
     pushNotif('warning', 'Nova Despesa', 'Compra de ' + itens.length + ' item(s): ' + fmt(tot));
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar compra (conexão/permissão?).'); }
+  } catch (err) { dbg.log('FALHA ao registrar compra: ' + describeFbErr(err)); toast('error', 'Falha ao registrar compra: ' + describeFbErr(err)); }
 }
 function renderHistoricoDispensas() {
   const c = document.getElementById('historicoDispensas');
@@ -1990,19 +2132,15 @@ function addProdutoFiado() {
   const nome = clampStr(document.getElementById('fiadoNomeProd').value.trim(), 60);
   const qtd = parseFloat(document.getElementById('fiadoQtdProd').value) || 1;
   const valor = parseFloat(document.getElementById('fiadoValorProd').value) || 0;
-
-  if (!nome) { toast('error', 'Informe o nome do produto'); return; }
-  if (valor <= 0 || !isSafeNumber(valor)) { toast('error', 'Informe um valor unitário válido'); return; }
-  if (qtd <= 0 || qtd > 1e6) { toast('error', 'Quantidade inválida'); return; }
-
+  if (!nome) { toast('error', 'Informe o nome do produto'); soundError(); return; }
+  if (valor <= 0 || !isSafeNumber(valor)) { toast('error', 'Informe um valor unitário válido'); soundError(); return; }
+  if (qtd <= 0 || qtd > 1e6) { toast('error', 'Quantidade inválida'); soundError(); return; }
   fiadoItensTemp.push({ cod, nome, qtd, valor, subtotal: valor * qtd });
-
   document.getElementById('fiadoCodProd').value = '';
   document.getElementById('fiadoNomeProd').value = '';
   document.getElementById('fiadoQtdProd').value = '1';
   document.getElementById('fiadoValorProd').value = '';
   document.getElementById('fiadoNomeProd').focus();
-
   renderFiadoItensTemp();
   soundSuccess();
 }
@@ -2031,86 +2169,89 @@ function removerProdutoFiadoTemp(idx) { fiadoItensTemp.splice(idx, 1); renderFia
 async function registrarFiado(e) {
   e.preventDefault();
   if (!caixaAberto) { toast('error', 'Abra o caixa primeiro!'); soundError(); return; }
-  if (!fiadoItensTemp.length) { toast('error', 'Adicione pelo menos um produto'); return; }
+  if (!fiadoItensTemp.length) { toast('error', 'Adicione pelo menos um produto'); soundError(); return; }
+  const cliente = clampStr(document.getElementById('fiadoCliente').value.trim(), 80);
+  const vendedor = clampStr(document.getElementById('fiadoVendedor').value.trim(), 60);
+  if (!cliente) { toast('error', 'Informe o nome do cliente!'); soundError(); return; }
+  if (!vendedor) { toast('error', 'Informe o vendedor!'); soundError(); return; }
   if (!masterPass) { toast('error', 'Chave de criptografia indisponível. Faça login novamente.'); logout(true); return; }
-
+  if (!db) { toast('error', 'Banco de dados ainda carregando.'); return; }
   const total = fiadoItensTemp.reduce((s, it) => s + it.subtotal, 0);
   const now = new Date();
-
   const fiadoData = {
-    id: Date.now(),
-    cliente: clampStr(document.getElementById('fiadoCliente').value.trim(), 80),
+    id: Date.now(), cliente,
     telefone: clampStr(document.getElementById('fiadoTelefone').value.trim(), 20),
     endereco: clampStr(document.getElementById('fiadoEndereco').value.trim(), 120),
-    vendedor: clampStr(document.getElementById('fiadoVendedor').value.trim(), 60),
+    vendedor,
     entregador: clampStr(document.getElementById('fiadoEntregador').value.trim(), 60),
     obs: clampStr(document.getElementById('fiadoObs').value.trim(), 120),
-    itens: [...fiadoItensTemp],
-    total,
+    itens: [...fiadoItensTemp], total,
     status: statusFiadoAtual,
-    data: now.toISOString(),
-    dataPagamento: null
+    data: now.toISOString(), dataPagamento: null
   };
-
+  const btn = document.getElementById('btnRegistrarFiado');
+  btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Salvando...';
   try {
     const e2e = await encryptJSON(fiadoData, masterPass);
-    await fbAdd(dbRefs.fiados, { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e });
-
+    await window.dbSet(window.dbPush(dbRefs.fiados), { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e });
     document.getElementById('fiadoForm').reset();
     fiadoItensTemp = [];
     renderFiadoItensTemp();
     statusFiadoAtual = 'pendente';
     setStatusFiado('pendente');
-
     toast('success', 'Fiado registrado (criptografado)! Total: ' + fmt(total));
     soundSuccess();
     pushNotif('warning', 'Novo Fiado', 'Registro cifrado de ' + fmt(total) + ' salvo no banco.');
-
     fiadoAtualPrint = fiadoData;
     abrirModalBobina(fiadoData);
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar fiado (conexão/permissão?).'); }
+    dbg.log('Fiado registrado e cifrado: ' + cliente + ' — ' + fmt(total), 'ok');
+  } catch (err) {
+    dbg.log('FALHA ao registrar fiado: ' + describeFbErr(err));
+    toast('error', 'Falha ao registrar fiado: ' + describeFbErr(err));
+    soundError();
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Registrar Fiado';
+  }
 }
 
 function renderFiados() {
-  const c = document.getElementById('listaFiados');
-  const q = (document.getElementById('searchFiado')?.value || '').toLowerCase();
-  const fs = document.getElementById('filtStatusFiado')?.value || '';
-
-  let list = fiados;
-  if (q) list = list.filter(f => String(f.cliente).toLowerCase().includes(q));
-  if (fs) list = list.filter(f => f.status === fs);
-
-  const rc = document.getElementById('resultCountFiado');
-  rc.textContent = fiados.length ? `Mostrando ${list.length} de ${fiados.length} contas` : '';
-
-  if (!list.length) { c.innerHTML = '<div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div>'; return; }
-
-  c.innerHTML = '<div class="fiado-lista">' + list.map(f => {
-    const d = new Date(f.data);
-    const isPago = f.status === 'pago';
-    return `
-      <div class="fiado-item ${isPago ? 'pago' : ''}">
-        <div class="fiado-info">
-          <div class="fiado-nome">${esc(f.cliente)} ${isPago ? '<span style="color:#86efac;font-size:.75rem">✓ PAGO</span>' : ''}</div>
-          <div class="fiado-meta">
-            <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
-            <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-            <span><i class="fas fa-cubes"></i>${(f.itens || []).length} item(s)</span>
-            ${f.telefone ? `<span><i class="fas fa-phone"></i>${esc(f.telefone)}</span>` : ''}
-            ${f.vendedor ? `<span><i class="fas fa-user"></i>${esc(f.vendedor)}</span>` : ''}
+  try {
+    const c = document.getElementById('listaFiados');
+    const q = (document.getElementById('searchFiado')?.value || '').toLowerCase();
+    const fs = document.getElementById('filtStatusFiado')?.value || '';
+    let list = fiados;
+    if (q) list = list.filter(f => String(f.cliente).toLowerCase().includes(q));
+    if (fs) list = list.filter(f => f.status === fs);
+    const rc = document.getElementById('resultCountFiado');
+    rc.textContent = fiados.length ? `Mostrando ${list.length} de ${fiados.length} contas` : '';
+    if (!list.length) { c.innerHTML = '<div class="empty"><i class="fas fa-hand-holding-dollar"></i><p>Nenhuma conta em fiado</p></div>'; return; }
+    c.innerHTML = '<div class="fiado-lista">' + list.map(f => {
+      const d = new Date(f.data);
+      const isPago = f.status === 'pago';
+      return `
+        <div class="fiado-item ${isPago ? 'pago' : ''}">
+          <div class="fiado-info">
+            <div class="fiado-nome">${esc(f.cliente)} ${isPago ? '<span style="color:#86efac;font-size:.75rem">✓ PAGO</span>' : ''}</div>
+            <div class="fiado-meta">
+              <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
+              <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+              <span><i class="fas fa-cubes"></i>${(f.itens || []).length} item(s)</span>
+              ${f.telefone ? `<span><i class="fas fa-phone"></i>${esc(f.telefone)}</span>` : ''}
+              ${f.vendedor ? `<span><i class="fas fa-user"></i>${esc(f.vendedor)}</span>` : ''}
+            </div>
           </div>
-        </div>
-        <div style="text-align:right">
-          <div class="fiado-valor ${isPago ? 'pago' : ''}">${fmt(f.total)}</div>
-          <div class="fiado-acoes">
-            <button class="btn-act edit" onclick="verDetalhesFiado(${f.id})" title="Ver detalhes"><i class="fas fa-eye"></i></button>
-            <button class="btn-act pago" onclick="imprimirFiadoBobina(${f.id})" title="Imprimir bobina"><i class="fas fa-print"></i></button>
-            ${!isPago ? `<button class="btn-act pago" onclick="marcarFiadoPago(${f.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
-            <button class="btn-act del" onclick="removerFiado(${f.id})" title="Remover"><i class="fas fa-trash"></i></button>
+          <div style="text-align:right">
+            <div class="fiado-valor ${isPago ? 'pago' : ''}">${fmt(f.total)}</div>
+            <div class="fiado-acoes">
+              <button class="btn-act edit" onclick="verDetalhesFiado(${f.id})" title="Ver detalhes"><i class="fas fa-eye"></i></button>
+              <button class="btn-act pago" onclick="imprimirFiadoBobina(${f.id})" title="Imprimir bobina"><i class="fas fa-print"></i></button>
+              ${!isPago ? `<button class="btn-act pago" onclick="marcarFiadoPago(${f.id})" title="Marcar como pago"><i class="fas fa-check"></i></button>` : ''}
+              <button class="btn-act del" onclick="removerFiado(${f.id})" title="Remover"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
-        </div>
-      </div>`;
-  }).join('') + '</div>';
+        </div>`;
+    }).join('') + '</div>';
+  } catch (err) { dbg.log('Erro ao renderizar fiados: ' + err.message); }
 }
 
 function verDetalhesFiado(id) {
@@ -2156,17 +2297,21 @@ async function marcarFiadoPago(id) {
     try {
       f.status = 'pago'; f.dataPagamento = new Date().toISOString();
       const e2e = await encryptJSON(f, masterPass);
-      await fbUpd(dbRefs.fiados, f.firebaseId, { status: 'pago', dataPagamento: f.dataPagamento, e2e });
+      await window.dbUpdate(window.dbRef(dbRefs.fiados, f.firebaseId), { status: 'pago', dataPagamento: f.dataPagamento, e2e });
       toast('success', 'Fiado marcado como pago!'); soundSuccess();
       pushNotif('success', 'Fiado Quitado', fmt(f.total) + ' recebido.');
-    } catch (err) { console.error(err); toast('error', 'Falha ao atualizar fiado (conexão/permissão?).'); }
+    } catch (err) { dbg.log('FALHA ao marcar fiado pago: ' + describeFbErr(err)); toast('error', 'Falha ao atualizar fiado: ' + describeFbErr(err)); }
   }
 }
 
 async function removerFiado(id) {
-  if (!confirm('Remover esta conta de fiado?')) return;
-  const f = fiados.find(x => x.id === id);
-  if (f?.firebaseId) { await fbDel(dbRefs.fiados, f.firebaseId); toast('info', 'Fiado removido'); }
+  pedirConfirmacao('Remover Fiado', 'Remover esta conta de fiado? Esta ação não pode ser desfeita.', async () => {
+    const f = fiados.find(x => x.id === id);
+    if (f?.firebaseId) {
+      try { await window.dbRemove(window.dbRef(dbRefs.fiados, f.firebaseId)); toast('info', 'Fiado removido'); }
+      catch (err) { toast('error', 'Falha ao remover: ' + describeFbErr(err)); }
+    }
+  });
 }
 
 /* ======== BOBINA 79MM ======== */
@@ -2175,7 +2320,6 @@ function gerarBobinaHTML(dados) {
   const dataStr = d.toLocaleDateString('pt-BR');
   const horaStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const notaNum = String(dados.id).slice(-4);
-
   const itensHTML = (dados.itens || []).map(it => `
     <div class="item-row">
       <span class="desc">${esc(it.cod) !== '—' ? esc(it.cod) + ' ' : ''}${esc(it.nome)}</span>
@@ -2184,7 +2328,6 @@ function gerarBobinaHTML(dados) {
       <span class="tot">${fmt(it.subtotal).replace('R$ ', '')}</span>
     </div>
   `).join('');
-
   return `
     <div class="bobina-print" id="bobinaPrint">
       <div class="cabecalho center">AÇAÍ REI</div>
@@ -2223,35 +2366,24 @@ function gerarBobinaHTML(dados) {
     </div>
   `;
 }
-
 function abrirModalBobina(dados) {
   fiadoAtualPrint = dados;
-  const html = gerarBobinaHTML(dados);
-  document.getElementById('modalBobinaBody').innerHTML = `<div class="bobina-preview">${html}</div>`;
+  document.getElementById('modalBobinaBody').innerHTML = `<div class="bobina-preview">${gerarBobinaHTML(dados)}</div>`;
   openModal('modalBobina');
 }
-
 function imprimirFiadoBobina(id) {
   const f = fiados.find(x => x.id === id);
   if (!f) { toast('error', 'Fiado não encontrado'); return; }
   abrirModalBobina(f);
 }
-
 function imprimirBobina() {
   if (!fiadoAtualPrint) { toast('error', 'Nenhum fiado selecionado'); return; }
   const bobina = document.getElementById('bobinaPrint');
   if (!bobina) { toast('error', 'Erro ao gerar bobina'); return; }
-
   const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.left = '-9999px';
-  iframe.style.top = '-9999px';
-  iframe.style.width = '79mm';
-  iframe.style.height = '1px';
-  iframe.style.border = 'none';
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:79mm;height:1px;border:none';
   iframe.setAttribute('sandbox', 'allow-modals');
   document.body.appendChild(iframe);
-
   const doc = iframe.contentWindow.document;
   doc.open();
   doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
@@ -2276,13 +2408,9 @@ function imprimirBobina() {
     .forma-pag{font-size:10pt;margin:2px 0}
   </style></head><body>${bobina.innerHTML}</body></html>`);
   doc.close();
-
   setTimeout(() => {
-    try {
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-      toast('success', 'Imprimindo...');
-    } catch (e) { toast('error', 'Erro na impressão'); }
+    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); toast('success', 'Imprimindo...'); }
+    catch (e) { toast('error', 'Erro na impressão'); }
     setTimeout(() => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 3000);
   }, 300);
 }
@@ -2296,7 +2424,6 @@ function abrirRelatorio() {
   const pendentes = produtosVenda.filter(p => p.status === 'pendente');
   const fiadosPendentes = fiados.filter(f => f.status === 'pendente');
   const totalFiado = fiadosPendentes.reduce((s, f) => s + f.total, 0);
-
   document.getElementById('modalRelatorioBody').innerHTML = `
     <div style="text-align:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gbr)">
       <div style="font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Gerado em</div>
@@ -2315,8 +2442,7 @@ function abrirRelatorio() {
     const pct = totalV ? Math.round(v.total / totalV * 100) : 0;
     return `<div class="report-pay-row"><span>${esc(k)} <span style="color:var(--tm);font-size:.78rem">(${v.count}x)</span></span><strong>${fmt(v.total)} · ${pct}%</strong></div>
         <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${pct}%"></div></div>`;
-  }).join('')
-      : '<p style="color:var(--tm);font-size:.88rem">Sem vendas</p>'}
+  }).join('') : '<p style="color:var(--tm);font-size:.88rem">Sem vendas</p>'}
     </div>
     <div class="report-section"><h4>Presencial vs Delivery</h4>
       <div class="report-pay-row"><span>Presencial (${pres.length})</span><strong>${fmt(presTotal)}</strong></div>
@@ -2349,7 +2475,6 @@ function exportarRelatorio() {
   }
   baixarTxt(txt, `relatorio-acairei-${new Date().toISOString().split('T')[0]}.txt`); toast('success', 'Relatório exportado!');
 }
-
 function exportarFatura(id) {
   const f = faturas.find(x => x.id === id); if (!f) return;
   let txt = `============================\n   FATURA — AÇAÍ REI\n============================\nAberta: ${formatDT(new Date(f.dataAbertura))}\n`;
@@ -2361,7 +2486,6 @@ function exportarFatura(id) {
 }
 function baixarTxt(txt, nome) { const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = nome; a.click(); URL.revokeObjectURL(url); }
 
-/* ── NOTIFICAÇÕES / TOAST ── */
 function pushNotif(type, title, msg) {
   notificacoes.unshift({ type, title, msg, time: new Date() });
   if (notificacoes.length > 30) notificacoes.pop();
@@ -2388,24 +2512,22 @@ function toast(type, msg) {
   const c = document.getElementById('toastContainer'); const t = document.createElement('div');
   const icons = { success: 'fa-check-circle', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark', info: 'fa-circle-info' };
   t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${esc(msg)}</span>`;
-  c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3500);
+  c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 4500);
 }
 
-/* ── CENTRAL DE SEGURANÇA ── */
 function verSeguranca() {
   document.getElementById('secListBody').innerHTML = `
-    <div class="sec-row"><i class="fas fa-shield-halved si"></i><div><div class="t">Criptografia de ponta a ponta (AES-256-GCM)</div><div class="d">Fiados (cliente, telefone, endereço, itens) são cifrados no dispositivo antes de irem ao Firebase. O banco só guarda bytes ilegíveis.</div></div></div>
+    <div class="sec-row"><i class="fas fa-shield-halved si"></i><div><div class="t">Criptografia de ponta a ponta (AES-256-GCM)</div><div class="d">Fiados são cifrados no dispositivo antes de irem ao Firebase. O banco só guarda bytes ilegíveis.</div></div></div>
     <div class="sec-row"><i class="fas fa-key si"></i><div><div class="t">Senha protegida com PBKDF2 (210.000 iterações)</div><div class="d">A senha nunca é armazenada nem transmitida. Só um hash resistente a força bruta é salvo, com salt aleatório de 128 bits.</div></div></div>
     <div class="sec-row"><i class="fas fa-user-lock si"></i><div><div class="t">Bloqueio anti força bruta</div><div class="d">5 tentativas erradas bloqueiam o login por 15 minutos neste dispositivo.</div></div></div>
     <div class="sec-row"><i class="fas fa-clock si"></i><div><div class="t">Sessão expira em 30 min</div><div class="d">Inatividade encerra a sessão e apaga a chave de criptografia da memória.</div></div></div>
     <div class="sec-row"><i class="fas fa-code si"></i><div><div class="t">Proteção contra XSS</div><div class="d">Todos os dados exibidos passam por escape de HTML; inputs têm limite de tamanho e validação numérica.</div></div></div>
     <div class="sec-row"><i class="fas fa-window-maximize si"></i><div><div class="t">Anti-clickjacking + CSP</div><div class="d">A página recusa execução dentro de iframes e aplica Content Security Policy restritiva.</div></div></div>
-    <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">Se as regras exigirem auth, ative o login anônimo em Authentication → Sign-in method → Anonymous. Sem isso o banco recusa leitura/escrita.</div></div></div>
+    <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">Se as regras exigirem auth, ative o login anônimo em Authentication → Sign-in method → Anonymous. Use o botão "Diagnóstico" na barra superior para testar os nós do banco.</div></div></div>
     <pre style="background:rgba(0,0,0,.35);border:1px solid var(--gbr);border-radius:10px;padding:1rem;font-family:monospace;font-size:.72rem;color:#5eead4;margin-top:.6rem;overflow-x:auto">{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</pre>`;
   openModal('modalSeguranca');
 }
 
-/* ── BACKUP ── */
 function sincronizarDados() {
   const dados = {
     faturas, dispensas, comprasDispensa, favoritos,
@@ -2419,7 +2541,6 @@ function sincronizarDados() {
   a.click(); URL.revokeObjectURL(url); toast('success', 'Backup baixado!');
 }
 
-/* ── SESSÃO ── */
 function scheduleSessionExpiry() {
   clearTimeout(sessionTimer);
   sessionTimer = setTimeout(() => { toast('warning', 'Sessão expirada por inatividade'); logout(true); }, SEC.SESSION_TIMEOUT);
@@ -2430,7 +2551,6 @@ function scheduleSessionExpiry() {
     }, { passive: true }));
 }
 
-/* ── UTILS ── */
 function fmt(n) {
   if (n == null || isNaN(n)) return 'R$ 0,00';
   return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -2454,7 +2574,7 @@ function logout(expired) {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); fecharConfirm(); } });
 </script>
 </body>
 </html>
