@@ -458,7 +458,7 @@ tbody tr:last-child td{border-bottom:none}
     <div class="setup-note" id="setupNote"><i class="fas fa-circle-info" style="margin-top:.15rem"></i><span></span></div>
     <div class="error-box" id="errorBox"><i class="fas fa-circle-exclamation"></i><span id="errorText"></span></div>
     <div class="lockout-box" id="lockoutBox"><i class="fas fa-user-lock"></i><span id="lockoutText"></span></div>
-    <form id="loginForm" autocomplete="off">
+    <form id="loginForm" autocomplete="off" novalidate>
       <div class="field"><label>Usuário</label>
         <div class="field-wrap"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Digite seu usuário" autocomplete="off" maxlength="40" required></div>
       </div>
@@ -470,9 +470,9 @@ tbody tr:last-child td{border-bottom:none}
         <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
         <div class="strength-label"><span id="strengthText">Força da senha</span><span id="strengthPct"></span></div>
       </div>
-      <div class="field" id="confirmField" style="display:none"><label>Confirmar Senha</label>
+      <div class="field" id="confirmField" hidden><label>Confirmar Senha</label>
         <div class="field-wrap">
-          <i class="fas fa-lock icon"></i><input type="password" id="passwordConfirm" placeholder="Repita a senha" autocomplete="new-password" minlength="12" required>
+          <i class="fas fa-lock icon"></i><input type="password" id="passwordConfirm" placeholder="Repita a senha" autocomplete="new-password" minlength="12">
         </div>
         <div class="error-box" id="confirmErrorBox" style="margin-top:.5rem"><i class="fas fa-circle-exclamation"></i><span id="confirmErrorText"></span></div>
       </div>
@@ -1023,7 +1023,7 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- FIREBASE (chaves públicas de config, não são secretas; proteja o banco com Security Rules) -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase,ref,set,push,onValue,remove,update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -1035,19 +1035,12 @@ window.dbOnValue=onValue;window.dbRemove=remove;window.dbUpdate=update;
 
 <script>
 /* ================================================================
-   NÚCLEO DE SEGURANÇA (Web Crypto API — AES-256-GCM + PBKDF2)
-   Senha nunca sai do dispositivo: só um hash PBKDF2 é armazenado.
-   Dados de fiado/cliente são cifrados com chave derivada da senha
-   antes de irem ao Firebase (criptografia de ponta a ponta).
+   NÚCLEO DE SEGURANÇA (Web Crypto — AES-256-GCM + PBKDF2 210k)
    ================================================================ */
 const SEC = {
-  PBKDF2_ITER: 210000,
-  KEY_LEN: 256,
-  SALT_LEN: 16,
-  IV_LEN: 12,
+  PBKDF2_ITER: 210000, KEY_LEN: 256, SALT_LEN: 16, IV_LEN: 12,
   SESSION_TIMEOUT: 30 * 60 * 1000,
-  LOCKOUT_MAX_ATTEMPTS: 5,
-  LOCKOUT_MS: 15 * 60 * 1000,
+  LOCKOUT_MAX_ATTEMPTS: 5, LOCKOUT_MS: 15 * 60 * 1000,
   MAX_INPUT_LEN: 1e9,
   APP_NS: 'acaiReiSec_v1'
 };
@@ -1058,41 +1051,28 @@ const b64 = {
 const te = new TextEncoder(), td = new TextDecoder();
 
 function assertCrypto() {
-  if (!window.crypto || !crypto.subtle || !crypto.getRandomValues) {
-    throw new Error('WebCrypto indisponível. Abra o sistema por HTTPS ou localhost.');
-  }
+  if (!window.crypto || !crypto.subtle) throw new Error('WebCrypto indisponível (use HTTPS).');
 }
 
-/* Importa a senha como chave-base PBKDF2 (não extraível) */
 async function importPBKDF2Base(password) {
   assertCrypto();
   return crypto.subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey', 'deriveBits']);
 }
-
-/* Deriva chave AES-256-GCM a partir da senha + salt (PBKDF2-HMAC-SHA256) */
 async function deriveAESKey(password, salt, usage) {
   const base = await importPBKDF2Base(password);
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' },
-    base,
-    { name: 'AES-GCM', length: SEC.KEY_LEN },
-    false,
-    usage
+    base, { name: 'AES-GCM', length: SEC.KEY_LEN }, false, usage
   );
 }
-
-/* Hash PBKDF2 da senha (para autenticação local) */
 async function hashPassword(password, saltB64) {
   const salt = saltB64 ? b64.dec(saltB64) : crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
   const base = await importPBKDF2Base(password);
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' },
-    base,
-    256
+    { name: 'PBKDF2', salt, iterations: SEC.PBKDF2_ITER, hash: 'SHA-256' }, base, 256
   );
   return { hash: b64.enc(bits), salt: b64.enc(salt) };
 }
-
 async function verifyPassword(password, rec) {
   const { hash } = await hashPassword(password, rec.salt);
   const a = te.encode(hash), b = te.encode(rec.hash);
@@ -1101,8 +1081,6 @@ async function verifyPassword(password, rec) {
   for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
   return diff === 0;
 }
-
-/* Cifra/decifra payloads (AES-256-GCM, IV aleatório por operação) */
 async function encryptJSON(obj, password) {
   const salt = crypto.getRandomValues(new Uint8Array(SEC.SALT_LEN));
   const key = await deriveAESKey(password, salt, ['encrypt']);
@@ -1120,19 +1098,16 @@ async function decryptJSON(pkg, password) {
 /* Anti-clickjacking */
 try { if (window.top !== window.self) { document.body.innerHTML = ''; throw new Error('clickjacking'); } } catch(e) { window.location.href = 'about:blank'; }
 
-/* Utilitários anti-abuso / sanitização */
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function clampStr(s, n) { return String(s ?? '').slice(0, n); }
 function isSafeNumber(v) { const n = Number(v); return isFinite(n) && n >= 0 && n < SEC.MAX_INPUT_LEN; }
 
-/* Rate limiting de login por dispositivo */
+/* Lockout */
 const lockStore = {
   get() { try { return JSON.parse(sessionStorage.getItem(SEC.APP_NS + '_lock')) || { tries: 0, until: 0 }; } catch { return { tries: 0, until: 0 }; } },
-  set(o) { sessionStorage.setItem(SEC.APP_NS + '_lock', JSON.stringify(o)); }
+  set(o) { try { sessionStorage.setItem(SEC.APP_NS + '_lock', JSON.stringify(o)); } catch { } }
 };
-function isLocked() { const l = lockStore.get(); return Date.now() < l.until; }
+function isLocked() { return Date.now() < lockStore.get().until; }
 function lockoutRemaining() { return Math.max(0, Math.ceil((lockStore.get().until - Date.now()) / 1000)); }
 function registerFail() {
   const l = lockStore.get(); l.tries++;
@@ -1141,7 +1116,7 @@ function registerFail() {
 }
 function zerarTentativas() { lockStore.set({ tries: 0, until: 0 }); toast('success', 'Bloqueio resetado.'); closeModal('modalSeguranca'); }
 
-/* Medidor de força de senha */
+/* Força de senha */
 function scorePassword(p) {
   let s = 0;
   if (p.length >= 12) s += 40;
@@ -1151,23 +1126,8 @@ function scorePassword(p) {
   if (/[^A-Za-z0-9]/.test(p)) s += 15;
   return Math.min(100, s);
 }
-document.getElementById('password').addEventListener('input', function () {
-  const s = scorePassword(this.value);
-  const f = document.getElementById('strengthFill'), t = document.getElementById('strengthText'), pct = document.getElementById('strengthPct');
-  pct.textContent = s + '%';
-  if (s < 40) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f43f5e,#fb7185)'; t.textContent = 'Fraca'; }
-  else if (s < 70) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f59e0b,#fcd34d)'; t.textContent = 'Média'; }
-  else { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#14b8a6,#5eead4)'; t.textContent = 'Forte'; }
-  updateConfirmVisibility();
-});
-function updateConfirmVisibility() {
-  const cred = localStorage.getItem(SEC.APP_NS + '_cred');
-  const cf = document.getElementById('confirmField');
-  const show = !cred && scorePassword(document.getElementById('password').value) >= 40;
-  cf.style.display = show ? 'block' : 'none';
-}
 
-/* ================ ESTADO DA APLICAÇÃO ================ */
+/* ================ ESTADO ================ */
 let caixaAberto = false, horaAbertura = null, faturaAtual = null;
 let produtosVenda = [], faturas = [], dispensas = [], comprasDispensa = [];
 let itensSelecionados = new Map();
@@ -1175,8 +1135,8 @@ let db = null, dbRefs = {}, currentUser = null, masterPass = null;
 let timerInterval = null, notificacoes = [], favoritos = [], metaDia = 0;
 let statusPagAtual = 'pago', soundEnabled = true;
 let fiados = [], fiadoItensTemp = [], statusFiadoAtual = 'pendente', fiadoAtualPrint = null;
-let sessionTimer = null;
-let audioCtx = null;
+let sessionTimer = null, audioCtx = null;
+let fiadosCacheRaw = [];   /* backup dos registros cifrados recebidos antes do login */
 
 function getAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
 function playSound(freq = 880, dur = .15, type = 'sine') {
@@ -1194,6 +1154,7 @@ function soundError() { playSound(220, .3, 'sawtooth'); }
 window.addEventListener('load', () => {
   loadLocalPrefs();
   setupFirstRun();
+  bindLoginForm();
   setTimeout(initFirebase, 300);
 });
 
@@ -1213,152 +1174,107 @@ function setupFirstRun() {
     note.classList.add('show');
     note.querySelector('span').innerHTML =
       '<strong>Primeiro acesso:</strong> defina um usuário e uma senha de <strong>mínimo 12 caracteres</strong> ' +
-      '(letras maiúsculas, minúsculas, números e símbolos). Ela será usada como chave mestra para ' +
-      'criptografar todos os dados no banco — e nunca é enviada nem armazenada em texto puro.';
-  }
-  checkAuth();
-}
-
-function initFirebase() {
-  if (!window.firebaseDB) { setTimeout(initFirebase, 400); return; }
-  db = window.firebaseDB;
-  dbRefs = {
-    caixa: window.dbRef(db, 'caixa'), vendas: window.dbRef(db, 'vendas'),
-    faturas: window.dbRef(db, 'faturas'), dispensas: window.dbRef(db, 'dispensas'),
-    compras: window.dbRef(db, 'compras'), conn: window.dbRef(db, '.info/connected'),
-    fiados: window.dbRef(db, 'fiados')
-  };
-  setupListeners();
-}
-
-function setupListeners() {
-  window.dbOnValue(dbRefs.caixa, snap => {
-    const d = snap.val() || {};
-    caixaAberto = d.aberto || false;
-    horaAbertura = d.horaAbertura ? new Date(d.horaAbertura) : null;
-    faturaAtual = d.faturaAtual || null;
-    updateCaixaUI(); updateBadge(); startTimer();
-  });
-  window.dbOnValue(dbRefs.vendas, snap => {
-    const raw = snap.val();
-    produtosVenda = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && typeof v === 'object' && v.id) : [];
-    renderTabela(); updateDashboard();
-  });
-  window.dbOnValue(dbRefs.faturas, snap => {
-    const raw = snap.val();
-    faturas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).sort((a, b) => b.id - a.id) : [];
-    renderFaturas();
-  });
-  window.dbOnValue(dbRefs.dispensas, snap => {
-    const raw = snap.val();
-    dispensas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
-    renderDispensas();
-  });
-  window.dbOnValue(dbRefs.compras, snap => {
-    const raw = snap.val();
-    comprasDispensa = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).sort((a, b) => b.id - a.id) : [];
-    renderHistoricoDispensas(); updateDashboard();
-  });
-  window.dbOnValue(dbRefs.fiados, snap => {
-    const raw = snap.val();
-    const list = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
-    fiados = [];
-    if (!masterPass) { renderFiados(); updateDashboard(); return; }
-    Promise.all(list.map(async r => {
-      try {
-        const base = r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
-        if (!base || typeof base !== 'object' || !Array.isArray(base.itens)) return null;
-        return { ...base, firebaseId: r.firebaseId };
-      } catch { return null; }
-    })).then(l => {
-      fiados = l.filter(Boolean).sort((a, b) => b.id - a.id);
-      renderFiados(); updateDashboard();
-    });
-  });
-  window.dbOnValue(dbRefs.conn, snap => {
-    const on = snap.val() === true;
-    const pill = document.getElementById('syncPill');
-    pill.className = 'sync-pill ' + (on ? 'synced' : 'offline');
-    document.getElementById('syncText').textContent = on ? 'Online' : 'Offline';
-    if (!on) pushNotif('warning', 'Conexão perdida', 'Você está offline.');
-  });
-}
-
-function checkAuth() {
-  const s = localStorage.getItem(SEC.APP_NS + '_sess');
-  if (s) {
+      '(maiúsculas, minúsculas, números e símbolos). Ela será a chave mestra para criptografar os dados no banco — nunca sai do dispositivo.';
+  } else {
+    /* sessão existente: apenas pré-preenche usuário, senha sempre obrigatória */
     try {
-      const sess = JSON.parse(s);
-      if (Date.now() - sess.at < SEC.SESSION_TIMEOUT && typeof sess.user === 'string') {
-        currentUser = sess.user.slice(0, 40);
-        showLogin();
-        toast('info', 'Sessão ativa. Digite sua senha para descriptografar os dados.');
-        return;
-      }
+      const c = JSON.parse(rec);
+      document.getElementById('username').value = c.user || '';
     } catch { }
-    localStorage.removeItem(SEC.APP_NS + '_sess');
   }
-  showLogin();
 }
 
-/* ── LOGIN ── */
-document.getElementById('loginForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  if (isLocked()) { showLockout(); return; }
-  const btn = document.getElementById('loginBtn');
-  const btnHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
-  btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Verificando...';
-  try {
-    const u = clampStr(document.getElementById('username').value.trim(), 40);
-    const p = document.getElementById('password').value;
-
-    if (!window.crypto || !crypto.subtle) { showErr('Criptografia indisponível. Abra o sistema por HTTPS ou localhost.'); return; }
-    if (p.length < 12) { showErr('A senha deve ter no mínimo 12 caracteres.'); return; }
-
-    const credRaw = localStorage.getItem(SEC.APP_NS + '_cred');
-    let credOK = false;
-
-    if (!credRaw) {
-      /* PRIMEIRO ACESSO → exige confirmação de senha */
-      const conf = document.getElementById('passwordConfirm').value;
-      const confErr = document.getElementById('confirmErrorBox');
-      if (scorePassword(p) < 70) { showErr('Senha fraca! Use 12+ caracteres com letras maiúsculas, minúsculas, números e símbolos.'); return; }
-      if (p !== conf) { confErr.classList.add('show'); document.getElementById('confirmErrorText').textContent = 'As senhas não conferem.'; return; }
-      confErr.classList.remove('show');
-      const { hash, salt } = await hashPassword(p);
-      localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
-      credOK = true;
-      toast('info', 'Credenciais criadas com criptografia forte!');
-    } else {
-      const rec = JSON.parse(credRaw);
-      credOK = rec.user === u && await verifyPassword(p, rec);
-    }
-
-    if (credOK) {
-      masterPass = p;
-      currentUser = u;
-      localStorage.setItem(SEC.APP_NS + '_sess', JSON.stringify({ user: u, at: Date.now() }));
-      document.getElementById('setupNote').classList.remove('show');
-      zerarTentativasQuiet();
-      showApp(); scheduleSessionExpiry(); soundSuccess();
-    } else {
-      registerFail();
-      document.querySelector('.login-card').classList.add('shake');
-      setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
-      if (isLocked()) showLockout();
-      else showErr('Usuário ou senha incorretos! (' + (SEC.LOCKOUT_MAX_ATTEMPTS - lockStore.get().tries) + ' tentativa(s) restante(s))');
-      soundError();
-    }
-  } catch (err) {
-    console.error('Falha no processo de login:', err);
-    showErr('Erro interno de criptografia (' + (err && err.name ? err.name : 'desconhecido') + '). Verifique o console.');
-    soundError();
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = btnHTML;
-  }
+/* Medidor de força + campo de confirmação dinâmico */
+document.getElementById('password').addEventListener('input', function () {
+  const s = scorePassword(this.value);
+  const f = document.getElementById('strengthFill'), t = document.getElementById('strengthText'), pct = document.getElementById('strengthPct');
+  pct.textContent = s + '%';
+  if (s < 40) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f43f5e,#fb7185)'; t.textContent = 'Fraca'; }
+  else if (s < 70) { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#f59e0b,#fcd34d)'; t.textContent = 'Média'; }
+  else { f.style.width = s + '%'; f.style.background = 'linear-gradient(90deg,#14b8a6,#5eead4)'; t.textContent = 'Forte'; }
+  updateConfirmVisibility();
 });
-function zerarTentativasQuiet() { lockStore.set({ tries: 0, until: 0 }); }
+function updateConfirmVisibility() {
+  const cred = localStorage.getItem(SEC.APP_NS + '_cred');
+  const cf = document.getElementById('confirmField');
+  const isNew = !cred && scorePassword(document.getElementById('password').value) >= 40;
+  cf.hidden = !isNew;
+}
+
+document.getElementById('togglePass').addEventListener('click', function () {
+  const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password';
+  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
+});
+
+/* ── LOGIN (bind dinâmico, à prova de erros) ── */
+function bindLoginForm() {
+  const form = document.getElementById('loginForm');
+  form.setAttribute('novalidate', 'novalidate');   /* o form nunca bloqueia o submit por conta própria */
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (isLocked()) { showLockout(); return; }
+    const btn = document.getElementById('loginBtn');
+    const btnHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Entrar no Sistema';
+    btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Verificando...';
+    try {
+      const u = clampStr(document.getElementById('username').value.trim(), 40);
+      const p = document.getElementById('password').value;
+
+      if (!u) { showErr('Informe o usuário.'); return; }
+      if (p.length < 12) { showErr('A senha deve ter no mínimo 12 caracteres.'); return; }
+      if (!window.crypto || !crypto.subtle) { showErr('Criptografia indisponível. Abra o sistema por HTTPS ou localhost.'); return; }
+
+      const credRaw = localStorage.getItem(SEC.APP_NS + '_cred');
+      let credOK = false;
+
+      if (!credRaw) {
+        /* PRIMEIRO ACESSO */
+        const conf = document.getElementById('passwordConfirm').value;
+        const confErr = document.getElementById('confirmErrorBox');
+        if (scorePassword(p) < 70) { showErr('Senha fraca! Use 12+ caracteres com maiúsculas, minúsculas, números e símbolos.'); return; }
+        if (p !== conf) { confErr.classList.add('show'); document.getElementById('confirmErrorText').textContent = 'As senhas não conferem.'; soundError(); return; }
+        confErr.classList.remove('show');
+        const { hash, salt } = await hashPassword(p);
+        localStorage.setItem(SEC.APP_NS + '_cred', JSON.stringify({ user: u, hash, salt, created: new Date().toISOString() }));
+        credOK = true;
+        toast('info', 'Credenciais criadas com criptografia forte!');
+      } else {
+        let rec;
+        try { rec = JSON.parse(credRaw); } catch { showErr('Registro de credencial corrompido. Apague "acaiReiSec_v1_cred" no DevTools e tente de novo.'); return; }
+        if (!rec || typeof rec.user !== 'string' || typeof rec.hash !== 'string' || typeof rec.salt !== 'string') {
+          showErr('Registro de credencial inválido (versão antiga). Apague "acaiReiSec_v1_cred" no DevTools e tente de novo.');
+          return;
+        }
+        credOK = rec.user === u && await verifyPassword(p, rec);
+      }
+
+      if (credOK) {
+        masterPass = p;
+        currentUser = u;
+        localStorage.setItem(SEC.APP_NS + '_sess', JSON.stringify({ user: u, at: Date.now() }));
+        document.getElementById('setupNote').classList.remove('show');
+        lockStore.set({ tries: 0, until: 0 });
+        showApp(); scheduleSessionExpiry(); soundSuccess();
+        decryptFiadosFromCache();   /* decifra dados que chegaram antes do login */
+      } else {
+        registerFail();
+        const card = document.querySelector('.login-card');
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+        if (isLocked()) showLockout();
+        else showErr('Usuário ou senha incorretos! (' + (SEC.LOCKOUT_MAX_ATTEMPTS - lockStore.get().tries) + ' tentativa(s) restante(s))');
+        soundError();
+      }
+    } catch (err) {
+      console.error('Falha no processo de login:', err);
+      showErr('Erro interno de criptografia (' + (err && err.name ? err.name : 'desconhecido') + '). Verifique o console (F12).');
+      soundError();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = btnHTML;
+    }
+  });
+}
 
 function showErr(m) { const b = document.getElementById('errorBox'); document.getElementById('errorText').textContent = m; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 4500); }
 function showLockout() {
@@ -1366,19 +1282,15 @@ function showLockout() {
   document.getElementById('lockoutText').textContent = 'Muitas tentativas! Aguarde ' + Math.ceil(lockoutRemaining() / 60) + ' minuto(s) para tentar novamente.';
   b.classList.add('show');
 }
-function showLogin() { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appScreen').style.display = 'none'; }
+function showLogin() { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appScreen').classList.remove('visible'); }
 function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appScreen').classList.add('visible');
   document.getElementById('currentUser').textContent = currentUser;
   toast('success', 'Bem-vindo, ' + esc(currentUser) + '!');
 }
-document.getElementById('togglePass').addEventListener('click', function () {
-  const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password';
-  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
-});
 
-/* Troca de senha: re-hash da nova senha e re-cifração dos fiados */
+/* Troca de senha */
 async function trocarSenhaUI() {
   const nova = prompt('Nova senha (mínimo 12 caracteres, com maiúsculas, minúsculas, números e símbolos):');
   if (nova === null) return;
@@ -1402,7 +1314,7 @@ async function trocarSenhaUI() {
   }
 }
 
-/* ── TEMA / SOM ── */
+/* Tema / Som */
 function toggleTheme() {
   const isLight = document.documentElement.hasAttribute('data-theme');
   if (isLight) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('acaiRei_theme', 'dark'); }
@@ -1413,37 +1325,129 @@ function updateThemeBtn() { document.getElementById('themeBtn').innerHTML = docu
 function toggleSound() { soundEnabled = !soundEnabled; localStorage.setItem('acaiRei_sound', soundEnabled); updateSoundBtn(); toast('info', soundEnabled ? 'Som ativado' : 'Som desativado'); }
 function updateSoundBtn() { document.getElementById('soundBtn').innerHTML = soundEnabled ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-xmark"></i>'; }
 
-/* ── TABS ── */
-function switchTab(name, btn) {
+/* Tabs */
+function switchTab(name) {
   document.querySelectorAll('.nav-item').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active'); else b.classList.remove('active'); });
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'dashboard') updateDashboard();
 }
 
-/* ── FIREBASE HELPERS ── */
-async function fbAdd(ref, data) {
-  const r = window.dbPush(ref);
-  await window.dbSet(r, data);
-  return r.key;
-}
+/* Firebase helpers */
+async function fbAdd(ref, data) { const r = window.dbPush(ref); await window.dbSet(r, data); return r.key; }
 async function fbDel(ref, fid) { await window.dbRemove(window.dbRef(ref, fid)); }
 async function fbUpd(ref, fid, data) { await window.dbUpdate(window.dbRef(ref, fid), data); }
 
+/* Firebase init + listeners */
+function initFirebase() {
+  if (!window.firebaseDB) { setTimeout(initFirebase, 400); return; }
+  db = window.firebaseDB;
+  dbRefs = {
+    caixa: window.dbRef(db, 'caixa'), vendas: window.dbRef(db, 'vendas'),
+    faturas: window.dbRef(db, 'faturas'), dispensas: window.dbRef(db, 'dispensas'),
+    compras: window.dbRef(db, 'compras'), conn: window.dbRef(db, '.info/connected'),
+    fiados: window.dbRef(db, 'fiados')
+  };
+  setupListeners();
+}
+
+function setupListeners() {
+  window.dbOnValue(dbRefs.caixa, snap => {
+    const d = snap.val() || {};
+    caixaAberto = d.aberto || false;
+    horaAbertura = d.horaAbertura ? new Date(d.horaAbertura) : null;
+    faturaAtual = d.faturaAtual || null;
+    updateCaixaUI(); updateBadge(); startTimer();
+  }, err => { console.error('caixa:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.vendas, snap => {
+    const raw = snap.val();
+    produtosVenda = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && typeof v === 'object' && v.id && isSafeNumber(v.valor)) : [];
+    renderTabela(); updateDashboard();
+  }, err => { console.error('vendas:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.faturas, snap => {
+    const raw = snap.val();
+    faturas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id).sort((a, b) => b.id - a.id) : [];
+    renderFaturas();
+  }, err => { console.error('faturas:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.dispensas, snap => {
+    const raw = snap.val();
+    dispensas = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
+    renderDispensas();
+  }, err => { console.error('dispensas:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.compras, snap => {
+    const raw = snap.val();
+    comprasDispensa = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id).sort((a, b) => b.id - a.id) : [];
+    renderHistoricoDispensas(); updateDashboard();
+  }, err => { console.error('compras:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.fiados, snap => {
+    const raw = snap.val();
+    fiadosCacheRaw = raw ? Object.entries(raw).map(([k, v]) => ({ ...v, firebaseId: k })).filter(v => v && v.id) : [];
+    if (masterPass) decryptFiadosFromCache();
+    else { fiados = []; renderFiados(); updateDashboard(); }
+  }, err => { console.error('fiados:', err); showSyncDenied(err); });
+  window.dbOnValue(dbRefs.conn, snap => {
+    const on = snap.val() === true;
+    const pill = document.getElementById('syncPill');
+    pill.className = 'sync-pill ' + (on ? 'synced' : 'offline');
+    document.getElementById('syncText').textContent = on ? 'Online' : 'Offline';
+  });
+}
+
+/* Erro de permissão → aviso claro (regra auth != null ativa sem login anônimo) */
+let deniedShown = false;
+function showSyncDenied(err) {
+  if (deniedShown) return;
+  deniedShown = true;
+  const msg = (err && err.message) || '';
+  if (/permission_denied|Permission denied/i.test(msg)) {
+    toast('error', 'Firebase bloqueou o acesso (regra auth != null). Ative o login anônimo em Authentication → Sign-in method.');
+    pushNotif('error', 'Acesso negado', 'Configure o Firebase Authentication (login anônimo) ou volte as regras para teste.');
+  } else {
+    toast('warning', 'Falha ao carregar dados do banco. Verifique a conexão.');
+  }
+}
+
+/* Decifra fiados a partir do cache (chamado após login OU a cada evento) */
+function decryptFiadosFromCache() {
+  if (!masterPass || !fiadosCacheRaw.length) {
+    fiados = masterPass ? [] : fiados;
+    renderFiados(); updateDashboard();
+    if (masterPass && !fiadosCacheRaw.length) { /* sem dados */ }
+    return;
+  }
+  Promise.all(fiadosCacheRaw.map(async r => {
+    try {
+      const base = r.e2e ? await decryptJSON(r.e2e, masterPass) : r;
+      if (!base || typeof base !== 'object' || !Array.isArray(base.itens)) return null;
+      return { ...base, firebaseId: r.firebaseId };
+    } catch { return null; }
+  })).then(l => {
+    fiados = l.filter(Boolean).sort((a, b) => b.id - a.id);
+    renderFiados(); updateDashboard();
+  }).catch(err => {
+    console.error('decrypt fiados:', err);
+    toast('error', 'Não foi possível descriptografar os fiados. A senha mestra pode ter mudado.');
+  });
+}
+
 /* ── CAIXA ── */
 function toggleCaixa() { if (!caixaAberto) abrirCaixa(); else if (confirm('Deseja realmente fechar o caixa?')) fecharCaixa(); }
+async function salvarCaixa() {
+  await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura ? horaAbertura.toISOString() : null, faturaAtual, lastUpdate: new Date().toISOString() });
+}
 async function abrirCaixa() {
   try {
     caixaAberto = true; horaAbertura = new Date();
     faturaAtual = { id: Date.now(), dataAbertura: horaAbertura.toISOString(), dataFechamento: null, produtos: [], total: 0 };
-    await window.dbSet(dbRefs.caixa, { aberto: caixaAberto, horaAbertura: horaAbertura.toISOString(), faturaAtual, lastUpdate: new Date().toISOString() });
+    await salvarCaixa();
     toast('success', 'Caixa aberto!'); soundSuccess();
     pushNotif('success', 'Caixa Aberto', 'Expediente iniciado às ' + formatHora(horaAbertura));
-  } catch (e) { console.error(e); toast('error', 'Falha ao abrir caixa (conexão?).'); }
+  } catch (e) { console.error(e); toast('error', 'Falha ao abrir caixa (conexão/permissão?).'); }
 }
 async function fecharCaixa() {
   try {
     const hf = new Date();
+    faturaAtual = faturaAtual || { id: Date.now(), dataAbertura: horaAbertura ? horaAbertura.toISOString() : hf.toISOString() };
     faturaAtual.dataFechamento = hf.toISOString();
     faturaAtual.produtos = [...produtosVenda];
     faturaAtual.total = calcTotal();
@@ -1451,11 +1455,11 @@ async function fecharCaixa() {
     await window.dbSet(dbRefs.vendas, null);
     const tot = faturaAtual.total;
     caixaAberto = false; horaAbertura = null; faturaAtual = null;
-    await window.dbSet(dbRefs.caixa, { aberto: false, horaAbertura: null, faturaAtual: null, lastUpdate: new Date().toISOString() });
+    await salvarCaixa();
     stopTimer();
     toast('info', 'Caixa fechado! Total: ' + fmt(tot));
     pushNotif('info', 'Caixa Fechado', 'Total: ' + fmt(tot));
-  } catch (e) { console.error(e); toast('error', 'Falha ao fechar caixa (conexão?).'); }
+  } catch (e) { console.error(e); toast('error', 'Falha ao fechar caixa (conexão/permissão?).'); }
 }
 function updateCaixaUI() {
   const orb = document.getElementById('caixaOrb'), icon = document.getElementById('caixaOrbIcon');
@@ -1630,7 +1634,7 @@ function salvarFavorito() {
   renderFavoritos(); toast('success', '"' + esc(nome) + '" salvo como favorito!'); soundSuccess();
 }
 function aplicarFavorito(i) {
-  const f = favoritos[i];
+  const f = favoritos[i]; if (!f) return;
   document.getElementById('nomeProduto').value = f.nome;
   document.getElementById('valorProduto').value = f.valor;
   if (f.pagamento) document.getElementById('formaPagamento').value = f.pagamento;
@@ -1695,7 +1699,7 @@ async function addProduto(e) {
     statusPagAtual = 'pago';
     setStatusPag('pago');
     toast('success', 'Venda registrada!'); soundSuccess();
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar venda (conexão?).'); }
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar venda (conexão/permissão?).'); }
 }
 
 async function removerProduto(id) {
@@ -1713,11 +1717,11 @@ async function marcarPago(id) {
 function editarProduto(id) {
   const p = produtosVenda.find(x => x.id === id); if (!p) return;
   document.getElementById('editId').value = id;
-  document.getElementById('editCliente').value = p.cliente;
-  document.getElementById('editProduto').value = p.nome;
-  document.getElementById('editValor').value = p.valor;
-  document.getElementById('editPagamento').value = p.pagamento;
-  document.getElementById('editTipo').value = p.tipo;
+  document.getElementById('editCliente').value = p.cliente || '';
+  document.getElementById('editProduto').value = p.nome || '';
+  document.getElementById('editValor').value = p.valor || 0;
+  document.getElementById('editPagamento').value = p.pagamento || 'Dinheiro';
+  document.getElementById('editTipo').value = p.tipo || 'Presencial';
   document.getElementById('editObs').value = p.obs || '';
   document.getElementById('editStatus').value = p.status || 'pago';
   openModal('modalEditar');
@@ -1795,8 +1799,7 @@ function calcTotal() { return produtosVenda.reduce((s, p) => s + p.valor, 0); }
 function verHistoricoCliente(nome) {
   const vendas = produtosVenda.filter(p => p.cliente === nome);
   const total = vendas.reduce((s, p) => s + p.valor, 0);
-  const body = document.getElementById('modalClienteBody');
-  body.innerHTML = `
+  document.getElementById('modalClienteBody').innerHTML = `
     <div class="detail-row"><span>Cliente</span><strong>${esc(nome)}</strong></div>
     <div class="detail-row"><span>Pedidos hoje</span><strong>${vendas.length}</strong></div>
     <div class="detail-row"><span>Total gasto hoje</span><strong style="color:#a78bfa">${fmt(total)}</strong></div>
@@ -1828,7 +1831,7 @@ async function addDispensa(e) {
     });
     document.getElementById('dispensaForm').reset(); document.getElementById('unidLabel').textContent = 'unidade';
     toast('success', 'Produto cadastrado!');
-  } catch (err) { console.error(err); toast('error', 'Falha ao cadastrar (conexão?).'); }
+  } catch (err) { console.error(err); toast('error', 'Falha ao cadastrar (conexão/permissão?).'); }
 }
 function renderDispensas() {
   const cad = document.getElementById('listaCadastrados');
@@ -1886,7 +1889,7 @@ async function finalizarCompraDispensa() {
     itensSelecionados.clear(); renderDispensas();
     toast('success', 'Compra registrada! ' + fmt(tot)); soundSuccess();
     pushNotif('warning', 'Nova Despesa', 'Compra de ' + itens.length + ' item(s): ' + fmt(tot));
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar compra (conexão?).'); }
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar compra (conexão/permissão?).'); }
 }
 function renderHistoricoDispensas() {
   const c = document.getElementById('historicoDispensas');
@@ -1898,7 +1901,7 @@ function renderHistoricoDispensas() {
         <div class="fatura-meta">
           <span><i class="fas fa-calendar"></i>${d.toLocaleDateString('pt-BR')}</span>
           <span><i class="fas fa-clock"></i>${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-          <span><i class="fas fa-cubes"></i>${c2.itens.length} item(s)</span>
+          <span><i class="fas fa-cubes"></i>${(c2.itens || []).length} item(s)</span>
         </div></div>
       <div style="text-align:right"><div class="fatura-amt">${fmt(c2.total)}</div><div style="font-size:.72rem;color:var(--tm)">Finalizada</div></div>
     </div>`;
@@ -1908,10 +1911,10 @@ function verCompra(id) {
   const c = comprasDispensa.find(x => x.id === id); if (!c) return;
   document.getElementById('modalCompraBody').innerHTML = `
     <div class="detail-row"><span>Data</span><strong>${formatDT(new Date(c.data))}</strong></div>
-    <div class="detail-row"><span>Itens</span><strong>${c.itens.length}</strong></div>
+    <div class="detail-row"><span>Itens</span><strong>${(c.itens || []).length}</strong></div>
     <div style="margin:1.2rem 0 .5rem;font-size:.78rem;color:var(--tm);letter-spacing:.6px;text-transform:uppercase">Produtos</div>
     <div style="background:rgba(255,255,255,.03);border:1px solid var(--gbr);border-radius:12px;padding:.5rem 1rem">
-      ${c.itens.map(it => `<div class="detail-row"><span>${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}${esc(it.unidade || 'un')}</span></span><strong>${fmt(it.subtotal || it.valor)}</strong></div>`).join('')}
+      ${(c.itens || []).map(it => `<div class="detail-row"><span>${esc(it.nome)} <span style="color:var(--tm);font-size:.78rem">${it.qtd}${esc(it.unidade || 'un')}</span></span><strong>${fmt(it.subtotal || it.valor)}</strong></div>`).join('')}
     </div>
     <div class="summary-footer green"><span class="label">TOTAL</span><span class="amount">${fmt(c.total)}</span></div>`;
   openModal('modalCompra');
@@ -1922,9 +1925,9 @@ function renderFaturas() {
   const c = document.getElementById('listaFaturas');
   const q = (document.getElementById('searchFatura')?.value || '').toLowerCase();
   let list = faturas;
-  if (q) list = faturas.filter((f, i) => ('fatura #' + (faturas.length - i)).includes(q) || new Date(f.dataAbertura).toLocaleDateString('pt-BR').includes(q));
+  if (q) list = faturas.filter(f => ('fatura #' + (faturas.length - faturas.indexOf(f))).includes(q) || new Date(f.dataAbertura).toLocaleDateString('pt-BR').includes(q));
   if (!list.length) { c.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>Nenhuma fatura encontrada</p></div>'; return; }
-  c.innerHTML = list.map((f, i) => {
+  c.innerHTML = list.map(f => {
     const ab = new Date(f.dataAbertura);
     return `<div class="fatura-item" onclick="verFatura(${f.id})">
       <div><div class="fatura-num">Fatura #${faturas.length - faturas.indexOf(f)}</div>
@@ -1975,7 +1978,7 @@ function verFatura(id) {
   openModal('modalFatura');
 }
 
-/* ======== FIADO / CREDIÁRIO (criptografado ponta a ponta) ======== */
+/* ======== FIADO ======== */
 function setStatusFiado(s) {
   statusFiadoAtual = s;
   document.getElementById('optFiadoPendente').className = 'status-opt' + (s === 'pendente' ? ' sel-pendente' : '');
@@ -2050,7 +2053,6 @@ async function registrarFiado(e) {
   };
 
   try {
-    /* CRIPTOGRAFIA PONTA A PONTA: payload cifrado com AES-256-GCM antes do banco */
     const e2e = await encryptJSON(fiadoData, masterPass);
     await fbAdd(dbRefs.fiados, { id: fiadoData.id, status: statusFiadoAtual, total, data: fiadoData.data, e2e });
 
@@ -2066,7 +2068,7 @@ async function registrarFiado(e) {
 
     fiadoAtualPrint = fiadoData;
     abrirModalBobina(fiadoData);
-  } catch (err) { console.error(err); toast('error', 'Falha ao registrar fiado (conexão?).'); }
+  } catch (err) { console.error(err); toast('error', 'Falha ao registrar fiado (conexão/permissão?).'); }
 }
 
 function renderFiados() {
@@ -2114,8 +2116,7 @@ function renderFiados() {
 function verDetalhesFiado(id) {
   const f = fiados.find(x => x.id === id); if (!f) return;
   const d = new Date(f.data);
-  const body = document.getElementById('modalFiadoBody');
-  body.innerHTML = `
+  document.getElementById('modalFiadoBody').innerHTML = `
     <div class="detail-row"><span>Cliente</span><strong>${esc(f.cliente)}</strong></div>
     ${f.telefone ? `<div class="detail-row"><span>Telefone</span><strong>${esc(f.telefone)}</strong></div>` : ''}
     ${f.endereco ? `<div class="detail-row"><span>Endereço</span><strong>${esc(f.endereco)}</strong></div>` : ''}
@@ -2158,7 +2159,7 @@ async function marcarFiadoPago(id) {
       await fbUpd(dbRefs.fiados, f.firebaseId, { status: 'pago', dataPagamento: f.dataPagamento, e2e });
       toast('success', 'Fiado marcado como pago!'); soundSuccess();
       pushNotif('success', 'Fiado Quitado', fmt(f.total) + ' recebido.');
-    } catch (err) { console.error(err); toast('error', 'Falha ao atualizar fiado.'); }
+    } catch (err) { console.error(err); toast('error', 'Falha ao atualizar fiado (conexão/permissão?).'); }
   }
 }
 
@@ -2168,7 +2169,7 @@ async function removerFiado(id) {
   if (f?.firebaseId) { await fbDel(dbRefs.fiados, f.firebaseId); toast('info', 'Fiado removido'); }
 }
 
-/* ======== IMPRESSÃO BOBINA 79MM ======== */
+/* ======== BOBINA 79MM ======== */
 function gerarBobinaHTML(dados) {
   const d = new Date(dados.data);
   const dataStr = d.toLocaleDateString('pt-BR');
@@ -2281,9 +2282,7 @@ function imprimirBobina() {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
       toast('success', 'Imprimindo...');
-    } catch (e) {
-      toast('error', 'Erro na impressão');
-    }
+    } catch (e) { toast('error', 'Erro na impressão'); }
     setTimeout(() => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 3000);
   }, 300);
 }
@@ -2362,7 +2361,7 @@ function exportarFatura(id) {
 }
 function baixarTxt(txt, nome) { const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = nome; a.click(); URL.revokeObjectURL(url); }
 
-/* ── NOTIFICAÇÕES ── */
+/* ── NOTIFICAÇÕES / TOAST ── */
 function pushNotif(type, title, msg) {
   notificacoes.unshift({ type, title, msg, time: new Date() });
   if (notificacoes.length > 30) notificacoes.pop();
@@ -2401,7 +2400,7 @@ function verSeguranca() {
     <div class="sec-row"><i class="fas fa-clock si"></i><div><div class="t">Sessão expira em 30 min</div><div class="d">Inatividade encerra a sessão e apaga a chave de criptografia da memória.</div></div></div>
     <div class="sec-row"><i class="fas fa-code si"></i><div><div class="t">Proteção contra XSS</div><div class="d">Todos os dados exibidos passam por escape de HTML; inputs têm limite de tamanho e validação numérica.</div></div></div>
     <div class="sec-row"><i class="fas fa-window-maximize si"></i><div><div class="t">Anti-clickjacking + CSP</div><div class="d">A página recusa execução dentro de iframes e aplica Content Security Policy restritiva.</div></div></div>
-    <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">No console do Firebase → Realtime Database → Rules, ative autenticação (regra abaixo) para bloquear leitura/escrita anônima da internet.</div></div></div>
+    <div class="sec-row"><i class="fas fa-database si"></i><div><div class="t">Ação necessária: Firebase Rules</div><div class="d">Se as regras exigirem auth, ative o login anônimo em Authentication → Sign-in method → Anonymous. Sem isso o banco recusa leitura/escrita.</div></div></div>
     <pre style="background:rgba(0,0,0,.35);border:1px solid var(--gbr);border-radius:10px;padding:1rem;font-family:monospace;font-size:.72rem;color:#5eead4;margin-top:.6rem;overflow-x:auto">{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</pre>`;
   openModal('modalSeguranca');
 }
@@ -2455,7 +2454,6 @@ function logout(expired) {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-/* Esc fecha modais */
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); });
 </script>
 </body>
